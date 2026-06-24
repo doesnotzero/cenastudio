@@ -79,6 +79,12 @@ export default function AppNavBar({ children }: AppNavBarProps) {
       <nav className="hidden md:flex items-center gap-5">
         {navLink("/dashboard", "Painel")}
         {navLink("/tools", "Ferramentas")}
+        {navLink("/clients", "CRM")}
+        {navLink("/pipeline", "Pipeline")}
+        {navLink("/files", "Arquivos")}
+        {navLink("/video-reviews", "Reviews")}
+        {navLink("/collaborators", "Equipe")}
+        {navLink("/analytics", "Analytics")}
         {isAdmin && navLink("/admin", "Admin")}
       </nav>
 
