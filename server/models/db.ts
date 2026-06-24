@@ -57,6 +57,15 @@ function ensureProjectColumns() {
   }
 }
 
+function ensureClientColumns() {
+  const clientCols = (db.prepare("PRAGMA table_info(clients)").all() as { name: string }[]).map(
+    (c) => c.name,
+  );
+  if (!clientCols.includes("workflow_stage")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN workflow_stage TEXT DEFAULT 'prospect'").run();
+  }
+}
+
 function ensureSubscription(userId: number, planId: string, status = "active") {
   const existing = db.prepare("SELECT id FROM subscriptions WHERE user_id = ?").get(userId);
   if (!existing) {
@@ -180,6 +189,7 @@ export function initDatabase() {
       phone TEXT,
       segment TEXT DEFAULT 'direct',
       status TEXT DEFAULT 'lead',
+      workflow_stage TEXT DEFAULT 'prospect',
       notes TEXT,
       total_spent INTEGER DEFAULT 0,
       first_contact_at TEXT,
@@ -281,6 +291,7 @@ export function initDatabase() {
   ensureUserColumns();
   ensureSubscriptionColumns();
   ensureProjectColumns();
+  ensureClientColumns();
 
   const planCount = db.prepare("SELECT COUNT(*) as c FROM plans").get() as { c: number };
   if (planCount.c === 0) {

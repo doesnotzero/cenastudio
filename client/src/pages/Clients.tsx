@@ -17,6 +17,7 @@ import {
   TrendingUp,
   DollarSign,
   Calendar,
+  GripVertical,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -34,6 +35,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Client {
   id: number;
@@ -43,10 +61,81 @@ interface Client {
   phone?: string;
   segment: string;
   status: string;
+  workflow_stage?: string;
   notes?: string;
   total_spent: number;
   created_at: string;
   updated_at: string;
+}
+
+const WORKFLOW_STAGES = [
+  { id: "prospect", label: "Prospectado", color: "border-blue-500/30 bg-blue-500/5" },
+  { id: "contacted", label: "Contatado", color: "border-yellow-500/30 bg-yellow-500/5" },
+  { id: "qualified", label: "Qualificado", color: "border-purple-500/30 bg-purple-500/5" },
+  { id: "proposal", label: "Proposta", color: "border-orange-500/30 bg-orange-500/5" },
+  { id: "negotiation", label: "Negociação", color: "border-pink-500/30 bg-pink-500/5" },
+  { id: "won", label: "Ganho", color: "border-green-500/30 bg-green-500/5" },
+  { id: "recurrent", label: "Recorrente", color: "border-cyan-500/30 bg-cyan-500/5" },
+  { id: "freela", label: "Freela", color: "border-indigo-500/30 bg-indigo-500/5" },
+  { id: "lost", label: "Perdido", color: "border-red-500/30 bg-red-500/5" },
+];
+
+function SortableClientCard({ client, onEdit, onDelete }: { client: Client; onEdit: (client: Client) => void; onDelete: (client: Client) => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: client.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const stage = WORKFLOW_STAGES.find(s => s.id === client.workflow_stage) || WORKFLOW_STAGES[0];
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className={`border ${stage.color} rounded-lg p-4 mb-3 cursor-grab active:cursor-grabbing hover:border-frame-orange/50 transition-colors`}
+    >
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex-1">
+          <h4 className="font-semibold text-sm text-frame-white">{client.name}</h4>
+          {client.company && <p className="text-xs text-frame-gray-light mt-1">{client.company}</p>}
+        </div>
+        <div {...listeners} className="cursor-grab">
+          <GripVertical className="w-4 h-4 text-frame-gray-light" />
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-2 text-xs text-frame-gray-light mt-2">
+        {client.email && <Mail className="w-3 h-3" />}
+        {client.phone && <Phone className="w-3 h-3" />}
+      </div>
+
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-frame-gray-3">
+        <span className="text-xs text-frame-gray-light">
+          {formatCurrency(client.total_spent)}
+        </span>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-1 hover:bg-frame-gray-3 rounded transition-colors">
+              <MoreVertical className="w-4 h-4 text-frame-gray-light" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => onEdit(client)}>
+              <Edit className="w-4 h-4 mr-2" />
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(client)} className="text-red-400">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Excluir
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
 }
 
 interface ClientStats {
@@ -84,6 +173,44 @@ function ClientsContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterSegment, setFilterSegment] = useState("");
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = clients.findIndex((c) => c.id === active.id);
+      const newIndex = clients.findIndex((c) => c.id === over.id);
+      
+      const newClients = arrayMove(clients, oldIndex, newIndex);
+      setClients(newClients);
+
+      // Update workflow stage if dropped on a different stage column
+      const overStage = WORKFLOW_STAGES.find((s) => s.id === over.id);
+      if (overStage) {
+        const client = clients.find((c) => c.id === active.id);
+        if (client && client.workflow_stage !== overStage.id) {
+          try {
+            await fetch(`/api/clients/${client.id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ workflow_stage: overStage.id }),
+            });
+            toast.success(`Cliente movido para ${overStage.label}`);
+          } catch (error) {
+            toast.error("Erro ao atualizar estágio do cliente");
+          }
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     loadClients();
@@ -437,12 +564,38 @@ function ClientsContent() {
           </select>
         </div>
 
-        {/* Clients List */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-frame-orange" />
+        {/* Kanban Board */}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 overflow-x-auto pb-4">
+            {WORKFLOW_STAGES.map((stage) => (
+              <div key={stage.id} className={`border ${stage.color} rounded-lg p-4 min-w-[280px]`}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-sm text-frame-white">{stage.label}</h3>
+                  <span className="text-xs text-frame-gray-light">
+                    {clients.filter(c => c.workflow_stage === stage.id).length}
+                  </span>
+                </div>
+                
+                <SortableContext items={clients.filter(c => c.workflow_stage === stage.id).map(c => c.id)} strategy={verticalListSortingStrategy}>
+                  {clients.filter(c => c.workflow_stage === stage.id).map((client) => (
+                    <SortableClientCard
+                      key={client.id}
+                      client={client}
+                      onEdit={openEditModal}
+                      onDelete={(c) => {
+                        setSelectedClient(c);
+                        setIsDeleteOpen(true);
+                      }}
+                    />
+                  ))}
+                </SortableContext>
+              </div>
+            ))}
           </div>
-        ) : filteredClients.length === 0 ? (
+        </DndContext>
+
+        {/* Empty State */}
+        {clients.length === 0 && (
           <div className="border border-dashed border-frame-gray-3 p-12 text-center">
             <Users className="w-12 h-12 text-frame-gray-light mx-auto mb-4" />
             <p className="text-frame-gray-light mb-4">Nenhum cliente encontrado</p>
@@ -451,99 +604,11 @@ function ClientsContent() {
                 resetForm();
                 setIsCreateOpen(true);
               }}
-              className="frame-btn-ghost"
+              className="frame-btn-primary inline-flex items-center gap-2"
             >
-              Criar Primeiro Cliente
+              <Plus className="w-4 h-4" />
+              Adicionar Cliente
             </button>
-          </div>
-        ) : (
-          <div className="border border-frame-gray-3 bg-frame-gray-1/10 divide-y divide-frame-gray-3">
-            {filteredClients.map((client) => (
-              <motion.div
-                key={client.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-4 hover:bg-frame-gray-1/30 transition duration-150"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-lg font-semibold text-frame-white truncate">
-                        {client.name}
-                      </h3>
-                      <span
-                        className={`px-2 py-0.5 text-xs font-frame-mono border rounded ${getStatusColor(client.status)}`}
-                      >
-                        {getStatusLabel(client.status)}
-                      </span>
-                    </div>
-
-                    {client.company && (
-                      <div className="flex items-center gap-2 text-frame-gray-light text-sm mb-2">
-                        <Building2 className="w-3.5 h-3.5" />
-                        <span>{client.company}</span>
-                      </div>
-                    )}
-
-                    <div className="flex flex-wrap gap-4 text-sm text-frame-gray-light">
-                      {client.email && (
-                        <div className="flex items-center gap-2">
-                          <Mail className="w-3.5 h-3.5" />
-                          <span className="truncate">{client.email}</span>
-                        </div>
-                      )}
-                      {client.phone && (
-                        <div className="flex items-center gap-2">
-                          <Phone className="w-3.5 h-3.5" />
-                          <span>{client.phone}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="w-3.5 h-3.5" />
-                        <span>{formatCurrency(client.total_spent)}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span>{formatDate(client.created_at)}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="p-2 hover:bg-frame-gray-2 transition rounded-none">
-                        <MoreVertical className="w-4 h-4" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-frame-black border-frame-gray-3">
-                      <DropdownMenuItem
-                        onClick={() => setLocation(`/clients/${client.id}`)}
-                        className="cursor-pointer"
-                      >
-                        Ver Detalhes
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => openEditModal(client)}
-                        className="cursor-pointer"
-                      >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedClient(client);
-                          setIsDeleteOpen(true);
-                        }}
-                        className="cursor-pointer text-frame-red"
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Excluir
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </motion.div>
-            ))}
           </div>
         )}
       </main>
@@ -608,12 +673,12 @@ function ClientsContent() {
                   Telefone
                 </label>
                 <input
-                  type="tel"
+                  type="text"
                   disabled={isSubmitting}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
-                  placeholder="(11) 99999-9999"
+                  placeholder="+55 11 99999-9999"
                 />
               </div>
             </div>
@@ -660,23 +725,24 @@ function ClientsContent() {
                 disabled={isSubmitting}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none resize-none h-20"
+                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none resize-none"
+                rows={3}
                 placeholder="Observações sobre o cliente..."
               />
             </div>
 
-            <DialogFooter className="gap-2 pt-4 border-t border-frame-gray-3">
+            <DialogFooter>
               <button
                 type="button"
-                disabled={isSubmitting}
                 onClick={() => setIsCreateOpen(false)}
+                disabled={isSubmitting}
                 className="frame-btn-ghost"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !name.trim()}
+                disabled={isSubmitting}
                 className="frame-btn-primary"
               >
                 {isSubmitting ? "Criando..." : "Criar Cliente"}
@@ -696,7 +762,7 @@ function ClientsContent() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleUpdate} className="space-y-4 mt-4">
+          <form onSubmit={handleEdit} className="space-y-4 mt-4">
             <div className="space-y-2">
               <label className="block font-frame-mono text-xs text-frame-orange uppercase">
                 Nome *
@@ -743,7 +809,7 @@ function ClientsContent() {
                   Telefone
                 </label>
                 <input
-                  type="tel"
+                  type="text"
                   disabled={isSubmitting}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -794,25 +860,26 @@ function ClientsContent() {
                 disabled={isSubmitting}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none resize-none h-20"
+                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none resize-none"
+                rows={3}
               />
             </div>
 
-            <DialogFooter className="gap-2 pt-4 border-t border-frame-gray-3">
+            <DialogFooter>
               <button
                 type="button"
-                disabled={isSubmitting}
                 onClick={() => setIsEditOpen(false)}
+                disabled={isSubmitting}
                 className="frame-btn-ghost"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !name.trim()}
+                disabled={isSubmitting}
                 className="frame-btn-primary"
               >
-                {isSubmitting ? "Atualizando..." : "Atualizar Cliente"}
+                {isSubmitting ? "Atualizando..." : "Atualizar"}
               </button>
             </DialogFooter>
           </form>
@@ -821,28 +888,38 @@ function ClientsContent() {
 
       {/* Delete Modal */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="bg-frame-black border-frame-gray-3 text-frame-white max-w-sm rounded-none p-6">
+        <DialogContent className="bg-frame-black border-frame-gray-3 text-frame-white max-w-md rounded-none p-6">
           <DialogHeader>
-            <DialogTitle className="frame-title text-2xl text-frame-red">EXCLUIR CLIENTE?</DialogTitle>
+            <DialogTitle className="frame-title text-2xl">EXCLUIR CLIENTE</DialogTitle>
             <DialogDescription className="text-frame-gray-light text-sm">
-              Esta ação é permanente. Todos os dados do cliente serão apagados.
+              Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="gap-2 pt-4 border-t border-frame-gray-3">
+          <div className="flex items-center gap-4 mt-4 p-4 border border-frame-red/30 bg-frame-red/5">
+            <Trash2 className="w-5 h-5 text-frame-red" />
+            <div>
+              <p className="font-semibold text-frame-white">{selectedClient?.name}</p>
+              {selectedClient?.company && (
+                <p className="text-sm text-frame-gray-light">{selectedClient.company}</p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter>
             <button
               type="button"
-              disabled={isSubmitting}
               onClick={() => setIsDeleteOpen(false)}
+              disabled={isSubmitting}
               className="frame-btn-ghost"
             >
               Cancelar
             </button>
             <button
               type="button"
-              disabled={isSubmitting}
               onClick={handleDelete}
-              className="bg-frame-red hover:bg-red-600 text-white px-4 py-2 text-sm font-frame-mono uppercase tracking-wider transition rounded-none"
+              disabled={isSubmitting}
+              className="frame-btn-danger"
             >
               {isSubmitting ? "Excluindo..." : "Excluir"}
             </button>
