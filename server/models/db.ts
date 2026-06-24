@@ -64,6 +64,51 @@ function ensureClientColumns() {
   if (!clientCols.includes("workflow_stage")) {
     db.prepare("ALTER TABLE clients ADD COLUMN workflow_stage TEXT DEFAULT 'prospect'").run();
   }
+  if (!clientCols.includes("address")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN address TEXT").run();
+  }
+  if (!clientCols.includes("city")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN city TEXT").run();
+  }
+  if (!clientCols.includes("state")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN state TEXT").run();
+  }
+  if (!clientCols.includes("country")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN country TEXT").run();
+  }
+  if (!clientCols.includes("website")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN website TEXT").run();
+  }
+  if (!clientCols.includes("linkedin")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN linkedin TEXT").run();
+  }
+  if (!clientCols.includes("instagram")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN instagram TEXT").run();
+  }
+  if (!clientCols.includes("industry")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN industry TEXT").run();
+  }
+  if (!clientCols.includes("company_size")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN company_size TEXT").run();
+  }
+  if (!clientCols.includes("annual_revenue")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN annual_revenue INTEGER").run();
+  }
+  if (!clientCols.includes("contact_person")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN contact_person TEXT").run();
+  }
+  if (!clientCols.includes("contact_role")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN contact_role TEXT").run();
+  }
+  if (!clientCols.includes("billing_cycle")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN billing_cycle TEXT").run();
+  }
+  if (!clientCols.includes("payment_method")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN payment_method TEXT").run();
+  }
+  if (!clientCols.includes("tax_id")) {
+    db.prepare("ALTER TABLE clients ADD COLUMN tax_id TEXT").run();
+  }
 }
 
 function ensureSubscription(userId: number, planId: string, status = "active") {
