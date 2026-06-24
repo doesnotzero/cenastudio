@@ -23,7 +23,7 @@ function ensureUserColumns() {
   if (!userCols.includes("email_verified")) {
     db.prepare("ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0").run();
   }
-  if (!userCols.includes("github_id")) db.prepare("ALTER TABLE users ADD COLUMN github_id TEXT UNIQUE").run();
+  if (!userCols.includes("github_id")) db.prepare("ALTER TABLE users ADD COLUMN github_id TEXT").run();
 }
 
 function ensureSubscriptionColumns() {
