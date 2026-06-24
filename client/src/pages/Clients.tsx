@@ -1093,7 +1093,7 @@ function ClientsContent() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleEdit} className="space-y-4 mt-4">
+          <form onSubmit={handleUpdate} className="space-y-4 mt-4">
             <div className="space-y-2">
               <label className="block font-frame-mono text-xs text-frame-orange uppercase">
                 Nome *
@@ -1183,7 +1183,238 @@ function ClientsContent() {
               </div>
             </div>
 
-            <div className="space-y-2">
+            {/* Endereço */}
+            <div className="space-y-4 pt-4 border-t border-frame-gray-3">
+              <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Endereço</h4>
+              <div className="space-y-2">
+                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                  Endereço
+                </label>
+                <input
+                  type="text"
+                  disabled={isSubmitting}
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Cidade
+                  </label>
+                  <input
+                    type="text"
+                    disabled={isSubmitting}
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Estado
+                  </label>
+                  <input
+                    type="text"
+                    disabled={isSubmitting}
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    País
+                  </label>
+                  <input
+                    type="text"
+                    disabled={isSubmitting}
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Redes Sociais */}
+            <div className="space-y-4 pt-4 border-t border-frame-gray-3">
+              <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Redes Sociais</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Website
+                  </label>
+                  <input
+                    type="url"
+                    disabled={isSubmitting}
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    LinkedIn
+                  </label>
+                  <input
+                    type="url"
+                    disabled={isSubmitting}
+                    value={linkedin}
+                    onChange={(e) => setLinkedin(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Instagram
+                  </label>
+                  <input
+                    type="url"
+                    disabled={isSubmitting}
+                    value={instagram}
+                    onChange={(e) => setInstagram(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Informações da Empresa */}
+            <div className="space-y-4 pt-4 border-t border-frame-gray-3">
+              <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Informações da Empresa</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Indústria
+                  </label>
+                  <input
+                    type="text"
+                    disabled={isSubmitting}
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Tamanho da Empresa
+                  </label>
+                  <select
+                    disabled={isSubmitting}
+                    value={companySize}
+                    onChange={(e) => setCompanySize(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  >
+                    <option value="">Selecione</option>
+                    <option value="1-10">1-10 funcionários</option>
+                    <option value="11-50">11-50 funcionários</option>
+                    <option value="51-200">51-200 funcionários</option>
+                    <option value="201-500">201-500 funcionários</option>
+                    <option value="500+">500+ funcionários</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Receita Anual (R$)
+                  </label>
+                  <input
+                    type="number"
+                    disabled={isSubmitting}
+                    value={annualRevenue}
+                    onChange={(e) => setAnnualRevenue(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Contato Principal */}
+            <div className="space-y-4 pt-4 border-t border-frame-gray-3">
+              <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Contato Principal</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Pessoa de Contato
+                  </label>
+                  <input
+                    type="text"
+                    disabled={isSubmitting}
+                    value={contactPerson}
+                    onChange={(e) => setContactPerson(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Cargo
+                  </label>
+                  <input
+                    type="text"
+                    disabled={isSubmitting}
+                    value={contactRole}
+                    onChange={(e) => setContactRole(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Financeiro */}
+            <div className="space-y-4 pt-4 border-t border-frame-gray-3">
+              <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Financeiro</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Ciclo de Cobrança
+                  </label>
+                  <select
+                    disabled={isSubmitting}
+                    value={billingCycle}
+                    onChange={(e) => setBillingCycle(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  >
+                    <option value="">Selecione</option>
+                    <option value="monthly">Mensal</option>
+                    <option value="quarterly">Trimestral</option>
+                    <option value="annual">Anual</option>
+                    <option value="project">Por Projeto</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    Método de Pagamento
+                  </label>
+                  <select
+                    disabled={isSubmitting}
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  >
+                    <option value="">Selecione</option>
+                    <option value="pix">PIX</option>
+                    <option value="bank_transfer">Transferência Bancária</option>
+                    <option value="credit_card">Cartão de Crédito</option>
+                    <option value="boleto">Boleto</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">
+                    CNPJ/CPF
+                  </label>
+                  <input
+                    type="text"
+                    disabled={isSubmitting}
+                    value={taxId}
+                    onChange={(e) => setTaxId(e.target.value)}
+                    className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange rounded-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-4 border-t border-frame-gray-3">
               <label className="block font-frame-mono text-xs text-frame-orange uppercase">
                 Notas
               </label>
