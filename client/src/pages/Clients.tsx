@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import AppNavBar from "@/components/AppNavBar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AnimatedModal from "@/components/AnimatedModal";
 import {
   Users,
   Plus,
@@ -20,14 +21,6 @@ import {
   GripVertical,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -706,16 +699,33 @@ function ClientsContent() {
       </main>
 
       {/* Create Modal */}
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="bg-frame-black border-frame-gray-3 text-frame-white max-w-md rounded-none p-6">
-          <DialogHeader>
-            <DialogTitle className="frame-title text-2xl">NOVO CLIENTE</DialogTitle>
-            <DialogDescription className="text-frame-gray-light text-sm">
-              Adicione um novo cliente ao seu CRM
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleCreate} className="space-y-4 mt-4">
+      <AnimatedModal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        title="NOVO CLIENTE"
+        description="Adicione um novo cliente ao seu CRM"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setIsCreateOpen(false)}
+              disabled={isSubmitting}
+              className="frame-btn-ghost"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="create-client-form"
+              disabled={isSubmitting}
+              className="frame-btn-primary"
+            >
+              {isSubmitting ? "Criando..." : "Criar Cliente"}
+            </button>
+          </>
+        }
+      >
+        <form id="create-client-form" onSubmit={handleCreate} className="space-y-4">
             <div className="space-y-2">
               <label className="block font-frame-mono text-xs text-frame-orange uppercase">
                 Nome *
@@ -1062,38 +1072,37 @@ function ClientsContent() {
               />
             </div>
 
-            <DialogFooter>
-              <button
-                type="button"
-                onClick={() => setIsCreateOpen(false)}
-                disabled={isSubmitting}
-                className="frame-btn-ghost"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="frame-btn-primary"
-              >
-                {isSubmitting ? "Criando..." : "Criar Cliente"}
-              </button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+        </form>
+      </AnimatedModal>
 
       {/* Edit Modal */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="bg-frame-black border-frame-gray-3 text-frame-white max-w-md rounded-none p-6">
-          <DialogHeader>
-            <DialogTitle className="frame-title text-2xl">EDITAR CLIENTE</DialogTitle>
-            <DialogDescription className="text-frame-gray-light text-sm">
-              Atualize as informações do cliente
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleUpdate} className="space-y-4 mt-4">
+      <AnimatedModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        title="EDITAR CLIENTE"
+        description="Atualize as informações do cliente"
+        footer={
+          <>
+            <button
+              type="button"
+              onClick={() => setIsEditOpen(false)}
+              disabled={isSubmitting}
+              className="frame-btn-ghost"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="edit-client-form"
+              disabled={isSubmitting}
+              className="frame-btn-primary"
+            >
+              {isSubmitting ? "Atualizando..." : "Atualizar"}
+            </button>
+          </>
+        }
+      >
+        <form id="edit-client-form" onSubmit={handleUpdate} className="space-y-4">
             <div className="space-y-2">
               <label className="block font-frame-mono text-xs text-frame-orange uppercase">
                 Nome *
@@ -1427,48 +1436,17 @@ function ClientsContent() {
               />
             </div>
 
-            <DialogFooter>
-              <button
-                type="button"
-                onClick={() => setIsEditOpen(false)}
-                disabled={isSubmitting}
-                className="frame-btn-ghost"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="frame-btn-primary"
-              >
-                {isSubmitting ? "Atualizando..." : "Atualizar"}
-              </button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+        </form>
+      </AnimatedModal>
 
       {/* Delete Modal */}
-      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="bg-frame-black border-frame-gray-3 text-frame-white max-w-md rounded-none p-6">
-          <DialogHeader>
-            <DialogTitle className="frame-title text-2xl">EXCLUIR CLIENTE</DialogTitle>
-            <DialogDescription className="text-frame-gray-light text-sm">
-              Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex items-center gap-4 mt-4 p-4 border border-frame-red/30 bg-frame-red/5">
-            <Trash2 className="w-5 h-5 text-frame-red" />
-            <div>
-              <p className="font-semibold text-frame-white">{selectedClient?.name}</p>
-              {selectedClient?.company && (
-                <p className="text-sm text-frame-gray-light">{selectedClient.company}</p>
-              )}
-            </div>
-          </div>
-
-          <DialogFooter>
+      <AnimatedModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        title="EXCLUIR CLIENTE"
+        description="Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita."
+        footer={
+          <>
             <button
               type="button"
               onClick={() => setIsDeleteOpen(false)}
@@ -1485,9 +1463,19 @@ function ClientsContent() {
             >
               {isSubmitting ? "Excluindo..." : "Excluir"}
             </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </>
+        }
+      >
+        <div className="flex items-center gap-4 mt-4 p-4 border border-frame-red/30 bg-frame-red/5">
+          <Trash2 className="w-5 h-5 text-frame-red" />
+          <div>
+            <p className="font-semibold text-frame-white">{selectedClient?.name}</p>
+            {selectedClient?.company && (
+              <p className="text-sm text-frame-gray-light">{selectedClient.company}</p>
+            )}
+          </div>
+        </div>
+      </AnimatedModal>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import AppNavBar from "@/components/AppNavBar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AnimatedModal from "@/components/AnimatedModal";
 import {
   Plus,
   DollarSign,
@@ -15,14 +16,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -503,16 +496,33 @@ function PipelineContent() {
       </main>
 
       {/* Create Modal */}
-      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent className="bg-frame-black border-frame-gray-3 text-frame-white max-w-md rounded-none p-6">
-          <DialogHeader>
-            <DialogTitle className="frame-title text-2xl">NOVA OPORTUNIDADE</DialogTitle>
-            <DialogDescription className="text-frame-gray-light text-sm">
-              Adicione uma nova oportunidade ao pipeline
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleCreate} className="space-y-4 mt-4">
+      <AnimatedModal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        title="NOVA OPORTUNIDADE"
+        description="Adicione uma nova oportunidade ao pipeline"
+        footer={
+          <>
+            <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => setIsCreateOpen(false)}
+              className="frame-btn-ghost"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="create-opportunity-form"
+              disabled={isSubmitting || !title.trim()}
+              className="frame-btn-primary"
+            >
+              {isSubmitting ? "Criando..." : "Criar Oportunidade"}
+            </button>
+          </>
+        }
+      >
+        <form id="create-opportunity-form" onSubmit={handleCreate} className="space-y-4">
             <div className="space-y-2">
               <label className="block font-frame-mono text-xs text-frame-orange uppercase">
                 Título *
@@ -612,38 +622,37 @@ function PipelineContent() {
               </div>
             </div>
 
-            <DialogFooter className="gap-2 pt-4 border-t border-frame-gray-3">
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={() => setIsCreateOpen(false)}
-                className="frame-btn-ghost"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting || !title.trim()}
-                className="frame-btn-primary"
-              >
-                {isSubmitting ? "Criando..." : "Criar Oportunidade"}
-              </button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+        </form>
+      </AnimatedModal>
 
       {/* Edit Modal */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="bg-frame-black border-frame-gray-3 text-frame-white max-w-md rounded-none p-6">
-          <DialogHeader>
-            <DialogTitle className="frame-title text-2xl">EDITAR OPORTUNIDADE</DialogTitle>
-            <DialogDescription className="text-frame-gray-light text-sm">
-              Atualize os detalhes da oportunidade
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleUpdate} className="space-y-4 mt-4">
+      <AnimatedModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        title="EDITAR OPORTUNIDADE"
+        description="Atualize os detalhes da oportunidade"
+        footer={
+          <>
+            <button
+              type="button"
+              disabled={isSubmitting}
+              onClick={() => setIsEditOpen(false)}
+              className="frame-btn-ghost"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="edit-opportunity-form"
+              disabled={isSubmitting || !title.trim()}
+              className="frame-btn-primary"
+            >
+              {isSubmitting ? "Atualizando..." : "Atualizar Oportunidade"}
+            </button>
+          </>
+        }
+      >
+        <form id="edit-opportunity-form" onSubmit={handleUpdate} className="space-y-4">
             <div className="space-y-2">
               <label className="block font-frame-mono text-xs text-frame-orange uppercase">
                 Título *
@@ -736,38 +745,17 @@ function PipelineContent() {
               </div>
             )}
 
-            <DialogFooter className="gap-2 pt-4 border-t border-frame-gray-3">
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={() => setIsEditOpen(false)}
-                className="frame-btn-ghost"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting || !title.trim()}
-                className="frame-btn-primary"
-              >
-                {isSubmitting ? "Atualizando..." : "Atualizar Oportunidade"}
-              </button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+        </form>
+      </AnimatedModal>
 
       {/* Delete Modal */}
-      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="bg-frame-black border-frame-gray-3 text-frame-white max-w-sm rounded-none p-6">
-          <DialogHeader>
-            <DialogTitle className="frame-title text-2xl text-frame-red">EXCLUIR OPORTUNIDADE?</DialogTitle>
-            <DialogDescription className="text-frame-gray-light text-sm">
-              Esta ação é permanente.
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter className="gap-2 pt-4 border-t border-frame-gray-3">
+      <AnimatedModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        title="EXCLUIR OPORTUNIDADE?"
+        description="Esta ação é permanente."
+        footer={
+          <>
             <button
               type="button"
               disabled={isSubmitting}
@@ -784,9 +772,19 @@ function PipelineContent() {
             >
               {isSubmitting ? "Excluindo..." : "Excluir"}
             </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </>
+        }
+      >
+        <div className="flex items-center gap-4 mt-4 p-4 border border-frame-red/30 bg-frame-red/5">
+          <Trash2 className="w-5 h-5 text-frame-red" />
+          <div>
+            <p className="font-semibold text-frame-white">{selectedOpportunity?.title}</p>
+            {selectedOpportunity?.client_name && (
+              <p className="text-sm text-frame-gray-light">{selectedOpportunity.client_name}</p>
+            )}
+          </div>
+        </div>
+      </AnimatedModal>
     </div>
   );
 }
