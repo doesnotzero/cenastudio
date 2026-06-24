@@ -5,6 +5,7 @@ import { CHECKOUT_MODAL_PLAN, planDisplayLabel } from "@/lib/plans";
 import { LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 interface AppNavBarProps {
   children?: React.ReactNode;
@@ -56,13 +57,18 @@ export default function AppNavBar({ children }: AppNavBarProps) {
   const navLink = (href: string, label: string) => {
     const active = location === href || location.startsWith(href + "/");
     return (
-      <button
+      <motion.button
         type="button"
         onClick={() => setLocation(href)}
         className={`frame-nav-link ${active ? "active" : ""}`}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
       >
         {label}
-      </button>
+      </motion.button>
     );
   };
 
