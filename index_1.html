@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRAME.AI — Agência Inteligente para Filmmakers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+:root{--black:#080808;--white:#f5f0e8;--cream:#e8e0d0;--orange:#ff4d00;--od:#cc3d00;--obg:rgba(255,77,0,0.09);--g1:#111;--g2:#1a1a1a;--g3:#252525;--g4:#2e2e2e;--gl:#6e6e6e;--gm:#3a3a3a;--green:#00c864;--red:#ff3b3b;--blue:#4d9fff;--gold:#ffb800;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;overflow-x:hidden;cursor:none;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");pointer-events:none;z-index:9990;}
+#cur{width:8px;height:8px;background:var(--orange);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .15s,height .15s;mix-blend-mode:difference;}
+#cur.h{width:32px;height:32px;}
+.page{display:none;min-height:100vh;}.page.active{display:block;}
+@keyframes flk{0%,100%{opacity:.3}50%{opacity:.8}}
+@keyframes blk{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes mqa{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes db{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* AUTH */
+.auth-page{min-height:100vh;display:flex;align-items:stretch;}
+.auth-left{width:52%;background:linear-gradient(135deg,#0d0d0d,#1a0800 60%,#0d0d0d);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:56px;}
+.auth-reel{position:absolute;inset:0;display:flex;flex-wrap:wrap;gap:2px;padding:2px;opacity:.1;}
+.auth-ff{background:linear-gradient(135deg,#222,#111);border:1px solid #2a2a2a;border-radius:2px;animation:flk 3s infinite;}
+.auth-lines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(255,77,0,.02) 4px,rgba(255,77,0,.02) 5px);}
+.auth-brand{font-family:'Bebas Neue',sans-serif;font-size:3.8rem;letter-spacing:.05em;color:var(--white);position:relative;z-index:2;line-height:1;}
+.auth-brand span{color:var(--orange);}
+.auth-tagline{font-size:.88rem;color:var(--gl);font-weight:300;margin-top:10px;max-width:310px;line-height:1.65;position:relative;z-index:2;}
+.auth-feats{display:flex;flex-direction:column;gap:9px;margin-top:28px;position:relative;z-index:2;}
+.auth-feat{display:flex;align-items:center;gap:9px;font-size:.78rem;color:var(--gl);}
+.auth-feat::before{content:'▸';color:var(--orange);flex-shrink:0;}
+.auth-right{flex:1;display:flex;align-items:center;justify-content:center;padding:44px 36px;background:var(--black);}
+.auth-box{width:100%;max-width:390px;}
+.auth-toggle{display:flex;margin-bottom:32px;border:1px solid var(--g3);}
+.auth-tbtn{flex:1;padding:11px;font-family:'JetBrains Mono',monospace;font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;background:none;color:var(--gl);border:none;cursor:pointer;transition:all .2s;}
+.auth-tbtn.active{background:var(--orange);color:var(--black);}
+.auth-title{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:.04em;margin-bottom:5px;}
+.auth-sub{font-size:.8rem;color:var(--gl);margin-bottom:28px;font-weight:300;}
+.auth-field{margin-bottom:16px;}
+.auth-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gl);margin-bottom:6px;}
+.auth-field input{width:100%;background:var(--g2);border:1px solid var(--g3);color:var(--white);padding:12px 15px;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;border-radius:0;}
+.auth-field input:focus{border-color:var(--orange);}
+.auth-field input::placeholder{color:#2a2a2a;}
+.pw-wrap{position:relative;}.pw-wrap input{padding-right:42px;}
+.pw-eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gl);cursor:pointer;font-size:.95rem;padding:3px;}
+.role-row{display:flex;gap:7px;margin-bottom:16px;}
+.role-opt{flex:1;padding:10px 6px;border:1px solid var(--g3);background:none;color:var(--gl);font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-align:center;}
+.role-opt.active{border-color:var(--orange);color:var(--orange);background:var(--obg);}
+.auth-submit{width:100%;background:var(--orange);color:var(--black);border:none;padding:14px;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-weight:500;transition:all .2s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.auth-submit:hover{background:var(--od);}.auth-submit:disabled{opacity:.5;cursor:not-allowed;}
+.auth-demos{display:flex;gap:7px;margin-top:12px;}
+.demo-btn{flex:1;background:none;border:1px solid var(--g3);color:var(--gl);padding:10px 8px;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.demo-btn:hover{border-color:#444;color:var(--white);}
+.auth-divider{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--gm);letter-spacing:.15em;text-transform:uppercase;margin:16px 0;position:relative;}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--g3);}
+.auth-divider::before{left:0;}.auth-divider::after{right:0;}
+.auth-link{font-size:.8rem;color:var(--gl);text-align:center;margin-top:16px;}
+.auth-link a{color:var(--orange);cursor:pointer;}
+.auth-err{background:rgba(255,59,59,.1);border:1px solid rgba(255,59,59,.3);color:var(--red);padding:10px 13px;font-family:'JetBrains Mono',monospace;font-size:.63rem;margin-bottom:14px;display:none;}
+.auth-err.show{display:block;}
+.admin-notice{background:rgba(255,184,0,.07);border:1px solid rgba(255,184,0,.2);color:var(--gold);padding:10px 13px;font-family:'JetBrains Mono',monospace;font-size:.62rem;margin-bottom:14px;display:none;align-items:center;gap:7px;}
+.admin-notice.show{display:flex;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:space-between;align-items:center;padding:15px 36px;background:rgba(8,8,8,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--g2);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:.1em;color:var(--white);cursor:pointer;}
+.nav-logo span{color:var(--orange);}
+.nav-mid{display:flex;gap:22px;}
+.nav-mid a{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gl);text-decoration:none;transition:color .2s;cursor:pointer;}
+.nav-mid a:hover,.nav-mid a.active{color:var(--white);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;}
+.nav-av.admin{background:var(--gold);color:var(--black);}.nav-av.user{background:var(--orange);color:var(--black);}
+.nav-uname{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;color:var(--gl);}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:.48rem;letter-spacing:.09em;text-transform:uppercase;padding:2px 5px;border-radius:2px;}
+.nav-badge.admin{background:rgba(255,184,0,.14);color:var(--gold);border:1px solid rgba(255,184,0,.28);}
+.nav-badge.user{background:var(--obg);color:var(--orange);border:1px solid rgba(255,77,0,.28);}
+.nav-logout{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;background:none;border:1px solid var(--g3);color:var(--gl);padding:6px 11px;cursor:pointer;transition:all .2s;}
+.nav-logout:hover{border-color:var(--red);color:var(--red);}
+
+/* LANDING */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 48px 80px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 40%,#1a0a00,var(--black) 70%);}
+.hero-reel{position:absolute;top:0;right:-5%;width:62%;height:100%;background:linear-gradient(135deg,#0d0d0d,#1a0800 50%,#0d0d0d);clip-path:polygon(14% 0%,100% 0%,100% 100%,0% 100%);overflow:hidden;}
+.hero-reel::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,77,0,.03) 3px,rgba(255,77,0,.03) 4px);}
+.reel-inner{position:absolute;inset:0;display:flex;flex-wrap:wrap;gap:2px;padding:2px;opacity:.12;}
+.ff{height:80px;background:linear-gradient(135deg,#222,#111);border:1px solid #2a2a2a;border-radius:2px;animation:flk 3s infinite;}
+.htag{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:18px;position:relative;z-index:2;}
+.htag::before{content:'▶ ';animation:blk 1.2s infinite;}
+.htitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,9.5vw,8.5rem);line-height:.9;letter-spacing:.02em;position:relative;z-index:2;}
+.htitle .l2{color:var(--orange);margin-left:80px;}.htitle .l3{-webkit-text-stroke:1px var(--white);color:transparent;}
+.hsub{margin-top:26px;max-width:450px;font-size:.93rem;line-height:1.75;color:var(--gl);font-weight:300;position:relative;z-index:2;}
+.hcta{margin-top:40px;display:flex;gap:12px;align-items:center;position:relative;z-index:2;flex-wrap:wrap;}
+.btn-p{background:var(--orange);color:var(--black);padding:14px 34px;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;border:none;cursor:pointer;font-weight:500;transition:background .2s,transform .2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.btn-p:hover{background:var(--od);transform:translateY(-2px);}
+.btn-g{color:var(--gl);font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;background:none;border:1px solid #2a2a2a;padding:14px 20px;cursor:pointer;transition:color .2s,border-color .2s;}
+.btn-g:hover{color:var(--white);border-color:#555;}
+.hstats{position:absolute;right:48px;bottom:80px;display:flex;gap:34px;z-index:2;}
+.hstat-n{font-family:'Bebas Neue',sans-serif;font-size:2.3rem;color:var(--orange);line-height:1;}
+.hstat-l{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gl);margin-top:2px;}
+.mq{background:var(--orange);padding:12px 0;overflow:hidden;}
+.mqt{display:flex;gap:40px;animation:mqa 22s linear infinite;white-space:nowrap;}
+.mqt span{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.13em;color:var(--black);flex-shrink:0;}
+.mqt .dot{opacity:.32;}
+.sec{padding:96px 48px;}
+.slbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--orange);margin-bottom:12px;}
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.3rem,4.3vw,3.8rem);line-height:.95;margin-bottom:55px;}
+.stitle em{font-style:normal;-webkit-text-stroke:1px var(--white);color:transparent;}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.tcard{background:var(--g2);padding:34px 30px;position:relative;overflow:hidden;cursor:pointer;transition:background .3s;border:1px solid transparent;}
+.tcard:hover{background:#1c1c1c;border-color:var(--orange);}
+.tcard::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--orange);transition:height .35s;}
+.tcard:hover::before{height:100%;}
+.tico{font-size:1.7rem;margin-bottom:14px;display:block;filter:grayscale(1) brightness(.5);transition:filter .3s;}
+.tcard:hover .tico{filter:none;}
+.tnum{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.2em;color:var(--orange);margin-bottom:9px;}
+.tname{font-family:'Bebas Neue',sans-serif;font-size:1.45rem;letter-spacing:.04em;margin-bottom:9px;}
+.tdesc{font-size:.8rem;line-height:1.63;color:var(--gl);font-weight:300;margin-bottom:16px;}
+.ttags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px;}
+.ttag{font-family:'JetBrains Mono',monospace;font-size:.53rem;letter-spacing:.09em;text-transform:uppercase;background:#1e1e1e;color:var(--gl);padding:3px 7px;border-radius:2px;}
+.tcbtn{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.11em;text-transform:uppercase;background:none;border:1px solid #2e2e2e;color:var(--gl);padding:7px 14px;cursor:pointer;transition:all .2s;width:100%;}
+.tcbtn:hover{background:var(--orange);color:var(--black);border-color:var(--orange);}
+.wfsteps{display:grid;grid-template-columns:repeat(5,1fr);position:relative;margin-top:18px;}
+.wfsteps::before{content:'';position:absolute;top:27px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--orange),transparent);}
+.wfs{text-align:center;padding:0 10px;}
+.wfn{width:54px;height:54px;background:var(--black);border:1px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--orange);position:relative;z-index:2;}
+.wft{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.04em;margin-bottom:5px;}
+.wfd{font-size:.73rem;line-height:1.6;color:var(--gl);font-weight:300;}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:46px;}
+.pcard{background:var(--g2);padding:42px 30px;border:1px solid transparent;transition:border-color .3s;}
+.pcard.feat{background:var(--orange);color:var(--black);}
+.pcard:not(.feat):hover{border-color:#2e2e2e;}
+.ptier{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-bottom:12px;}
+.pval{font-family:'Bebas Neue',sans-serif;font-size:3rem;line-height:1;}
+.pper{font-size:.76rem;opacity:.5;margin-bottom:26px;}
+.pfeats{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:28px;}
+.pfeats li{font-size:.8rem;line-height:1.5;display:flex;align-items:flex-start;gap:7px;opacity:.82;}
+.pfeats li::before{content:'▸';opacity:.6;flex-shrink:0;margin-top:1px;}
+.pcta{display:block;text-align:center;padding:12px;font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.11em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;width:100%;}
+.pcard:not(.feat) .pcta{border:1px solid #2a2a2a;color:var(--white);background:none;}
+.pcard:not(.feat) .pcta:hover{border-color:var(--orange);color:var(--orange);}
+.pcard.feat .pcta{background:var(--black);color:var(--white);}
+footer{background:#050505;padding:66px 48px 34px;border-top:1px solid #111;}
+.ftop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:46px;flex-wrap:wrap;gap:36px;}
+.fbrand{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;letter-spacing:.04em;}
+.fbrand span{color:var(--orange);}
+.ftagline{font-size:.8rem;color:var(--gl);margin-top:5px;font-weight:300;}
+.flinks{display:grid;grid-template-columns:repeat(3,120px);gap:32px;}
+.fct{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:12px;}
+.fcol a{display:block;font-size:.8rem;color:var(--gl);text-decoration:none;margin-bottom:8px;transition:color .2s;cursor:pointer;}
+.fcol a:hover{color:var(--white);}
+.fbot{display:flex;justify-content:space-between;align-items:center;padding-top:32px;border-top:1px solid #0e0e0e;flex-wrap:wrap;gap:10px;}
+.fcopy{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.09em;color:#2a2a2a;}
+
+/* ADMIN */
+.admin-pg{padding-top:62px;min-height:100vh;}
+.adm-hdr{padding:28px 36px 0;border-bottom:1px solid var(--g2);}
+.adm-hdr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+.adm-title{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:.04em;}
+.adm-title span{color:var(--gold);}
+.adm-tabs{display:flex;gap:0;}
+.adm-tab{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.11em;text-transform:uppercase;padding:12px 18px;cursor:pointer;color:var(--gl);border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap;}
+.adm-tab:hover{color:var(--white);}.adm-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.adm-body{padding:28px 36px;}
+.adm-sec{display:none;}.adm-sec.active{display:block;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px;}
+.stat-card{background:var(--g2);border:1px solid var(--g3);padding:22px;position:relative;overflow:hidden;}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.stat-card.cor::after{background:var(--orange);}.stat-card.cgr::after{background:var(--green);}
+.stat-card.cbl::after{background:var(--blue);}.stat-card.cgo::after{background:var(--gold);}
+.slb{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gl);margin-bottom:9px;}
+.svl{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;line-height:1;margin-bottom:3px;}
+.stat-card.cor .svl{color:var(--orange);}.stat-card.cgr .svl{color:var(--green);}
+.stat-card.cbl .svl{color:var(--blue);}.stat-card.cgo .svl{color:var(--gold);}
+.str{font-size:.72rem;color:var(--gl);}
+.adm-card{background:var(--g2);border:1px solid var(--g3);margin-bottom:18px;}
+.adm-card-hdr{padding:14px 18px;border-bottom:1px solid var(--g3);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:9px;}
+.adm-card-t{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);}
+.utbl{width:100%;border-collapse:collapse;}
+.utbl th{font-family:'JetBrains Mono',monospace;font-size:.53rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gl);padding:10px 15px;text-align:left;border-bottom:1px solid var(--g3);}
+.utbl td{padding:11px 15px;border-bottom:1px solid #0f0f0f;font-size:.81rem;color:var(--cream);}
+.utbl tr:hover td{background:#1d1d1d;}
+.rbadge{font-family:'JetBrains Mono',monospace;font-size:.48rem;letter-spacing:.09em;text-transform:uppercase;padding:2px 7px;border-radius:2px;}
+.rb-a{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.22);}
+.rb-u{background:var(--obg);color:var(--orange);border:1px solid rgba(255,77,0,.22);}
+.sdot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:5px;}
+.sdot.on{background:var(--green);}.sdot.off{background:var(--gl);}
+.tbtn{font-family:'JetBrains Mono',monospace;font-size:.53rem;letter-spacing:.07em;text-transform:uppercase;background:none;border:1px solid var(--g3);color:var(--gl);padding:4px 9px;cursor:pointer;transition:all .2s;margin-right:3px;}
+.tbtn:hover{border-color:var(--orange);color:var(--orange);}
+.tbtn.dg:hover{border-color:var(--red);color:var(--red);}
+.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.cfg-card{background:var(--g2);border:1px solid var(--g3);padding:22px;}
+.cfg-ct{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:14px;}
+.cf{margin-bottom:13px;}
+.cf label{display:block;font-family:'JetBrains Mono',monospace;font-size:.54rem;letter-spacing:.11em;text-transform:uppercase;color:var(--gl);margin-bottom:5px;}
+.cf input,.cf select,.cf textarea{width:100%;background:var(--g1);border:1px solid var(--g3);color:var(--white);padding:9px 11px;font-family:'JetBrains Mono',monospace;font-size:.76rem;outline:none;transition:border-color .2s;border-radius:0;}
+.cf input:focus,.cf select:focus,.cf textarea:focus{border-color:var(--orange);}
+.cf select option{background:var(--g2);}
+.kw{position:relative;}.kw input{padding-right:40px;}
+.ke{position:absolute;right:9px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gl);cursor:pointer;padding:3px;}
+.csav{background:var(--orange);color:var(--black);border:none;padding:10px 20px;font-family:'JetBrains Mono',monospace;font-size:.63rem;letter-spacing:.11em;text-transform:uppercase;cursor:pointer;font-weight:500;transition:background .2s;margin-top:3px;}
+.csav:hover{background:var(--od);}
+.api-st{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:.6rem;margin-top:10px;}
+.adot{width:7px;height:7px;border-radius:50%;}
+.adot.ok{background:var(--green);animation:pulse 2s infinite;}
+.adot.err{background:var(--red);}
+.adot.testing{background:var(--gold);animation:pulse .6s infinite;}
+.tbtest{background:none;border:1px solid var(--g3);color:var(--gl);padding:9px 15px;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:10px;}
+.tbtest:hover{border-color:var(--green);color:var(--green);}
+.aug-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.aug-form{background:var(--g2);border:1px solid var(--g3);padding:22px;margin-bottom:18px;}
+.loge{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #0f0f0f;font-size:.79rem;align-items:center;}
+.lg-time{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--gl);flex-shrink:0;width:75px;}
+.lg-user{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--orange);flex-shrink:0;width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lg-act{color:var(--cream);flex:1;}
+.lg-tag{font-family:'JetBrains Mono',monospace;font-size:.48rem;letter-spacing:.07em;text-transform:uppercase;padding:2px 6px;border-radius:2px;flex-shrink:0;}
+.lt-gen{background:rgba(255,77,0,.1);color:var(--orange);}
+.lt-login{background:rgba(0,200,100,.1);color:var(--green);}
+.lt-admin{background:rgba(255,184,0,.1);color:var(--gold);}
+
+/* STUDIO */
+.studio-wrap{padding-top:62px;height:100vh;display:flex;flex-direction:column;}
+.studio-layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:248px;flex-shrink:0;background:var(--g1);border-right:1px solid var(--g2);display:flex;flex-direction:column;overflow-y:auto;}
+.sb-logo{padding:16px 15px 11px;border-bottom:1px solid var(--g2);}
+.sb-lt{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;color:var(--white);}
+.sb-lt span{color:var(--orange);}
+.sb-sub{font-family:'JetBrains Mono',monospace;font-size:.49rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gl);margin-top:2px;}
+.sb-sect{font-family:'JetBrains Mono',monospace;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gm);padding:11px 15px 5px;}
+.sbi{display:flex;align-items:center;gap:8px;padding:9px 15px;cursor:pointer;transition:background .15s;border-left:2px solid transparent;}
+.sbi:hover{background:#1c1c1c;}
+.sbi.active{background:var(--obg);border-left-color:var(--orange);}
+.sic{font-size:.88rem;flex-shrink:0;}
+.sin{font-size:.76rem;font-weight:400;color:var(--gl);transition:color .15s;}
+.sbi.active .sin,.sbi:hover .sin{color:var(--white);}
+.sb-foot{margin-top:auto;padding:11px 15px;border-top:1px solid var(--g2);}
+.sb-arow{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.07em;color:var(--gl);}
+.sb-adot{width:6px;height:6px;border-radius:50%;}
+.sb-adot.ok{background:var(--green);}.sb-adot.err{background:var(--red);}
+.sb-mdl{font-size:.5rem;color:var(--gm);margin-top:3px;font-family:'JetBrains Mono',monospace;}
+.main-content{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.panel{display:none;flex-direction:column;min-height:100%;}
+.panel.active{display:flex;}
+.phdr{padding:20px 28px 15px;border-bottom:1px solid var(--g2);flex-shrink:0;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;}
+.phdr-title{font-family:'Bebas Neue',sans-serif;font-size:1.65rem;letter-spacing:.04em;display:flex;align-items:center;gap:9px;}
+.phdr-sub{font-size:.76rem;color:var(--gl);margin-top:2px;font-weight:300;}
+.phdr-acts{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+.abtn{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.09em;text-transform:uppercase;padding:7px 12px;border:1px solid var(--g3);background:none;color:var(--gl);cursor:pointer;transition:all .2s;}
+.abtn:hover{border-color:#555;color:var(--white);}
+.abtn.prim{background:var(--orange);border-color:var(--orange);color:var(--black);}
+.abtn.prim:hover{background:var(--od);}
+.abtn:disabled{opacity:.35;cursor:not-allowed;}
+.pbody{flex:1;display:flex;overflow:hidden;}
+.fside{width:310px;flex-shrink:0;padding:18px 16px;overflow-y:auto;border-right:1px solid var(--g2);}
+.fsect{margin-bottom:20px;}
+.fsect-t{font-family:'JetBrains Mono',monospace;font-size:.54rem;letter-spacing:.17em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;}
+.field{margin-bottom:11px;}
+.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.53rem;letter-spacing:.11em;text-transform:uppercase;color:var(--gl);margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;background:var(--g1);border:1px solid var(--g3);color:var(--white);padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;transition:border-color .2s;-webkit-appearance:none;border-radius:0;}
+.field select{cursor:pointer;}
+.field textarea{resize:vertical;min-height:72px;line-height:1.6;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange);}
+.field input::placeholder,.field textarea::placeholder{color:#252525;}
+.field select option{background:var(--g2);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.gbtn{width:100%;background:var(--orange);color:var(--black);border:none;padding:11px;font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;font-weight:500;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.gbtn:hover{background:var(--od);}
+.gbtn:disabled{opacity:.5;cursor:not-allowed;}
+.odiv{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.53rem;color:var(--gm);letter-spacing:.14em;text-transform:uppercase;margin:9px 0;position:relative;}
+.odiv::before,.odiv::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--g3);}
+.odiv::before{left:0;}.odiv::after{right:0;}
+.fbtn{width:100%;background:none;color:var(--gl);border:1px solid var(--g3);padding:9px;font-family:'JetBrains Mono',monospace;font-size:.59rem;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.fbtn:hover{border-color:#444;color:var(--white);}
+.oside{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.oarea{flex:1;padding:20px 24px;overflow-y:auto;}
+.oph{height:100%;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;opacity:.26;}
+.oph-icon{font-size:2.4rem;filter:grayscale(1);}
+.oph-txt{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gl);text-align:center;line-height:1.7;}
+.oc{display:none;}.oc.show{display:block;}
+.oc pre{white-space:pre-wrap;word-break:break-word;font-family:'DM Sans',sans-serif;font-size:.84rem;line-height:1.76;color:var(--cream);}
+.tok-bar{padding:7px 24px;border-top:1px solid var(--g2);display:flex;align-items:center;gap:10px;background:var(--g1);flex-shrink:0;}
+.tok-lbl{font-family:'JetBrains Mono',monospace;font-size:.53rem;letter-spacing:.11em;text-transform:uppercase;color:var(--gm);}
+.tok-val{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--orange);}
+.mdl-tag{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.07em;text-transform:uppercase;background:var(--obg);color:var(--orange);border:1px solid rgba(255,77,0,.18);padding:2px 6px;border-radius:2px;margin-left:auto;}
+.otbar{padding:10px 24px;border-top:1px solid var(--g2);display:flex;gap:5px;background:var(--g2);flex-wrap:wrap;flex-shrink:0;}
+.itabs{display:flex;gap:0;border-bottom:1px solid var(--g2);padding:0 24px;flex-shrink:0;overflow-x:auto;}
+.itab{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.11em;text-transform:uppercase;padding:11px 14px;cursor:pointer;color:var(--gl);border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap;}
+.itab:hover{color:var(--white);}.itab.active{color:var(--orange);border-bottom-color:var(--orange);}
+.cllist{display:flex;flex-direction:column;gap:5px;}
+.clitem{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;background:var(--g1);border:1px solid var(--g2);cursor:pointer;transition:background .15s;}
+.clitem:hover{background:#161616;}
+.clitem input[type=checkbox]{width:13px;height:13px;flex-shrink:0;accent-color:var(--orange);cursor:pointer;margin-top:2px;}
+.clitem label{font-size:.79rem;color:var(--white);cursor:pointer;line-height:1.5;}
+.clitem.done label{text-decoration:line-through;color:var(--gl);}
+.chat-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.cmsgs{flex:1;padding:16px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
+.cmsg{display:flex;gap:9px;max-width:90%;}
+.cmsg.user{flex-direction:row-reverse;align-self:flex-end;}
+.cmav{width:25px;height:25px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.63rem;font-weight:700;}
+.cmsg.ai .cmav{background:var(--orange);color:var(--black);}.cmsg.user .cmav{background:#222;color:var(--white);}
+.cmbbl{padding:9px 13px;font-size:.8rem;line-height:1.7;border-radius:2px;}
+.cmsg.ai .cmbbl{background:var(--g1);border-left:2px solid var(--orange);color:var(--cream);}
+.cmsg.user .cmbbl{background:var(--g2);border-right:2px solid #333;color:var(--white);}
+.cthink{display:none;align-items:center;gap:8px;padding:5px 20px;font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--orange);}
+.cthink.show{display:flex;}
+.cdots span{display:inline-block;width:4px;height:4px;background:var(--orange);border-radius:50%;margin:0 2px;animation:db 1.2s infinite;}
+.cdots span:nth-child(2){animation-delay:.2s;}.cdots span:nth-child(3){animation-delay:.4s;}
+.cinrow{padding:11px 18px;border-top:1px solid var(--g2);display:flex;gap:7px;background:var(--g2);}
+.cin{flex:1;background:var(--g1);border:1px solid var(--g3);color:var(--white);padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;transition:border-color .2s;resize:none;min-height:40px;max-height:108px;}
+.cin:focus{border-color:var(--orange);}
+.csend{background:var(--orange);color:var(--black);border:none;padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:.61rem;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:background .2s;align-self:flex-end;}
+.csend:hover{background:var(--od);}.csend:disabled{opacity:.4;cursor:not-allowed;}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--g2);border:1px solid var(--orange);color:var(--white);padding:11px 16px;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.09em;z-index:9000;transform:translateY(80px);opacity:0;transition:all .3s;border-left:3px solid var(--orange);}
+.toast.show{transform:translateY(0);opacity:1;}
+.fu{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s;}
+.fu.vis{opacity:1;transform:translateY(0);}
+@media(max-width:900px){
+  nav{padding:12px 15px;}.nav-mid{display:none;}
+  .hero{padding:0 18px 60px;}.hstats{display:none;}
+  .auth-left{display:none;}.auth-right{padding:22px 18px;}
+  .sec{padding:58px 18px;}
+  .tgrid{grid-template-columns:1fr;}
+  .wfsteps{grid-template-columns:1fr;gap:22px;}.wfsteps::before{display:none;}
+  .pgrid{grid-template-columns:1fr;}
+  .flinks{grid-template-columns:repeat(2,1fr);}footer{padding:38px 18px 22px;}
+  .studio-layout{flex-direction:column;}.sidebar{width:100%;max-height:190px;overflow-x:auto;}
+  .pbody{flex-direction:column;}.fside{width:100%;border-right:none;border-bottom:1px solid var(--g2);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .cfg-grid{grid-template-columns:1fr;}.aug-grid{grid-template-columns:1fr;}
+  .adm-body{padding:18px 15px;}.adm-hdr{padding:18px 15px 0;}
+}
+
+
+/* ---- API SETUP SCREEN ---- */
+.setup-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;background:var(--black);}
+.setup-box{width:100%;max-width:560px;}
+.setup-logo{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:.08em;margin-bottom:4px;}
+.setup-logo span{color:var(--orange);}
+.setup-step{display:none;}.setup-step.active{display:block;}
+.setup-step-num{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
+.setup-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;margin-bottom:6px;}
+.setup-sub{font-size:.85rem;color:var(--gl);font-weight:300;line-height:1.65;margin-bottom:28px;}
+.setup-progress{display:flex;gap:6px;margin-bottom:36px;}
+.setup-dot{height:3px;flex:1;background:var(--g3);border-radius:2px;transition:background .3s;}
+.setup-dot.done{background:var(--orange);}
+.setup-field{margin-bottom:18px;}
+.setup-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gl);margin-bottom:6px;}
+.setup-field input,.setup-field select{width:100%;background:var(--g2);border:1px solid var(--g3);color:var(--white);padding:13px 15px;font-family:'JetBrains Mono',monospace;font-size:.82rem;outline:none;transition:border-color .2s;border-radius:0;}
+.setup-field input:focus,.setup-field select:focus{border-color:var(--orange);}
+.setup-field input::placeholder{color:#2a2a2a;}
+.setup-field select option{background:var(--g2);}
+.setup-kw{position:relative;}.setup-kw input{padding-right:42px;}
+.setup-ke{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gl);cursor:pointer;font-size:1rem;}
+.setup-hint{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.05em;color:var(--gm);margin-top:6px;line-height:1.5;}
+.setup-hint a{color:var(--orange);cursor:pointer;text-decoration:none;}
+.setup-hint a:hover{text-decoration:underline;}
+.setup-btn{width:100%;background:var(--orange);color:var(--black);border:none;padding:14px;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-weight:500;transition:background .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.setup-btn:hover{background:var(--od);}
+.setup-btn:disabled{opacity:.5;cursor:not-allowed;}
+.setup-btn-sec{width:100%;background:none;border:1px solid var(--g3);color:var(--gl);padding:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:8px;}
+.setup-btn-sec:hover{border-color:#555;color:var(--white);}
+.setup-api-test{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--g2);border:1px solid var(--g3);margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.06em;}
+.test-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.test-dot.idle{background:var(--gm);}
+.test-dot.ok{background:var(--green);animation:pulse 2s infinite;}
+.test-dot.err{background:var(--red);}
+.test-dot.spin{background:var(--gold);animation:pulse .5s infinite;}
+.setup-warn{background:rgba(255,184,0,.07);border:1px solid rgba(255,184,0,.2);color:var(--gold);padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.04em;line-height:1.6;margin-top:12px;}
+.setup-success{text-align:center;padding:40px 0;}
+.setup-success-icon{font-size:3.5rem;margin-bottom:16px;}
+.setup-success-title{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--green);letter-spacing:.04em;margin-bottom:8px;}
+.setup-success-sub{font-size:.9rem;color:var(--gl);font-weight:300;}
+
+/* ---- ADMIN LOGIN (separate visual) ---- */
+.admin-login-badge{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);padding:14px 18px;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.admin-login-badge .alb-icon{font-size:1.4rem;}
+.admin-login-badge .alb-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.04em;color:var(--gold);}
+.admin-login-badge .alb-sub{font-size:.72rem;color:var(--gl);font-weight:300;}
+.auth-mode-switcher{display:flex;gap:8px;margin-bottom:28px;}
+.auth-mode-btn{flex:1;padding:10px 8px;border:1px solid var(--g3);background:none;color:var(--gl);font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-align:center;}
+.auth-mode-btn.active.admin{border-color:var(--gold);color:var(--gold);background:rgba(255,184,0,.07);}
+.auth-mode-btn.active.user{border-color:var(--orange);color:var(--orange);background:var(--obg);}
+
+/* ---- SETUP NAV INDICATOR ---- */
+.setup-nav-hint{position:fixed;bottom:20px;right:20px;background:var(--g2);border:1px solid var(--g3);padding:10px 16px;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.08em;color:var(--gl);display:flex;align-items:center;gap:8px;z-index:100;}
+.setup-nav-hint .snh-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN PAGE -->
+<div class="page active" id="page-login">
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-reel" id="authReel"></div>
+    <div class="auth-lines"></div>
+    <div class="auth-brand">FRAME<span>.</span>AI</div>
+    <div class="auth-tagline">A agência inteligente do filmmaker moderno. IA especializada em produção audiovisual brasileira.</div>
+    <div class="auth-feats">
+      <div class="auth-feat">12 ferramentas de IA conectadas</div>
+      <div class="auth-feat">Roteiro, Decupagem, Callsheet e mais</div>
+      <div class="auth-feat">Propostas e Contratos profissionais</div>
+      <div class="auth-feat">Powered by Claude Sonnet 4.6</div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <!-- Mode switcher: Admin vs Filmmaker -->
+      <div class="auth-mode-switcher">
+        <button class="auth-mode-btn active user" id="auth-mode-user" onclick="switchAuthMode('user')">◈ Filmmaker</button>
+        <button class="auth-mode-btn admin" id="auth-mode-admin" onclick="switchAuthMode('admin')">⚑ Admin</button>
+      </div>
+      <!-- Admin badge (shown only in admin mode) -->
+      <div class="admin-login-badge" id="admin-login-badge" style="display:none">
+        <span class="alb-icon">⚑</span>
+        <div>
+          <div class="alb-title">Acesso Administrativo</div>
+          <div class="alb-sub">Apenas contas admin podem entrar neste modo.</div>
+        </div>
+      </div>
+      <div class="auth-toggle">
+        <button class="auth-tbtn active" id="tg-login" onclick="switchAuth('login')">Entrar</button>
+        <button class="auth-tbtn" id="tg-reg" onclick="switchAuth('register')">Criar Conta</button>
+      </div>
+      <!-- LOGIN -->
+      <div id="form-login">
+        <div class="auth-title">Bem-vindo de volta</div>
+        <div class="auth-sub">Faça login para acessar o Studio</div>
+        <div class="auth-err" id="login-err"></div>
+        <div class="admin-notice" id="adm-notice">&#9841; Acesso Administrativo Detectado</div>
+        <div class="auth-field"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com" oninput="chkAdminEmail()"></div>
+        <div class="auth-field"><label>Senha</label><div class="pw-wrap"><input type="password" id="login-pw" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;"><button class="pw-eye" onclick="tglPw('login-pw',this)">&#x1F441;</button></div></div>
+        <button class="auth-submit" onclick="doLogin()">&#x25BA; Entrar</button>
+        <div class="auth-divider">acesso demo</div>
+        <div class="auth-demos">
+          <button class="demo-btn" onclick="demoLogin('admin')">&#9841; Admin Demo</button>
+          <button class="demo-btn" onclick="demoLogin('user')">&#9672; Filmmaker Demo</button>
+        </div>
+        <div class="auth-link">Sem conta? <a onclick="switchAuth('register')">Criar agora</a></div>
+      </div>
+      <!-- REGISTER -->
+      <div id="form-reg" style="display:none">
+        <div class="auth-title">Criar Conta</div>
+        <div class="auth-sub">Comece a produzir com IA</div>
+        <div class="auth-err" id="reg-err"></div>
+        <div class="auth-field"><label>Nome completo</label><input type="text" id="reg-name" placeholder="Seu nome"></div>
+        <div class="auth-field"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
+        <div class="auth-field"><label>Senha</label><div class="pw-wrap"><input type="password" id="reg-pw" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;"><button class="pw-eye" onclick="tglPw('reg-pw',this)">&#x1F441;</button></div></div>
+        <div class="auth-field"><label>Tipo de conta</label>
+          <div class="role-row">
+            <button class="role-opt active" id="role-user" onclick="setRole('user')">&#9672; Filmmaker</button>
+            <button class="role-opt" id="role-admin" onclick="setRole('admin')">&#9841; Admin</button>
+          </div>
+        </div>
+        <div class="auth-field" id="adm-code-field" style="display:none"><label>Codigo de admin</label><input type="password" id="reg-code" placeholder="Codigo secreto"></div>
+        <button class="auth-submit" onclick="doReg()">&#x25BA; Criar Conta</button>
+        <div class="auth-link">Ja tem conta? <a onclick="switchAuth('login')">Entrar</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ================================================================
+     SETUP WIZARD PAGE (first run)
+================================================================ -->
+<div class="page" id="page-setup">
+  <div class="setup-page">
+    <div class="setup-box">
+      <div class="setup-logo">FRAME<span>.</span>AI</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gl);margin-bottom:32px">// Configuração inicial</div>
+      <div class="setup-progress">
+        <div class="setup-dot done" id="sdot-1"></div>
+        <div class="setup-dot" id="sdot-2"></div>
+        <div class="setup-dot" id="sdot-3"></div>
+      </div>
+
+      <!-- STEP 1: API Key -->
+      <div class="setup-step active" id="setup-step-1">
+        <div class="setup-step-num">// Passo 1 de 3</div>
+        <div class="setup-title">Conectar a IA</div>
+        <div class="setup-sub">
+          Para o FRAME.AI funcionar, você precisa de uma API Key da Anthropic.
+          É rápido, gratuito para começar, e você tem controle total dos custos.
+        </div>
+        <div class="setup-field">
+          <label>API Key da Anthropic</label>
+          <div class="setup-kw">
+            <input type="password" id="setup-apikey" placeholder="sk-ant-api03-...">
+            <button class="setup-ke" onclick="tglPw('setup-apikey',this)">👁</button>
+          </div>
+          <div class="setup-hint">
+            Não tem uma chave? <a href="https://console.anthropic.com/settings/keys" target="_blank">Criar conta gratuita na Anthropic →</a>
+          </div>
+        </div>
+        <div class="setup-field">
+          <label>Modelo de IA</label>
+          <select id="setup-model">
+            <option value="claude-sonnet-4-5">claude-sonnet-4-5 — Recomendado (rápido e inteligente)</option>
+            <option value="claude-opus-4-5">claude-opus-4-5 — Mais poderoso (mais lento)</option>
+            <option value="claude-haiku-4-5">claude-haiku-4-5 — Mais rápido (mais simples)</option>
+          </select>
+        </div>
+        <button class="setup-btn" style="background:none;border:1px solid var(--g3);color:var(--gl);margin-bottom:0" id="setup-test-btn" onclick="setupTestApi()">⟳ Testar Conexão</button>
+        <div class="setup-api-test">
+          <div class="test-dot idle" id="setup-test-dot"></div>
+          <span id="setup-test-txt">Clique em "Testar Conexão" para validar a chave</span>
+        </div>
+        <div class="setup-warn">
+          ⚠ Sua API Key fica salva apenas no <strong>localStorage do seu browser</strong>.
+          Nunca é enviada a terceiros nem ao GitHub. Para uso em equipe, configure no Admin após o setup.
+        </div>
+        <button class="setup-btn" id="setup-next-btn" onclick="setupNext()">Próximo → Criar Admin</button>
+      </div>
+
+      <!-- STEP 2: Admin Account -->
+      <div class="setup-step" id="setup-step-2">
+        <div class="setup-step-num">// Passo 2 de 3</div>
+        <div class="setup-title">Criar Conta Admin</div>
+        <div class="setup-sub">
+          Esta será a conta principal do sistema com acesso total ao painel de administração,
+          configurações de API, gerenciamento de usuários e logs.
+        </div>
+        <div class="setup-field">
+          <label>Nome completo</label>
+          <input type="text" id="setup-admin-name" placeholder="Seu nome">
+        </div>
+        <div class="setup-field">
+          <label>E-mail</label>
+          <input type="email" id="setup-admin-email" placeholder="admin@suaprodutora.com">
+        </div>
+        <div class="setup-field">
+          <label>Senha (mínimo 8 caracteres)</label>
+          <div class="setup-kw">
+            <input type="password" id="setup-admin-pw" placeholder="Crie uma senha forte">
+            <button class="setup-ke" onclick="tglPw('setup-admin-pw',this)">👁</button>
+          </div>
+        </div>
+        <div class="setup-field">
+          <label>Código secreto de Admin</label>
+          <input type="password" id="setup-admin-code" placeholder="Código para outros admins se registrarem">
+          <div class="setup-hint">Este código será necessário para registrar novas contas admin.</div>
+        </div>
+        <button class="setup-btn" onclick="setupNext()">Próximo → Confirmar</button>
+        <button class="setup-btn-sec" onclick="setupBack()">← Voltar</button>
+      </div>
+
+      <!-- STEP 3: Confirm -->
+      <div class="setup-step" id="setup-step-3">
+        <div class="setup-step-num">// Passo 3 de 3</div>
+        <div class="setup-title">Tudo Pronto</div>
+        <div class="setup-sub">
+          O FRAME.AI está configurado e pronto para usar.
+          Você pode alterar qualquer configuração a qualquer momento no painel Admin.
+        </div>
+        <div style="background:var(--g2);border:1px solid var(--g3);padding:20px;margin-bottom:24px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);margin-bottom:14px">// Resumo da Configuração</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:.82rem;padding:6px 0;border-bottom:1px solid var(--g3)">
+              <span style="color:var(--gl)">API Anthropic</span>
+              <span style="color:var(--green)">✓ Conectada</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.82rem;padding:6px 0;border-bottom:1px solid var(--g3)">
+              <span style="color:var(--gl)">Conta Admin</span>
+              <span style="color:var(--green)">✓ Criada</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.82rem;padding:6px 0;border-bottom:1px solid var(--g3)">
+              <span style="color:var(--gl)">12 Ferramentas IA</span>
+              <span style="color:var(--green)">✓ Disponíveis</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.82rem;padding:6px 0">
+              <span style="color:var(--gl)">Painel Admin</span>
+              <span style="color:var(--green)">✓ Ativo</span>
+            </div>
+          </div>
+        </div>
+        <button class="setup-btn" onclick="setupNext()">▶ Ir para o Login</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- NAV -->
+<nav id="mainNav" style="display:none">
+  <span class="nav-logo" onclick="goHome()">FRAME<span>.</span>AI</span>
+  <div class="nav-mid">
+    <a id="nav-home" onclick="goHome()">Inicio</a>
+    <a id="nav-studio" onclick="showPg('studio')">Studio</a>
+    <a id="nav-admin" onclick="showPg('admin')" style="display:none">&#9841; Admin</a>
+  </div>
+  <div class="nav-right">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="nav-av" id="navAv"></div>
+      <div><div class="nav-uname" id="navName"></div><div class="nav-badge" id="navBadge"></div></div>
+    </div>
+    <button class="nav-logout" onclick="logout()">Sair</button>
+  </div>
+</nav>
+
+<!-- LANDING -->
+<div class="page" id="page-landing">
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-reel"><div class="reel-inner" id="reelInner"></div></div>
+  <div class="htag">Agencia IA para Filmmakers</div>
+  <h1 class="htitle"><div>DO BRIEFING</div><div class="l2">AO FRAME</div><div class="l3">PERFEITO</div></h1>
+  <p class="hsub">Uma agencia inteligente para cada etapa da producao audiovisual. Powered by Claude Sonnet 4.6.</p>
+  <div class="hcta">
+    <button class="btn-p" onclick="showPg('studio')">&#x25BA; Abrir o Studio</button>
+    <button class="btn-g" onclick="document.getElementById('ferramentas').scrollIntoView({behavior:'smooth'})">Ver ferramentas</button>
+  </div>
+  <div class="hstats">
+    <div><div class="hstat-n">12+</div><div class="hstat-l">Ferramentas IA</div></div>
+    <div><div class="hstat-n">4.6</div><div class="hstat-l">Claude Sonnet</div></div>
+  </div>
+</section>
+<div class="mq"><div class="mqt" id="mqTrack"></div></div>
+<section class="sec" id="ferramentas">
+  <div class="slbl">// 01 -- Arsenal</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;gap:36px;flex-wrap:wrap;">
+    <h2 class="stitle" style="margin-bottom:0">FERRAMENTAS<br>QUE O <em>MERCADO</em><br>NAO TEM</h2>
+    <p style="max-width:290px;font-size:.86rem;line-height:1.7;color:var(--gl);font-weight:300">Cada ferramenta resolve uma dor real de quem vive no set, na ilha de edicao ou na call com o cliente.</p>
+  </div>
+  <div class="tgrid" id="tgrid"></div>
+</section>
+<section class="sec" id="workflow" style="background:var(--g2)">
+  <div class="slbl">// 02 -- Processo</div>
+  <h2 class="stitle">DO CONCEITO A ENTREGA</h2>
+  <div class="wfsteps">
+    <div class="wfs fu"><div class="wfn">01</div><div class="wft">Briefing IA</div><div class="wfd">A IA faz as perguntas certas para extrair tudo que importa.</div></div>
+    <div class="wfs fu"><div class="wfn">02</div><div class="wft">Pre-Prod</div><div class="wfd">Roteiro, decupagem, callsheet e orcamento automaticos.</div></div>
+    <div class="wfs fu"><div class="wfn">03</div><div class="wft">Set Virtual</div><div class="wfd">Checklist, cronograma e logistica com zero retrabalho.</div></div>
+    <div class="wfs fu"><div class="wfn">04</div><div class="wft">Pos-Prod</div><div class="wfd">Moodboard, colorizacao referenciada e entrega organizada.</div></div>
+    <div class="wfs fu"><div class="wfn">05</div><div class="wft">Comercial</div><div class="wfd">Proposta, contrato e relatorio prontos para o cliente.</div></div>
+  </div>
+</section>
+<section class="sec" id="planos">
+  <div class="slbl">// 03 -- Planos</div>
+  <h2 class="stitle fu">ESCOLHA SUA CAMERA</h2>
+  <div class="pgrid">
+    <div class="pcard fu"><div class="ptier">// Indie</div><div class="pval">R$97</div><div class="pper">/mes</div>
+      <ul class="pfeats"><li>5 roteiros por mes</li><li>Callsheet e checklist</li><li>Templates de proposta</li><li>Briefing inteligente</li></ul>
+      <button class="pcta" onclick="showPg('studio')">Comecar</button></div>
+    <div class="pcard feat fu"><div class="ptier">// Profissional</div><div class="pval">R$297</div><div class="pper">/mes -- mais popular</div>
+      <ul class="pfeats"><li>Roteiros ilimitados</li><li>Decupagem tecnica IA</li><li>Contratos personalizados</li><li>Orcamento automatico</li><li>Claude Sonnet 4.6</li></ul>
+      <button class="pcta" onclick="showPg('studio')">Comecar Agora</button></div>
+    <div class="pcard fu"><div class="ptier">// Produtora</div><div class="pval">R$697</div><div class="pper">/mes</div>
+      <ul class="pfeats"><li>Tudo do Profissional</li><li>Multi-usuarios (10 seats)</li><li>API personalizada</li><li>White-label</li></ul>
+      <button class="pcta" onclick="showPg('studio')">Falar com equipe</button></div>
+  </div>
+</section>
+<footer>
+  <div class="ftop">
+    <div><div class="fbrand">FRAME<span>.</span>AI</div><div class="ftagline">A agencia inteligente do filmmaker moderno.</div></div>
+    <div class="flinks">
+      <div class="fcol"><div class="fct">Ferramentas</div><a onclick="ot('roteiro')">Roteiro</a><a onclick="ot('callsheet')">Callsheet</a><a onclick="ot('decupagem')">Decupagem</a><a onclick="ot('orcamento')">Orcamento</a></div>
+      <div class="fcol"><div class="fct">Studio</div><a onclick="ot('proposta')">Proposta</a><a onclick="ot('contrato')">Contratos</a><a onclick="ot('briefing')">Briefing</a><a onclick="ot('moodboard')">Moodboard</a></div>
+      <div class="fcol"><div class="fct">Mais</div><a onclick="ot('checklist')">Checklist</a><a onclick="ot('cronograma')">Cronograma</a><a onclick="ot('entrega')">Entrega</a><a onclick="ot('assistente')">Assistente</a></div>
+    </div>
+  </div>
+  <div class="fbot"><div class="fcopy">2025 FRAME.AI -- Powered by Claude Sonnet 4.6</div><div class="fcopy">Feito por filmmakers, para filmmakers.</div></div>
+</footer>
+</div>
+
+<!-- ADMIN PAGE -->
+<div class="page" id="page-admin">
+<div class="admin-pg">
+  <div class="adm-hdr">
+    <div class="adm-hdr-top">
+      <div class="adm-title">Painel <span>Admin</span></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--gl)">Ultimo acesso: <span id="adm-last"></span></div>
+    </div>
+    <div class="adm-tabs">
+      <button class="adm-tab active" onclick="aTab('dash',this)">&#x1F4CA; Dashboard</button>
+      <button class="adm-tab" onclick="aTab('users',this)">&#x1F465; Usuarios</button>
+      <button class="adm-tab" onclick="aTab('api',this)">&#x2699; API &amp; Config</button>
+      <button class="adm-tab" onclick="aTab('logs',this)">&#x1F4CB; Logs</button>
+    </div>
+  </div>
+  <div class="adm-body">
+
+    <!-- DASHBOARD -->
+    <div class="adm-sec active" id="adm-dash">
+      <div class="stats-grid">
+        <div class="stat-card cor"><div class="slb">Usuarios Ativos</div><div class="svl" id="st-users">0</div><div class="str">Total cadastrados</div></div>
+        <div class="stat-card cgr"><div class="slb">Geracoes Hoje</div><div class="svl" id="st-gens">0</div><div class="str">Conteudos gerados</div></div>
+        <div class="stat-card cbl"><div class="slb">Modelo Ativo</div><div class="svl" id="st-mdl" style="font-size:1.3rem;margin-top:8px">--</div><div class="str">API Anthropic</div></div>
+        <div class="stat-card cgo"><div class="slb">Status API</div><div class="svl" id="st-api" style="font-size:1.8rem;margin-top:6px">?</div><div class="str" id="st-api-txt">Verificando</div></div>
+      </div>
+      <div class="adm-card">
+        <div class="adm-card-hdr"><span class="adm-card-t">Atividade Recente</span></div>
+        <div style="padding:8px 0" id="dash-logs"></div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="adm-sec" id="adm-users">
+      <div class="aug-form">
+        <div class="adm-card-t" style="margin-bottom:14px">+ Adicionar Usuario</div>
+        <div class="aug-grid">
+          <div class="cf"><label>Nome</label><input type="text" id="nu-name" placeholder="Nome completo"></div>
+          <div class="cf"><label>E-mail</label><input type="email" id="nu-email" placeholder="email@exemplo.com"></div>
+          <div class="cf"><label>Senha</label><input type="password" id="nu-pw" placeholder="Senha"></div>
+          <div class="cf"><label>Cargo</label><input type="text" id="nu-cargo" placeholder="Diretor, DOP..."></div>
+          <div class="cf"><label>Tipo</label><select id="nu-type"><option value="user">Filmmaker</option><option value="admin">Admin</option></select></div>
+        </div>
+        <button class="csav" onclick="addUsr()">+ Adicionar</button>
+      </div>
+      <div class="adm-card">
+        <div class="adm-card-hdr">
+          <span class="adm-card-t">Todos os Usuarios</span>
+          <input type="text" id="usr-search" placeholder="Buscar..." oninput="renderUsers()" style="background:var(--g1);border:1px solid var(--g3);color:var(--white);padding:6px 11px;font-family:'JetBrains Mono',monospace;font-size:.6rem;outline:none;width:180px">
+        </div>
+        <table class="utbl">
+          <thead><tr><th>Nome</th><th>E-mail</th><th>Tipo</th><th>Status</th><th>Geracoes</th><th>Acoes</th></tr></thead>
+          <tbody id="usr-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- API CONFIG -->
+    <div class="adm-sec" id="adm-api">
+      <div class="cfg-grid">
+        <div class="cfg-card">
+          <div class="cfg-ct">&#x26A1; API Anthropic</div>
+          <div class="cf"><label>API Key</label><div class="kw"><input type="password" id="cfg-key" placeholder="sk-ant-api03-..."><button class="ke" onclick="tglPw('cfg-key',this)">&#x1F441;</button></div></div>
+          <div class="cf"><label>Modelo</label><select id="cfg-mdl">
+            <option value="claude-sonnet-4-5">claude-sonnet-4-5 (Recomendado)</option>
+            <option value="claude-opus-4-5">claude-opus-4-5 (Mais poderoso)</option>
+            <option value="claude-haiku-4-5">claude-haiku-4-5 (Mais rapido)</option>
+          </select></div>
+          <div class="cf"><label>Max Tokens</label><input type="number" id="cfg-tok" value="1500" min="500" max="4000"></div>
+          <button class="csav" onclick="saveCfg()">&#x1F4BE; Salvar Config</button>
+          <button class="tbtest" onclick="testApi()">&#x27F3; Testar Conexao</button>
+          <div class="api-st"><div class="adot" id="a-dot"></div><span id="a-txt">Nao testado</span></div>
+        </div>
+        <div class="cfg-card">
+          <div class="cfg-ct">&#x1F4DD; System Prompt</div>
+          <div class="cf"><label>Prompt base da IA</label><textarea id="cfg-sp" style="min-height:180px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.6"></textarea></div>
+          <button class="csav" onclick="saveSp()">&#x1F4BE; Salvar Prompt</button>
+        <button class="tbtest" onclick="resetAndSetup()" style="width:100%;margin-top:8px;text-align:left">&#x21BA; Reiniciar Setup</button>
+        </div>
+        <div class="cfg-card">
+          <div class="cfg-ct">&#x1F512; Controle de Acesso</div>
+          <div class="cf"><label>Codigo de Admin (para registro)</label><input type="password" id="cfg-acode" placeholder="Codigo secreto"></div>
+          <div class="cf"><label>Limite de geracoes/dia</label><input type="number" id="cfg-lim" value="50"></div>
+          <div class="cf"><label>Modo da plataforma</label><select id="cfg-mode">
+            <option value="open">Aberto -- qualquer um pode registrar</option>
+            <option value="closed">Fechado -- sem novos registros</option>
+          </select></div>
+          <button class="csav" onclick="saveAccess()">&#x1F4BE; Salvar</button>
+        </div>
+        <div class="cfg-card">
+          <div class="cfg-ct">&#x1F4CA; Estatisticas de Uso</div>
+          <div id="uso-stats"></div>
+          <button class="tbtest" style="margin-top:14px" onclick="exportLogs()">&#x2193; Exportar Logs CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="adm-sec" id="adm-logs">
+      <div class="adm-card">
+        <div class="adm-card-hdr">
+          <span class="adm-card-t">Log de Atividades</span>
+          <div style="display:flex;gap:7px">
+            <button class="tbtest" onclick="clrLogs()">Limpar</button>
+            <button class="tbtest" onclick="exportLogs()">Exportar</button>
+          </div>
+        </div>
+        <div style="padding:0 15px" id="logs-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STUDIO -->
+<div class="page" id="page-studio">
+<div class="studio-wrap">
+<div class="studio-layout">
+<div class="sidebar">
+  <div class="sb-logo"><div class="sb-lt">FRAME<span>.</span>AI</div><div class="sb-sub">// Studio</div></div>
+  <div class="sb-sect">Pre-Producao</div>
+  <div class="sbi active" id="sb-roteiro" onclick="ost('roteiro')"><span class="sic">&#x1F3AC;</span><span class="sin">Gerador de Roteiro</span></div>
+  <div class="sbi" id="sb-decupagem" onclick="ost('decupagem')"><span class="sic">&#x1F39E;</span><span class="sin">Decupagem Tecnica</span></div>
+  <div class="sbi" id="sb-callsheet" onclick="ost('callsheet')"><span class="sic">&#x1F4CB;</span><span class="sin">Callsheet</span></div>
+  <div class="sbi" id="sb-checklist" onclick="ost('checklist')"><span class="sic">&#x2705;</span><span class="sin">Checklist de Set</span></div>
+  <div class="sbi" id="sb-cronograma" onclick="ost('cronograma')"><span class="sic">&#x1F4C5;</span><span class="sin">Cronograma</span></div>
+  <div class="sb-sect">Comercial</div>
+  <div class="sbi" id="sb-briefing" onclick="ost('briefing')"><span class="sic">&#x1F4DD;</span><span class="sin">Briefing Inteligente</span></div>
+  <div class="sbi" id="sb-orcamento" onclick="ost('orcamento')"><span class="sic">&#x1F4B0;</span><span class="sin">Orcamento</span></div>
+  <div class="sbi" id="sb-proposta" onclick="ost('proposta')"><span class="sic">&#x1F4BC;</span><span class="sin">Proposta Comercial</span></div>
+  <div class="sbi" id="sb-contrato" onclick="ost('contrato')"><span class="sic">&#x1F4C4;</span><span class="sin">Contratos</span></div>
+  <div class="sb-sect">Criativo &amp; Entrega</div>
+  <div class="sbi" id="sb-moodboard" onclick="ost('moodboard')"><span class="sic">&#x1F3A8;</span><span class="sin">Moodboard &amp; Look</span></div>
+  <div class="sbi" id="sb-entrega" onclick="ost('entrega')"><span class="sic">&#x1F4CA;</span><span class="sin">Relatorio de Entrega</span></div>
+  <div class="sbi" id="sb-assistente" onclick="ost('assistente')"><span class="sic">&#x2736;</span><span class="sin">Assistente Livre</span></div>
+  <div class="sb-foot">
+    <div class="sb-arow"><div class="sb-adot" id="sb-adot"></div><span id="sb-albl">API</span></div>
+    <div class="sb-mdl" id="sb-amdl">--</div>
+  </div>
+</div>
+<div class="main-content" id="mainContent">
+  
+<div class="panel" id="panel-roteiro">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F3AC; Gerador de Roteiro</div><div class="phdr-sub">Roteiros profissionais para qualquer formato</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('roteiro')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('roteiro','roteiro.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('roteiro')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Projeto</div>
+  <div class="field"><label>Titulo</label><input id="r-tit" placeholder="Ex: Deriva Urbana"></div>
+  <div class="field"><label>Formato</label><select id="r-fmt"><option>Curta-metragem (ficcao)</option><option>Video Institucional</option><option>Video Publicitario / TVC</option><option>Documentario</option><option>Video para Redes Sociais</option><option>Videoclipe</option><option>Webserie</option><option>Longa-metragem</option></select></div>
+  <div class="frow"><div class="field"><label>Duracao</label><input id="r-dur" placeholder="5 min"></div><div class="field"><label>Genero</label><input id="r-gen" placeholder="Drama..."></div></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Historia</div>
+  <div class="field"><label>Sinopse</label><textarea id="r-sin" placeholder="Descreva a historia..."></textarea></div>
+  <div class="field"><label>Personagens</label><input id="r-per" placeholder="Joao 30a, Maria 28a..."></div>
+  <div class="field"><label>Locacoes</label><input id="r-loc" placeholder="Metro SP, apartamento..."></div>
+  <div class="field"><label>Referencia estetica</label><input id="r-ref" placeholder="Kiarostami, Nolan..."></div>
+  <div class="field"><label>Observacoes</label><textarea id="r-obs" placeholder="Restricoes, mensagem central..."></textarea></div>
+</div>
+<button class="gbtn" id="btn-roteiro" onclick="gen('roteiro')">&#x25BA; Gerar Roteiro</button>
+<div class="odiv">ou</div>
+<button class="fbtn" onclick="toChatMode('Preciso de um roteiro para')">&#x2736; Modo livre no chat</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-roteiro">
+        <div class="oph" id="ph-roteiro"><div class="oph-icon">&#x1F3AC;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-roteiro"><pre id="otxt-roteiro"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-roteiro">--</span><span class="mdl-tag" id="mtag-roteiro">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('roteiro')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('roteiro','roteiro.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('roteiro')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="panel" id="panel-decupagem">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F39E; Decupagem Tecnica</div><div class="phdr-sub">Plano de filmagem com planos, movimentos e lentes</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('decupagem')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('decupagem','decupagem.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('decupagem')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Cena</div>
+  <div class="field"><label>Descricao da cena</label><textarea id="d-cena" placeholder="Perseguicao urbana noturna..."></textarea></div>
+  <div class="frow"><div class="field"><label>No de planos</label><input type="number" id="d-pl" value="10"></div><div class="field"><label>Duracao</label><input id="d-dur" placeholder="2 min"></div></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Camera &amp; Estilo</div>
+  <div class="field"><label>Camera</label><input id="d-cam" placeholder="Sony FX3, Canon R5C..."></div>
+  <div class="field"><label>Estilo</label><select id="d-est"><option>Camera na mao (handheld)</option><option>Tripe -- planos fixos</option><option>Steadicam / Gimbal</option><option>Drone / aereo</option><option>Misto</option></select></div>
+  <div class="field"><label>Referencia</label><input id="d-ref" placeholder="Cidade de Deus, Euphoria..."></div>
+  <div class="field"><label>Equipe</label><input id="d-eq" placeholder="Dir, DOP, AC, Som..."></div>
+  <div class="field"><label>Observacoes</label><textarea id="d-obs" placeholder="Restricoes de locacao..."></textarea></div>
+</div>
+<button class="gbtn" id="btn-decupagem" onclick="gen('decupagem')">&#x25BA; Gerar Decupagem</button>
+<div class="odiv">ou</div><button class="fbtn" onclick="toChatMode('Quero uma decupagem para')">&#x2736; Modo livre</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-decupagem">
+        <div class="oph" id="ph-decupagem"><div class="oph-icon">&#x1F39E;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-decupagem"><pre id="otxt-decupagem"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-decupagem">--</span><span class="mdl-tag" id="mtag-decupagem">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('decupagem')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('decupagem','decupagem.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('decupagem')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="panel" id="panel-callsheet">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F4CB; Callsheet</div><div class="phdr-sub">Callsheet completo para o dia de filmagem</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('callsheet')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('callsheet','callsheet.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('callsheet')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Producao</div>
+  <div class="field"><label>Nome da producao</label><input id="cs-prod" placeholder="Video Institucional XYZ"></div>
+  <div class="frow"><div class="field"><label>Data</label><input type="date" id="cs-data"></div><div class="field"><label>Cidade</label><input id="cs-cid" placeholder="Sao Paulo, SP"></div></div>
+  <div class="field"><label>Endereco</label><input id="cs-end" placeholder="Rua das Flores, 123"></div>
+  <div class="frow"><div class="field"><label>Call time</label><input type="time" id="cs-ct" value="07:00"></div><div class="field"><label>Wrap</label><input type="time" id="cs-wp" value="19:00"></div></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Equipe</div>
+  <div class="field"><label>Diretor</label><input id="cs-dir" placeholder="Nome -- tel"></div>
+  <div class="field"><label>Produtor</label><input id="cs-prd" placeholder="Nome -- tel"></div>
+  <div class="field"><label>DOP</label><input id="cs-dop" placeholder="Nome -- tel"></div>
+  <div class="field"><label>Som</label><input id="cs-som" placeholder="Nome -- tel"></div>
+  <div class="field"><label>Demais</label><textarea id="cs-eq" placeholder="Cargo -- Nome -- Tel"></textarea></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Logistica</div>
+  <div class="field"><label>Equipamentos</label><textarea id="cs-equip" placeholder="Sony FX3, Gimbal..."></textarea></div>
+  <div class="field"><label>Observacoes</label><textarea id="cs-obs" placeholder="Estacionamento, acesso..."></textarea></div>
+</div>
+<button class="gbtn" id="btn-callsheet" onclick="gen('callsheet')">&#x25BA; Gerar Callsheet</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-callsheet">
+        <div class="oph" id="ph-callsheet"><div class="oph-icon">&#x1F4CB;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-callsheet"><pre id="otxt-callsheet"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-callsheet">--</span><span class="mdl-tag" id="mtag-callsheet">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('callsheet')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('callsheet','callsheet.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('callsheet')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="panel" id="panel-checklist">
+    <div class="phdr">
+      <div><div class="phdr-title">&#x2705; Checklist de Set</div><div class="phdr-sub">Nunca esqueca nada no set</div></div>
+      <div class="phdr-acts"><button class="abtn" onclick="ckAll(true)">&#x2713; Marcar todos</button><button class="abtn" onclick="ckAll(false)">&#x25CB; Desmarcar</button><button class="abtn" onclick="cpCL()">&#x2398; Copiar</button><button class="abtn" onclick="rstCL()">&#x2715; Resetar</button></div>
+    </div>
+    <div class="itabs">
+      <button class="itab active" onclick="swCL(0,'camera',this)">&#x1F4F7; Camera</button>
+      <button class="itab" onclick="swCL(1,'audio',this)">&#x1F3A4; Audio</button>
+      <button class="itab" onclick="swCL(2,'luz',this)">&#x1F4A1; Iluminacao</button>
+      <button class="itab" onclick="swCL(3,'prod',this)">&#x1F3AC; Producao</button>
+      <button class="itab" onclick="swCL(4,'pos',this)">&#x1F4BB; Pos-Prod</button>
+      <button class="itab" onclick="swCL(5,'ia',this)">&#x2736; Lista IA</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:18px 22px" id="clBody"></div>
+  </div>
+  
+<div class="panel" id="panel-cronograma">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F4C5; Cronograma</div><div class="phdr-sub">Planejamento completo do projeto</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('cronograma')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('cronograma','cronograma.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('cronograma')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Projeto</div>
+  <div class="field"><label>Nome</label><input id="cr-nome" placeholder="Video Institucional ABC"></div>
+  <div class="frow"><div class="field"><label>Inicio</label><input type="date" id="cr-ini"></div><div class="field"><label>Entrega</label><input type="date" id="cr-fim"></div></div>
+  <div class="field"><label>Tipo</label><select id="cr-tipo"><option>Video Institucional</option><option>Curta-metragem</option><option>Documentario</option><option>Video Publicitario</option><option>Webserie</option><option>Videoclipe</option></select></div>
+  <div class="frow"><div class="field"><label>Dias filmagem</label><input type="number" id="cr-dias" value="3"></div><div class="field"><label>Equipe</label><input id="cr-eq" placeholder="Dir, DOP, AC..."></div></div>
+  <div class="field"><label>Entregaveis</label><textarea id="cr-ent" placeholder="1 video 2min, 3 cortes redes..."></textarea></div>
+</div>
+<button class="gbtn" id="btn-cronograma" onclick="gen('cronograma')">&#x25BA; Gerar Cronograma</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-cronograma">
+        <div class="oph" id="ph-cronograma"><div class="oph-icon">&#x1F4C5;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-cronograma"><pre id="otxt-cronograma"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-cronograma">--</span><span class="mdl-tag" id="mtag-cronograma">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('cronograma')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('cronograma','cronograma.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('cronograma')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="panel" id="panel-briefing">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F4DD; Briefing Inteligente</div><div class="phdr-sub">Extraia todas as informacoes do cliente</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('briefing')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('briefing','briefing.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('briefing')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Cliente</div>
+  <div class="field"><label>Cliente</label><input id="br-cli" placeholder="Startup XYZ"></div>
+  <div class="field"><label>Segmento</label><input id="br-seg" placeholder="Tecnologia, Moda..."></div>
+  <div class="field"><label>Tipo de video</label><select id="br-tipo"><option>Video Institucional</option><option>Video de Produto</option><option>Depoimento</option><option>Redes Sociais</option><option>Evento Corporativo</option><option>Video Publicitario</option></select></div>
+  <div class="field"><label>Objetivo</label><textarea id="br-obj" placeholder="O que o cliente quer comunicar?"></textarea></div>
+  <div class="field"><label>Publico-alvo</label><input id="br-pub" placeholder="Jovens 20-30 anos..."></div>
+  <div class="field"><label>Veiculacao</label><input id="br-veic" placeholder="YouTube, Instagram, TV..."></div>
+  <div class="frow"><div class="field"><label>Duracao</label><input id="br-dur" placeholder="2-3 min"></div><div class="field"><label>Prazo</label><input id="br-prz" placeholder="30 dias"></div></div>
+  <div class="field"><label>Referencias</label><input id="br-ref" placeholder="Videos que o cliente gostou"></div>
+  <div class="field"><label>Restricoes</label><textarea id="br-nao" placeholder="O que NAO deve aparecer..."></textarea></div>
+</div>
+<button class="gbtn" id="btn-briefing" onclick="gen('briefing')">&#x25BA; Gerar Briefing</button>
+<div class="odiv">ou</div><button class="fbtn" onclick="toChatMode('Crie um briefing para')">&#x2736; Modo livre</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-briefing">
+        <div class="oph" id="ph-briefing"><div class="oph-icon">&#x1F4DD;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-briefing"><pre id="otxt-briefing"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-briefing">--</span><span class="mdl-tag" id="mtag-briefing">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('briefing')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('briefing','briefing.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('briefing')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="panel" id="panel-orcamento">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F4B0; Orcamento</div><div class="phdr-sub">Orcamentos realistas conforme mercado nacional</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('orcamento')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('orcamento','orcamento.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('orcamento')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Projeto</div>
+  <div class="field"><label>Tipo</label><select id="or-tipo"><option>Video Institucional (1-3 min)</option><option>Video Publicitario / TVC 30s</option><option>Curta-metragem</option><option>Documentario</option><option>Video Redes Sociais</option><option>Evento Corporativo</option><option>Videoclipe</option></select></div>
+  <div class="frow"><div class="field"><label>Dias filmagem</label><input type="number" id="or-dias" value="2"></div><div class="field"><label>Locacoes</label><input type="number" id="or-loc" value="2"></div></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Equipe &amp; Elenco</div>
+  <div class="field"><label>Equipe</label><select id="or-eq"><option>Pequena (2-4)</option><option>Media (5-8)</option><option>Grande (9-15)</option></select></div>
+  <div class="field"><label>Elenco</label><select id="or-at"><option>Nao</option><option>Equipe interna do cliente</option><option>Atores contratados (2)</option><option>Atores contratados (4+)</option></select></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Equipamento</div>
+  <div class="field"><label>Camera</label><select id="or-cam"><option>Camera propria</option><option>Aluguel basico (Sony A7)</option><option>Aluguel cinema (FX6, FX9)</option><option>Aluguel topo (ARRI, RED)</option></select></div>
+  <div class="frow"><div class="field"><label>Drone</label><select id="or-drone"><option>Nao</option><option>Sim -- proprio</option><option>Sim -- aluguel</option></select></div><div class="field"><label>Luz</label><select id="or-luz"><option>Natural</option><option>Kit basico</option><option>Aluguel pro</option></select></div></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Pos-Producao</div>
+  <div class="field"><label>Edicao</label><select id="or-ed"><option>Basica (corte simples)</option><option>Profissional (color, motion)</option><option>Premium (VFX, 3D)</option></select></div>
+  <div class="field"><label>Trilha</label><select id="or-tri"><option>Royalty-free</option><option>Banco premium</option><option>Composicao exclusiva</option></select></div>
+</div>
+<button class="gbtn" id="btn-orcamento" onclick="gen('orcamento')">&#x25BA; Calcular Orcamento</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-orcamento">
+        <div class="oph" id="ph-orcamento"><div class="oph-icon">&#x1F4B0;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-orcamento"><pre id="otxt-orcamento"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-orcamento">--</span><span class="mdl-tag" id="mtag-orcamento">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('orcamento')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('orcamento','orcamento.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('orcamento')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="panel" id="panel-proposta">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F4BC; Proposta Comercial</div><div class="phdr-sub">Proposta profissional e persuasiva</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('proposta')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('proposta','proposta.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('proposta')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Sua empresa</div>
+  <div class="field"><label>Produtora / Freelancer</label><input id="pr-emp" placeholder="Frame Filmes"></div>
+  <div class="field"><label>Seu nome</label><input id="pr-nome" placeholder="Joao Silva"></div>
+  <div class="field"><label>Diferenciais</label><textarea id="pr-dif" placeholder="5 anos de exp., clientes X e Y..."></textarea></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Projeto</div>
+  <div class="field"><label>Cliente</label><input id="pr-cli" placeholder="Empresa ABC"></div>
+  <div class="field"><label>Escopo</label><textarea id="pr-esc" placeholder="Roteiro, 2 dias filmagem, edicao..."></textarea></div>
+  <div class="frow"><div class="field"><label>Valor</label><input id="pr-val" placeholder="R$ 8.000"></div><div class="field"><label>Prazo</label><input id="pr-prz" placeholder="30 dias"></div></div>
+  <div class="field"><label>Pagamento</label><select id="pr-pgto"><option>50% entrada + 50% entrega</option><option>30% entrada + 70% entrega</option><option>100% antes do inicio</option><option>3x mensais</option></select></div>
+  <div class="frow"><div class="field"><label>Revisoes</label><select id="pr-rev"><option>2 rodadas inclusas</option><option>3 rodadas inclusas</option><option>1 rodada</option></select></div><div class="field"><label>Tom</label><select id="pr-tom"><option>Profissional</option><option>Descontraido</option><option>Criativo</option></select></div></div>
+</div>
+<button class="gbtn" id="btn-proposta" onclick="gen('proposta')">&#x25BA; Gerar Proposta</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-proposta">
+        <div class="oph" id="ph-proposta"><div class="oph-icon">&#x1F4BC;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-proposta"><pre id="otxt-proposta"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-proposta">--</span><span class="mdl-tag" id="mtag-proposta">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('proposta')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('proposta','proposta.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('proposta')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="panel" id="panel-contrato">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F4C4; Contratos e Juridico</div><div class="phdr-sub">Contratos para proteger seu trabalho</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('contrato')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('contrato','contrato.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('contrato')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Modelo</div>
+  <div class="field"><label>Tipo</label><select id="ct-tipo"><option>Prestacao de Servicos Audiovisuais</option><option>Cessao de Direitos de Imagem</option><option>Cessao de Uso de Trilha Sonora</option><option>NDA -- Confidencialidade</option><option>Contrato de Freelancer</option></select></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Partes</div>
+  <div class="field"><label>Contratante</label><input id="ct-cont" placeholder="Nome / Razao Social"></div>
+  <div class="field"><label>CPF/CNPJ contratante</label><input id="ct-cpf1" placeholder="000.000.000-00"></div>
+  <div class="field"><label>Contratado (voce)</label><input id="ct-ctdo" placeholder="Seu nome ou empresa"></div>
+  <div class="field"><label>CPF/CNPJ contratado</label><input id="ct-cpf2" placeholder="000.000.000-00"></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Servico</div>
+  <div class="field"><label>Objeto</label><textarea id="ct-obj" placeholder="Descreva o servico..."></textarea></div>
+  <div class="frow"><div class="field"><label>Valor</label><input id="ct-val" placeholder="R$ 5.000"></div><div class="field"><label>Prazo</label><input id="ct-prz" placeholder="30 dias"></div></div>
+  <div class="field"><label>Cidade/Estado</label><input id="ct-cid" placeholder="Sao Paulo/SP"></div>
+</div>
+<button class="gbtn" id="btn-contrato" onclick="gen('contrato')">&#x25BA; Gerar Contrato</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-contrato">
+        <div class="oph" id="ph-contrato"><div class="oph-icon">&#x1F4C4;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-contrato"><pre id="otxt-contrato"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-contrato">--</span><span class="mdl-tag" id="mtag-contrato">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('contrato')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('contrato','contrato.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('contrato')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="panel" id="panel-moodboard">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F3A8; Moodboard e Look</div><div class="phdr-sub">Identidade visual e estetica do projeto</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('moodboard')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('moodboard','moodboard.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('moodboard')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Estetica</div>
+  <div class="field"><label>Tom geral</label><select id="mb-tom"><option>Moderno e tecnologico</option><option>Quente e humano</option><option>Frio e minimalista</option><option>Vintage / analogico</option><option>Documental e real</option><option>Onirico e poetico</option><option>Urbano e dinamico</option><option>Natural e organico</option></select></div>
+  <div class="field"><label>Referencias</label><textarea id="mb-ref" placeholder="Wong Kar-Wai, Malick, Nolan..."></textarea></div>
+  <div class="field"><label>Paleta de cores</label><input id="mb-cor" placeholder="Tons terrosos, azul frio..."></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Tecnico</div>
+  <div class="field"><label>Formato</label><select id="mb-asp"><option>16:9 -- Cinema/TV</option><option>2.39:1 -- Cinemascope</option><option>1.85:1 -- Flat</option><option>9:16 -- Vertical / Reels</option><option>1:1 -- Quadrado</option></select></div>
+  <div class="field"><label>Look</label><select id="mb-col"><option>Natural / realista</option><option>Cinematografico -- alto contraste</option><option>Dessaturado / moody</option><option>Quente e ambar</option><option>Frio e azulado</option><option>Preto e branco</option><option>Teal and orange</option></select></div>
+  <div class="field"><label>Iluminacao</label><select id="mb-luz"><option>Natural -- golden hour</option><option>Natural -- dia difuso</option><option>Artificial -- chiaroscuro</option><option>Artificial -- neon/urbana</option><option>Mista</option></select></div>
+  <div class="field"><label>Descricao do projeto</label><textarea id="mb-desc" placeholder="Sobre o que e? Qual sensacao?"></textarea></div>
+</div>
+<button class="gbtn" id="btn-moodboard" onclick="gen('moodboard')">&#x25BA; Gerar Moodboard</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-moodboard">
+        <div class="oph" id="ph-moodboard"><div class="oph-icon">&#x1F3A8;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-moodboard"><pre id="otxt-moodboard"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-moodboard">--</span><span class="mdl-tag" id="mtag-moodboard">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('moodboard')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('moodboard','moodboard.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('moodboard')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="panel" id="panel-entrega">
+  <div class="phdr">
+    <div><div class="phdr-title">&#x1F4CA; Relatorio de Entrega</div><div class="phdr-sub">Documente o projeto finalizado</div></div>
+    <div class="phdr-acts">
+      <button class="abtn" onclick="cp('entrega')">&#x2398; Copiar</button>
+      <button class="abtn" onclick="dl('entrega','entrega.txt')">&#x2193; Baixar</button>
+      <button class="abtn" onclick="clr('entrega')">&#x2715; Limpar</button>
+    </div>
+  </div>
+  <div class="pbody">
+    <div class="fside">
+<div class="fsect"><div class="fsect-t">// Projeto</div>
+  <div class="field"><label>Nome</label><input id="en-nome" placeholder="Video Institucional ABC"></div>
+  <div class="field"><label>Cliente</label><input id="en-cli" placeholder="Nome do cliente"></div>
+  <div class="frow"><div class="field"><label>Inicio</label><input type="date" id="en-ini"></div><div class="field"><label>Entrega</label><input type="date" id="en-ent"></div></div>
+</div>
+<div class="fsect"><div class="fsect-t">// Entregaveis</div>
+  <div class="field"><label>Arquivos</label><textarea id="en-arq" placeholder="- Video_4K.mp4 (2min30s)&#10;- Corte_IG.mp4 (30s)"></textarea></div>
+  <div class="field"><label>Specs tecnicas</label><textarea id="en-sp" placeholder="4K 3840x2160, 24fps, H.264..."></textarea></div>
+  <div class="field"><label>Notas para o cliente</label><textarea id="en-not" placeholder="Instrucoes de uso, creditos..."></textarea></div>
+</div>
+<button class="gbtn" id="btn-entrega" onclick="gen('entrega')">&#x25BA; Gerar Relatorio</button>
+</div>
+    <div class="oside">
+      <div class="oarea" id="out-entrega">
+        <div class="oph" id="ph-entrega"><div class="oph-icon">&#x1F4CA;</div><div class="oph-txt">Preencha e clique em Gerar</div></div>
+        <div class="oc" id="oc-entrega"><pre id="otxt-entrega"></pre></div>
+      </div>
+      <div class="tok-bar"><span class="tok-lbl">Tokens</span><span class="tok-val" id="tok-entrega">--</span><span class="mdl-tag" id="mtag-entrega">--</span></div>
+      <div class="otbar">
+        <button class="abtn" onclick="cp('entrega')">&#x2398; Copiar</button>
+        <button class="abtn" onclick="dl('entrega','entrega.txt')">&#x2193; Baixar</button>
+        <button class="abtn prim" onclick="toChat('entrega')">&#x2736; Refinar com IA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="panel" id="panel-assistente">
+    <div class="phdr">
+      <div><div class="phdr-title">&#x2736; Assistente Livre</div><div class="phdr-sub">Converse com a IA sobre qualquer aspecto da producao</div></div>
+      <div class="phdr-acts"><button class="abtn" onclick="clrChat()">&#x2715; Nova conversa</button><button class="abtn" onclick="cpChat()">&#x2398; Copiar chat</button></div>
+    </div>
+    <div class="chat-wrap">
+      <div class="cmsgs" id="cmsgs">
+        <div class="cmsg ai"><div class="cmav">F</div><div class="cmbbl">Ola! Sou o FRAME.AI, especializado em producao audiovisual brasileira. Posso ajudar com roteiro, direcao, camera, producao, pos-producao, negocios ou carreira. O que voce precisa? &#x1F3AC;</div></div>
+      </div>
+      <div class="cthink" id="cthink"><span>FRAME.AI processando</span><div class="cdots"><span></span><span></span><span></span></div></div>
+      <div class="cinrow">
+        <textarea class="cin" id="cin" placeholder="Pergunte sobre filmmaking, equipamento, negocios..." rows="2"></textarea>
+        <button class="csend" id="csend" onclick="sendChat()">&#x25BA; Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+'use strict';
+
+// ============================================================
+// CONFIG & CONSTANTS
+// ============================================================
+const APP_VERSION = '2.1.0';
+const API_ENDPOINT = 'https://api.anthropic.com/v1/messages';
+const DEFAULT_MODEL = 'claude-sonnet-4-5';
+const STORAGE_KEYS = {
+  users: 'fa_users',
+  logs: 'fa_logs',
+  apiKey: 'fa_key',
+  model: 'fa_mdl',
+  maxTokens: 'fa_tok',
+  sysPrompt: 'fa_sp',
+  adminCode: 'fa_acode',
+  genLimit: 'fa_lim',
+  accessMode: 'fa_mode',
+  session: 'fa_sess',
+  setupDone: 'fa_setup_done',
+};
+
+const DEFAULT_SYS = `Você é FRAME.AI — assistente especializado em produção audiovisual para filmmakers brasileiros.
+Expertise profunda em: roteiro (Hollywood/ABNT), direção, fotografia cinematográfica, produção executiva, pós-produção, negócios audiovisuais e mercado brasileiro.
+Gere conteúdo PRONTO PARA USO PROFISSIONAL. Seja direto, específico, use terminologia técnica correta.
+Use formatação clara com seções bem definidas. Responda sempre em português brasileiro.`;
+
+// ============================================================
+// CONFIG HELPERS — single source of truth
+// ============================================================
+function getCfg() {
+  return {
+    apiKey:     localStorage.getItem(STORAGE_KEYS.apiKey) || '',
+    model:      localStorage.getItem(STORAGE_KEYS.model) || DEFAULT_MODEL,
+    maxTokens:  parseInt(localStorage.getItem(STORAGE_KEYS.maxTokens) || '1500'),
+    sysPrompt:  localStorage.getItem(STORAGE_KEYS.sysPrompt) || DEFAULT_SYS,
+    adminCode:  localStorage.getItem(STORAGE_KEYS.adminCode) || 'FRAMEAI2025',
+    genLimit:   parseInt(localStorage.getItem(STORAGE_KEYS.genLimit) || '50'),
+    accessMode: localStorage.getItem(STORAGE_KEYS.accessMode) || 'open',
+  };
+}
+function saveCfgKey(key, val) { localStorage.setItem(key, val); }
+const isSetupDone = () => !!(localStorage.getItem(STORAGE_KEYS.setupDone) && localStorage.getItem(STORAGE_KEYS.apiKey));
+
+// ============================================================
+// USER STORE — localStorage with validation
+// ============================================================
+function getUsers() { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]'); } catch { return []; } }
+function saveUsers(u) { localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(u)); }
+function getLogs()  { try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.logs) || '[]'); } catch { return []; } }
+function saveLogs(l) { localStorage.setItem(STORAGE_KEYS.logs, JSON.stringify(l.slice(-300))); }
+
+// ============================================================
+// SESSION
+// ============================================================
+let currentUser = null;
+
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem(STORAGE_KEYS.session) || 'null'); }
+  catch { return null; }
+}
+function setSession(u) { sessionStorage.setItem(STORAGE_KEYS.session, JSON.stringify(u)); }
+function clearSession() { sessionStorage.removeItem(STORAGE_KEYS.session); }
+
+// ============================================================
+// LOGGING
+// ============================================================
+function addLog(action, tag = 'gen') {
+  const logs = getLogs();
+  logs.unshift({
+    t: new Date().toLocaleTimeString('pt-BR'),
+    d: new Date().toLocaleDateString('pt-BR'),
+    u: currentUser?.email || '—',
+    act: action,
+    tag
+  });
+  saveLogs(logs);
+}
+function incGen(email) {
+  const users = getUsers();
+  const u = users.find(x => x.email === email);
+  if (u) { u.gens = (u.gens || 0) + 1; u.lastGen = new Date().toLocaleString('pt-BR'); saveUsers(users); }
+}
+
+// ============================================================
+// CURSOR
+// ============================================================
+const curEl = document.getElementById('cur');
+document.addEventListener('mousemove', e => {
+  curEl.style.left = e.clientX + 'px';
+  curEl.style.top  = e.clientY + 'px';
+});
+['a','button','.tcard','.sbi','.setup-btn','.auth-mode-btn','.setup-btn-sec'].forEach(sel => {
+  document.querySelectorAll(sel).forEach(el => {
+    el.addEventListener('mouseenter', () => curEl.classList.add('h'));
+    el.addEventListener('mouseleave', () => curEl.classList.remove('h'));
+  });
+});
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, duration = 2800) {
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ============================================================
+// PAGE ROUTING
+// ============================================================
+function showPg(id) {
+  // Guard: require login for protected pages
+  if (id !== 'login' && id !== 'setup' && !currentUser) { showPg('login'); return; }
+  // Guard: admin-only
+  if (id === 'admin' && currentUser?.type !== 'admin') { toast('⚠ Acesso restrito ao administrador'); return; }
+  // Guard: require API key for studio
+  if (id === 'studio' && !getCfg().apiKey) {
+    toast('⚠ Configure a API Key primeiro', 4000);
+    if (currentUser?.type === 'admin') showPg('admin');
+    else showApiKeyModal();
+    return;
+  }
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + id);
+  if (target) target.classList.add('active');
+
+  // Update nav active state
+  ['nav-home','nav-studio','nav-admin'].forEach(n => document.getElementById(n)?.classList.remove('active'));
+  if (id === 'landing') document.getElementById('nav-home')?.classList.add('active');
+  if (id === 'studio')  document.getElementById('nav-studio')?.classList.add('active');
+  if (id === 'admin')   { document.getElementById('nav-admin')?.classList.add('active'); renderAdmin(); }
+
+  window.scrollTo(0, 0);
+}
+
+function goHome() { showPg(currentUser ? 'landing' : 'login'); }
+function ot(t) { showPg('studio'); setTimeout(() => ost(t), 60); }
+
+// ============================================================
+// API KEY MODAL — for non-admin users who need to see status
+// ============================================================
+function showApiKeyModal() {
+  const modal = document.getElementById('apikey-modal');
+  if (modal) { modal.classList.add('show'); return; }
+  // Create inline
+  const div = document.createElement('div');
+  div.id = 'apikey-modal';
+  div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:800;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)';
+  div.innerHTML = `<div style="background:var(--g2);border:1px solid var(--g3);padding:36px;max-width:440px;width:90%;border-left:3px solid var(--orange)">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;margin-bottom:8px">API NÃO CONFIGURADA</div>
+    <div style="font-size:.85rem;color:var(--gl);font-weight:300;line-height:1.65;margin-bottom:24px">
+      O administrador ainda não configurou a API Key da Anthropic. 
+      Entre em contato com o admin para liberar o acesso ao Studio.
+    </div>
+    <div style="background:var(--g1);border:1px solid var(--g3);padding:14px;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--gl);margin-bottom:20px">
+      <div style="color:var(--orange);margin-bottom:6px">// STATUS</div>
+      <div>API Key: <span style="color:var(--red)">Não configurada</span></div>
+      <div style="margin-top:4px">Para configurar: Admin → API & Config → Inserir chave</div>
+    </div>
+    <button onclick="document.getElementById('apikey-modal').remove()" style="width:100%;background:var(--orange);color:var(--black);border:none;padding:12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Fechar</button>
+  </div>`;
+  document.body.appendChild(div);
+}
+
+// ============================================================
+// FIRST-RUN SETUP WIZARD
+// ============================================================
+let setupStep = 1;
+const SETUP_TOTAL = 3;
+
+function initSetup() {
+  setupStep = 1;
+  updateSetupProgress();
+  showSetupStep(1);
+}
+
+function updateSetupProgress() {
+  document.querySelectorAll('.setup-dot').forEach((dot, i) => {
+    dot.classList.toggle('done', i < setupStep);
+  });
+}
+
+function showSetupStep(n) {
+  document.querySelectorAll('.setup-step').forEach(s => s.classList.remove('active'));
+  const step = document.getElementById('setup-step-' + n);
+  if (step) step.classList.add('active');
+  setupStep = n;
+  updateSetupProgress();
+}
+
+async function setupTestApi() {
+  const key = document.getElementById('setup-apikey').value.trim();
+  const model = document.getElementById('setup-model').value;
+  const dot  = document.getElementById('setup-test-dot');
+  const txt  = document.getElementById('setup-test-txt');
+  const btn  = document.getElementById('setup-test-btn');
+
+  if (!key.startsWith('sk-')) {
+    dot.className = 'test-dot err'; txt.textContent = 'Chave inválida — deve começar com sk-ant-...';
+    return;
+  }
+
+  dot.className = 'test-dot spin'; txt.textContent = 'Testando conexão...'; btn.disabled = true;
+
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, max_tokens: 20, messages: [{ role: 'user', content: 'Say: OK' }] })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    dot.className = 'test-dot ok';
+    txt.textContent = '✓ Conexão bem-sucedida — ' + model;
+    document.getElementById('setup-next-btn').disabled = false;
+  } catch (e) {
+    dot.className = 'test-dot err';
+    txt.textContent = '✗ Erro: ' + e.message.substring(0, 60);
+  }
+  btn.disabled = false;
+}
+
+function setupNext() {
+  if (setupStep === 1) {
+    // Save API key and model
+    const key   = document.getElementById('setup-apikey').value.trim();
+    const model = document.getElementById('setup-model').value;
+    if (!key.startsWith('sk-')) { toast('⚠ Insira uma API Key válida primeiro'); return; }
+    localStorage.setItem(STORAGE_KEYS.apiKey, key);
+    localStorage.setItem(STORAGE_KEYS.model, model);
+    showSetupStep(2);
+  } else if (setupStep === 2) {
+    // Save admin credentials
+    const name  = document.getElementById('setup-admin-name').value.trim();
+    const email = document.getElementById('setup-admin-email').value.trim();
+    const pw    = document.getElementById('setup-admin-pw').value;
+    const code  = document.getElementById('setup-admin-code').value.trim();
+
+    if (!name || !email || !pw) { toast('⚠ Preencha todos os campos'); return; }
+    if (pw.length < 8) { toast('⚠ Senha mínimo 8 caracteres'); return; }
+    if (!email.includes('@')) { toast('⚠ E-mail inválido'); return; }
+    if (!code || code.length < 6) { toast('⚠ Código admin mínimo 6 caracteres'); return; }
+
+    // Save admin code
+    localStorage.setItem(STORAGE_KEYS.adminCode, code);
+
+    // Create admin user
+    const users = getUsers();
+    const existing = users.find(u => u.email === email);
+    if (!existing) {
+      users.push({
+        id: Date.now(),
+        name, email,
+        pw: btoa(pw),
+        type: 'admin',
+        active: true,
+        gens: 0,
+        createdAt: new Date().toLocaleDateString('pt-BR'),
+        isOwner: true
+      });
+      saveUsers(users);
+    } else {
+      existing.type = 'admin';
+      existing.isOwner = true;
+      saveUsers(users);
+    }
+
+    showSetupStep(3);
+  } else if (setupStep === 3) {
+    // Finalize setup
+    localStorage.setItem(STORAGE_KEYS.setupDone, '1');
+    addLog('Setup inicial concluído', 'admin');
+    showPg('login');
+    toast('✓ FRAME.AI configurado! Faça login para começar.');
+  }
+}
+
+function setupBack() {
+  if (setupStep > 1) showSetupStep(setupStep - 1);
+}
+
+function tglPw(id, btn) {
+  const inp = document.getElementById(id);
+  if (!inp) return;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+// ============================================================
+// AUTH — Login / Register with Admin/User separation
+// ============================================================
+let authMode = 'user'; // 'user' or 'admin'
+let regRole  = 'user';
+
+function switchAuthMode(mode) {
+  authMode = mode;
+  const adminBadge = document.getElementById('admin-login-badge');
+  const userBtn    = document.getElementById('auth-mode-user');
+  const adminBtn   = document.getElementById('auth-mode-admin');
+
+  userBtn.classList.toggle('active', mode === 'user');
+  adminBtn.classList.toggle('active', mode === 'admin');
+  if (adminBadge) adminBadge.style.display = mode === 'admin' ? 'flex' : 'none';
+
+  // Clear errors
+  ['login-err','reg-err'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+}
+
+function switchAuth(form) {
+  document.getElementById('form-login').style.display = form === 'login' ? 'block' : 'none';
+  document.getElementById('form-reg').style.display   = form === 'register' ? 'block' : 'none';
+  document.getElementById('tg-login').classList.toggle('active', form === 'login');
+  document.getElementById('tg-reg').classList.toggle('active',   form === 'register');
+}
+
+function setRole(r) {
+  regRole = r;
+  document.getElementById('role-user').classList.toggle('active', r === 'user');
+  document.getElementById('role-admin').classList.toggle('active', r === 'admin');
+  document.getElementById('adm-code-field').style.display = r === 'admin' ? 'block' : 'none';
+}
+
+function showErr(elId, msg) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+function doLogin() {
+  const email = (document.getElementById('login-email')?.value || '').trim();
+  const pw    = document.getElementById('login-pw')?.value || '';
+  const errEl = 'login-err';
+
+  if (!email || !pw) { showErr(errEl, 'Preencha e-mail e senha.'); return; }
+
+  const users = getUsers();
+  const user  = users.find(u => u.email === email && u.pw === btoa(pw));
+
+  if (!user)        { showErr(errEl, 'E-mail ou senha incorretos.'); return; }
+  if (!user.active) { showErr(errEl, 'Conta desativada. Contate o administrador.'); return; }
+
+  // Admin mode: only allow admin users
+  if (authMode === 'admin' && user.type !== 'admin') {
+    showErr(errEl, 'Esta conta não tem privilégios de administrador.');
+    return;
+  }
+
+  loginSuccess(user);
+}
+
+function doReg() {
+  const name  = (document.getElementById('reg-name')?.value  || '').trim();
+  const email = (document.getElementById('reg-email')?.value || '').trim();
+  const pw    = document.getElementById('reg-pw')?.value || '';
+  const code  = document.getElementById('reg-code')?.value  || '';
+  const cfg   = getCfg();
+  const errEl = 'reg-err';
+
+  if (cfg.accessMode === 'closed') { showErr(errEl, 'Novos registros estão desativados.'); return; }
+  if (!name || !email || !pw)      { showErr(errEl, 'Preencha todos os campos.'); return; }
+  if (pw.length < 6)               { showErr(errEl, 'Senha mínimo 6 caracteres.'); return; }
+  if (!email.includes('@'))        { showErr(errEl, 'E-mail inválido.'); return; }
+  if (regRole === 'admin' && code !== cfg.adminCode) {
+    showErr(errEl, 'Código de administrador incorreto.'); return;
+  }
+
+  const users = getUsers();
+  if (users.find(u => u.email === email)) { showErr(errEl, 'E-mail já cadastrado.'); return; }
+
+  const newUser = {
+    id: Date.now(),
+    name, email,
+    pw: btoa(pw),
+    type: regRole,
+    active: true,
+    gens: 0,
+    createdAt: new Date().toLocaleDateString('pt-BR')
+  };
+  users.push(newUser);
+  saveUsers(users);
+  addLog(`Novo cadastro: ${name} (${regRole})`, 'login');
+  loginSuccess(newUser);
+}
+
+function demoLogin(type) {
+  const email = type === 'admin' ? 'admin@frameai.com' : 'filmmaker@frameai.com';
+  const users = getUsers();
+  let user = users.find(u => u.email === email);
+  if (!user) {
+    user = {
+      id: Date.now() + Math.random(),
+      name: type === 'admin' ? 'Admin Demo' : 'Filmmaker Demo',
+      email, pw: btoa('demo123'),
+      type, active: true, gens: 0,
+      createdAt: new Date().toLocaleDateString('pt-BR'),
+      isDemo: true
+    };
+    users.push(user);
+    saveUsers(users);
+  }
+  // Force mode switch visual
+  switchAuthMode(type);
+  loginSuccess(user);
+}
+
+function loginSuccess(user) {
+  currentUser = user;
+  setSession(user);
+  addLog(`Login: ${user.name} (${user.type})`, 'login');
+  setupNav();
+
+  // Route based on role
+  if (user.type === 'admin') {
+    showPg('admin');
+    toast(`✓ Bem-vindo, ${user.name}! Painel Admin ativo.`);
+  } else {
+    // Check if API is configured before going to studio
+    if (!getCfg().apiKey) {
+      showPg('landing');
+      toast(`✓ Bem-vindo, ${user.name}! API ainda não configurada pelo admin.`, 4000);
+    } else {
+      showPg('landing');
+      toast(`✓ Bem-vindo, ${user.name}!`);
+    }
+  }
+}
+
+function logout() {
+  addLog(`Logout: ${currentUser?.name}`, 'login');
+  currentUser = null;
+  clearSession();
+  document.getElementById('mainNav').style.display = 'none';
+  // Reset auth mode
+  switchAuthMode('user');
+  showPg('login');
+}
+
+// ============================================================
+// NAV SETUP
+// ============================================================
+function setupNav() {
+  if (!currentUser) return;
+  document.getElementById('mainNav').style.display = 'flex';
+  document.getElementById('navName').textContent = currentUser.name;
+
+  const av = document.getElementById('navAv');
+  av.textContent = currentUser.name.charAt(0).toUpperCase();
+  av.className = 'nav-av ' + currentUser.type;
+
+  const badge = document.getElementById('navBadge');
+  badge.textContent = currentUser.type === 'admin' ? '⚑ Admin' : '◈ Filmmaker';
+  badge.className = 'nav-badge ' + currentUser.type;
+
+  // Show/hide admin link
+  const adminLink = document.getElementById('nav-admin');
+  if (adminLink) adminLink.style.display = currentUser.type === 'admin' ? 'block' : 'none';
+
+  // API status indicator
+  updateApiStatusUI();
+
+  // Show setup reminder if admin and no API key
+  if (currentUser.type === 'admin' && !getCfg().apiKey) {
+    setTimeout(() => toast('⚠ Configure a API Key: Admin → API & Config', 5000), 500);
+  }
+}
+
+function updateApiStatusUI() {
+  const cfg = getCfg();
+  const hasKey = !!cfg.apiKey;
+  const dot  = document.getElementById('sb-adot');
+  const lbl  = document.getElementById('sb-albl');
+  const mdl  = document.getElementById('sb-amdl');
+  if (dot) dot.className = 'sb-adot ' + (hasKey ? 'ok' : 'err');
+  if (lbl) lbl.textContent = hasKey ? 'API conectada' : 'Sem API Key';
+  if (mdl) mdl.textContent = cfg.model;
+}
+
+
+Expertise profunda em: roteiro (Hollywood/ABNT), direcao, fotografia cinematografica, producao executiva, pos-producao, negocios audiovisuais e mercado brasileiro.
+Gere conteudo PRONTO PARA USO PROFISSIONAL. Seja direto, especifico, use terminologia tecnica correta.
+Use formatacao clara com secoes bem definidas. Responda sempre em portugues brasileiro.`;
+
+
+
+const cur=document.getElementById('cur');
+
+// PAGES
+
+// HERO
+const ri=document.getElementById('reelInner');
+for(let i=0;i<60;i++){const f=document.createElement('div');f.className='ff';f.style.cssText=`width:calc(20% - 2px);animation-delay:${i*.3}s`;ri.appendChild(f);}
+const ar=document.getElementById('authReel');
+for(let i=0;i<80;i++){const f=document.createElement('div');f.className='auth-ff';f.style.cssText=`width:calc(16.6% - 2px);height:${40+Math.random()*40}px;animation-delay:${Math.random()*3}s`;ar.appendChild(f);}
+const mq=document.getElementById('mqTrack');
+const MI=['PRE-PRODUCAO','ROTEIRO','CALLSHEET','DECUPAGEM','ORCAMENTO','CONTRATO','PROPOSTA','COLORIZACAO','ENTREGA','MOODBOARD'];
+let mh='';for(let i=0;i<4;i++)MI.forEach(m=>{mh+=`<span>${m}</span><span class="dot">◆</span>`;});mq.innerHTML=mh;
+
+// TOOL CARDS
+const TD=[
+  {i:'🎬',n:'01',nm:'Gerador de Roteiro',d:'Roteiros formatados para qualquer formato audiovisual.',tg:['Ficcao','Publicidade'],t:'roteiro'},
+  {i:'🎞',n:'02',nm:'Decupagem Tecnica',d:'Plano de filmagem com planos, movimentos e lentes.',tg:['Direcao','DOP'],t:'decupagem'},
+  {i:'📋',n:'03',nm:'Callsheet',d:'Callsheet completo com equipe, horarios e logistica.',tg:['Producao','Set'],t:'callsheet'},
+  {i:'💰',n:'04',nm:'Orcamento',d:'Orcamentos realistas com diarias de mercado nacional.',tg:['Freelance','Produtora'],t:'orcamento'},
+  {i:'💼',n:'05',nm:'Proposta Comercial',d:'Propostas persuasivas com escopo, valores e condicoes.',tg:['Vendas','Cliente'],t:'proposta'},
+  {i:'📄',n:'06',nm:'Contratos',d:'Contratos de servico, imagem e NDA em linguagem clara.',tg:['Juridico'],t:'contrato'},
+  {i:'📝',n:'07',nm:'Briefing Inteligente',d:'Extraia todas as informacoes do cliente antes de comecar.',tg:['Discovery'],t:'briefing'},
+  {i:'🎨',n:'08',nm:'Moodboard & Look',d:'Paleta, referencias, colorizacao e prompts de IA.',tg:['Arte','Look'],t:'moodboard'},
+  {i:'✅',n:'09',nm:'Checklist de Set',d:'Lista completa de camera, audio, luz e producao.',tg:['Set','Camera'],t:'checklist'},
+  {i:'📅',n:'10',nm:'Cronograma',d:'Planejamento com fases de pre-prod, filmagem e pos.',tg:['Gestao'],t:'cronograma'},
+  {i:'📊',n:'11',nm:'Relatorio de Entrega',d:'Documente o projeto com specs e notas para o cliente.',tg:['Entrega'],t:'entrega'},
+  {i:'✶',n:'12',nm:'Assistente Livre',d:'Converse com a IA sobre producao, camera ou negocios.',tg:['IA','Chat'],t:'assistente'},
+];
+const tg=document.getElementById('tgrid');
+TD.forEach(t=>{tg.innerHTML+=`<div class="tcard fu" onclick="ot('${t.t}')"><span class="tico">${t.i}</span><div class="tnum">// ${t.n}</div><div class="tname">${t.nm}</div><div class="tdesc">${t.d}</div><div class="ttags">${t.tg.map(g=>`<span class="ttag">${g}</span>`).join('')}</div><button class="tcbtn">Abrir ferramenta →</button></div>`;});
+
+// SCROLL ANIM
+const obs=new IntersectionObserver(es=>{es.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('vis'),i*70);});},{threshold:0.08});
+document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+
+
+
+
+
+
+
+
+// STUDIO NAV
+function ost(tool){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sbi').forEach(s=>s.classList.remove('active'));
+  document.getElementById('panel-'+tool)?.classList.add('active');
+  document.getElementById('sb-'+tool)?.classList.add('active');
+  document.getElementById('mainContent').scrollTop=0;
+}
+
+// TOAST
+// OUTPUT
+function showO(tool,text,usage){
+  document.getElementById('ph-'+tool).style.display='none';
+  document.getElementById('oc-'+tool).classList.add('show');
+  document.getElementById('otxt-'+tool).textContent=text;
+  const cfg=gcfg();
+  if(usage&&document.getElementById('tok-'+tool)){
+    document.getElementById('tok-'+tool).textContent=`in:${usage.input_tokens} out:${usage.output_tokens}`;
+    document.getElementById('mtag-'+tool).textContent=cfg.mdl;
+  }
+}
+function clr(tool){
+  document.getElementById('ph-'+tool).style.display='';
+  document.getElementById('oc-'+tool).classList.remove('show');
+  document.getElementById('otxt-'+tool).textContent='';
+}
+function cp(tool){
+  const t=document.getElementById('otxt-'+tool)?.textContent;
+  if(!t){toast('⚠ Gere o conteudo primeiro');return;}
+  navigator.clipboard.writeText(t).then(()=>toast('✓ Copiado!'));
+}
+function dl(tool,fn){
+  const t=document.getElementById('otxt-'+tool)?.textContent;
+  if(!t){toast('⚠ Gere o conteudo primeiro');return;}
+  const a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(t);a.download=fn;a.click();
+  toast('↓ Download iniciado');
+}
+const fv=id=>document.getElementById(id)?.value?.trim()||'';
+
+// AI CALL
+async function callAI(userMsg,btnId=null,toolName=''){
+  const cfg=gcfg();
+  if(!cfg.key){
+    toast('⚠ Configure a API Key no Admin -> API & Config',5000);
+    return{text:'API Key nao configurada. Acesse Admin -> API & Config.',usage:null};
+  }
+  const btn=btnId?document.getElementById(btnId):null;
+  const orig=btn?.innerHTML||'';
+  if(btn){btn.disabled=true;btn.innerHTML='<span style="display:inline-block;animation:spin .8s linear infinite">⟳</span> Gerando...';}
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:cfg.mdl,max_tokens:cfg.tok,system:cfg.sp,messages:[{role:'user',content:userMsg}]})
+    });
+    const d=await res.json();
+    if(d.error)throw new Error(d.error.message);
+    const text=d.content?.[0]?.text||'Sem resposta.';
+    const usage=d.usage||null;
+    if(toolName){addLog(`Gerou: ${toolName}`,'gen');incGen(CU?.email);}
+    return{text,usage};
+  }catch(e){
+    const msg=e.message.includes('fetch')?'Erro de conexao. Verifique a rede.':'Erro: '+e.message;
+    toast('✗ '+msg.substring(0,80),5000);
+    return{text:msg,usage:null};
+  }finally{if(btn){btn.disabled=false;btn.innerHTML=orig;}}
+}
+
+// GENERATE
+async function gen(tool){
+  let msg='';
+  const bid='btn-'+tool;
+  switch(tool){
+    case 'roteiro': msg=`Gere um roteiro completo e profissional. Formate com numeracao de cenas, cabecalhos INT./EXT., acoes, dialogos centralizados, indicacoes tecnicas.\nTITULO: ${fv('r-tit')||'Sem titulo'}\nFORMATO: ${fv('r-fmt')}\nDURACAO: ${fv('r-dur')||'5 min'}\nGENERO: ${fv('r-gen')||'Drama'}\nSINOPSE: ${fv('r-sin')||'Definir'}\nPERSONAGENS: ${fv('r-per')||'A definir'}\nLOCACOES: ${fv('r-loc')||'A definir'}\nREFERENCIA: ${fv('r-ref')||'nenhuma'}\nOBS: ${fv('r-obs')||''}`; break;
+    case 'decupagem': msg=`Gere decupagem tecnica completa. Para cada plano: numero, tipo (PG/PP/PM/PA/PE/PD), movimento camera, lente (mm), duracao, conteudo, obs tecnicas.\nCENA: ${fv('d-cena')||'A descrever'}\nPLANOS: ${fv('d-pl')||10}\nDURACAO: ${fv('d-dur')||'2 min'}\nCAMERA: ${fv('d-cam')||'a definir'}\nESTILO: ${fv('d-est')}\nREFERENCIA: ${fv('d-ref')||'nenhuma'}\nEQUIPE: ${fv('d-eq')||'a definir'}\nOBS: ${fv('d-obs')||''}`; break;
+    case 'callsheet': msg=`Gere callsheet profissional completo com timeline hora a hora, lista de contatos e alertas.\nPRODUCAO: ${fv('cs-prod')||'Sem titulo'}\nDATA: ${fv('cs-data')||'a confirmar'}\nCIDADE: ${fv('cs-cid')||'a confirmar'}\nENDERECO: ${fv('cs-end')||'a confirmar'}\nCALL TIME: ${fv('cs-ct')||'07:00'}\nWRAP: ${fv('cs-wp')||'19:00'}\nDIRETOR: ${fv('cs-dir')||'a confirmar'}\nPRODUTOR: ${fv('cs-prd')||'a confirmar'}\nDOP: ${fv('cs-dop')||'a confirmar'}\nSOM: ${fv('cs-som')||'a confirmar'}\nEQUIPE: ${fv('cs-eq')||''}\nEQUIPAMENTOS: ${fv('cs-equip')||''}\nOBS: ${fv('cs-obs')||''}`; break;
+    case 'cronograma': msg=`Gere cronograma completo de producao com todas as fases: Desenvolvimento, Pre-Producao, Filmagem (dia a dia), Pos-Producao, Entrega. Para cada fase: datas, duracao, responsaveis, tarefas, marcos.\nPROJETO: ${fv('cr-nome')||'Sem titulo'}\nINICIO: ${fv('cr-ini')||'a definir'}\nENTREGA: ${fv('cr-fim')||'a definir'}\nTIPO: ${fv('cr-tipo')}\nDIAS: ${fv('cr-dias')||3}\nEQUIPE: ${fv('cr-eq')||'a definir'}\nENTREGAVEIS: ${fv('cr-ent')||'a definir'}`; break;
+    case 'briefing': msg=`Gere briefing criativo completo. Secoes: Contexto, Objetivos, Publico-Alvo, Mensagem Central, Tom & Estetica, Entregaveis, Cronograma, Restricoes, Proximos Passos.\nCLIENTE: ${fv('br-cli')||'nao informado'}\nSEGMENTO: ${fv('br-seg')||'nao informado'}\nTIPO: ${fv('br-tipo')}\nOBJETIVO: ${fv('br-obj')||'nao informado'}\nPUBLICO: ${fv('br-pub')||'nao informado'}\nVEICULACAO: ${fv('br-veic')||'nao informado'}\nDURACAO: ${fv('br-dur')||'a definir'}\nPRAZO: ${fv('br-prz')||'a definir'}\nREFERENCIAS: ${fv('br-ref')||'nenhuma'}\nRESTRICOES: ${fv('br-nao')||'nenhuma'}`; break;
+    case 'orcamento': msg=`Gere orcamento detalhado para producao audiovisual no Brasil. Valores realistas mercado SP/RJ 2024-2025. Tabela: Item, Descricao, Qtd/Dias, Valor Unit, Total. Categorias: Equipe, Equipamento, Locacao, Alimentacao, Transporte, Pos-Producao, Imprevistos 10%, Margem. Subtotais e TOTAL GERAL. Nota de validade e condicoes.\nTIPO: ${fv('or-tipo')}\nDIAS: ${fv('or-dias')||2}\nLOCACOES: ${fv('or-loc')||2}\nEQUIPE: ${fv('or-eq')}\nELENCO: ${fv('or-at')}\nCAMERA: ${fv('or-cam')}\nDRONE: ${fv('or-drone')}\nILUMINACAO: ${fv('or-luz')}\nEDICAO: ${fv('or-ed')}\nTRILHA: ${fv('or-tri')}`; break;
+    case 'proposta': msg=`Gere proposta comercial profissional e persuasiva. Tom: ${fv('pr-tom')}. Inclua: Apresentacao, Entendimento do projeto, Solucao, Escopo, Cronograma, Investimento, Condicoes, Proximos Passos com CTA.\nEMPRESA: ${fv('pr-emp')||'a preencher'}\nNOME: ${fv('pr-nome')||'a preencher'}\nDIFERENCIAIS: ${fv('pr-dif')||'experiencia no setor'}\nCLIENTE: ${fv('pr-cli')||'a preencher'}\nESCOPO: ${fv('pr-esc')||'a descrever'}\nVALOR: ${fv('pr-val')||'a definir'}\nPRAZO: ${fv('pr-prz')||'30 dias'}\nPAGAMENTO: ${fv('pr-pgto')}\nREVISOES: ${fv('pr-rev')}`; break;
+    case 'contrato': msg=`Gere ${fv('ct-tipo')} completo conforme legislacao brasileira. Clausulas: objeto, valor/pagamento, prazo, obrigacoes, propriedade intelectual, confidencialidade, penalidades, rescisao, foro. Campos de assinatura.\nCONTRATANTE: ${fv('ct-cont')||'[NOME]'} CPF/CNPJ: ${fv('ct-cpf1')||'[CPF]'}\nCONTRATADO: ${fv('ct-ctdo')||'[NOME]'} CPF/CNPJ: ${fv('ct-cpf2')||'[CPF]'}\nOBJETO: ${fv('ct-obj')||'Servicos audiovisuais'}\nVALOR: ${fv('ct-val')||'a definir'}\nPRAZO: ${fv('ct-prz')||'30 dias'}\nCIDADE: ${fv('ct-cid')||'Sao Paulo/SP'}`; break;
+    case 'moodboard': msg=`Gere moodboard e guia estetico completo:\n1. CONCEITO VISUAL - manifesto estetico (4-5 frases)\n2. PALETA DE CORES - 6 cores com hex codes e uso\n3. ILUMINACAO - setup, horario, temperatura Kelvin, contraste\n4. CAMERA - movimento, velocidade, abertura, focal\n5. COLORIZACAO - LUT sugerida, ajustes primarios e secundarios\n6. REFERENCIAS - 6 cenas especificas de filmes com descricao tecnica\n7. PROMPTS IA - 4 prompts Midjourney/DALL-E prontos\n8. TRILHA - 4 sugestoes musicais com artista e mood\nTOM: ${fv('mb-tom')}\nREFERENCIAS: ${fv('mb-ref')||'nenhuma'}\nPALETA: ${fv('mb-cor')||'a definir'}\nFORMATO: ${fv('mb-asp')}\nLOOK: ${fv('mb-col')}\nILUMINACAO: ${fv('mb-luz')}\nPROJETO: ${fv('mb-desc')||'nao descrito'}`; break;
+    case 'entrega': msg=`Gere relatorio de entrega profissional. Inclua: Sumario Executivo, Lista de Entregaveis com specs, Instrucoes de Uso, Creditos Obrigatorios, Validade de Licencas, Recomendacoes de Publicacao, Suporte, Campo de Aprovacao.\nPROJETO: ${fv('en-nome')||'sem titulo'}\nCLIENTE: ${fv('en-cli')||'nao informado'}\nPERIODO: ${fv('en-ini')||'--'} a ${fv('en-ent')||'--'}\nARQUIVOS: ${fv('en-arq')||'nao informados'}\nSPECS: ${fv('en-sp')||'nao informadas'}\nNOTAS: ${fv('en-not')||'nenhuma'}`; break;
+  }
+  const{text,usage}=await callAI(msg,bid,tool);
+  showO(tool,text,usage);
+  toast('✓ Conteudo gerado!');
+}
+
+// CHAT
+const chatH=[];
+function addCM(role,text){
+  const d=document.createElement('div');d.className='cmsg '+role;
+  d.innerHTML=`<div class="cmav">${role==='ai'?'F':'Vc'}</div><div class="cmbbl">${text.replace(/\n/g,'<br>')}</div>`;
+  document.getElementById('cmsgs').appendChild(d);
+  document.getElementById('cmsgs').scrollTop=99999;
+}
+async function sendChat(){
+  const inp=document.getElementById('cin'),send=document.getElementById('csend'),thk=document.getElementById('cthink');
+  const msg=inp.value.trim();if(!msg)return;
+  addCM('user',msg);chatH.push({role:'user',content:msg});
+  inp.value='';send.disabled=true;thk.classList.add('show');
+  const cfg=gcfg();
+  if(!cfg.key){thk.classList.remove('show');addCM('ai','API Key nao configurada. Acesse Admin > API & Config.');send.disabled=false;return;}
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:cfg.mdl,max_tokens:cfg.tok,system:cfg.sp+'\nSeja conversacional mas sempre pratico.',messages:chatH})});
+    const d=await r.json();if(d.error)throw new Error(d.error.message);
+    const reply=d.content?.[0]?.text||'Sem resposta.';
+    chatH.push({role:'assistant',content:reply});
+    thk.classList.remove('show');addCM('ai',reply);
+    addLog('Chat assistente','gen');incGen(CU?.email);
+  }catch(e){thk.classList.remove('show');addCM('ai','Erro: '+e.message);}
+  send.disabled=false;
+}
+function clrChat(){chatH.length=0;document.getElementById('cmsgs').innerHTML='<div class="cmsg ai"><div class="cmav">F</div><div class="cmbbl">Conversa reiniciada! Como posso ajudar? 🎬</div></div>';}
+function cpChat(){const t=[...document.querySelectorAll('#cmsgs .cmbbl')].map(m=>m.textContent).join('\n---\n');navigator.clipboard.writeText(t).then(()=>toast('✓ Chat copiado'));}
+function toChatMode(prefix){ost('assistente');document.getElementById('cin').value=prefix+' ';document.getElementById('cin').focus();}
+function toChat(tool){const t=document.getElementById('otxt-'+tool)?.textContent;ost('assistente');document.getElementById('cin').value=t?`Refine o conteudo:\n\n${t.substring(0,600)}...`:'Me ajude com '+tool+': ';}
+document.getElementById('cin').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}});
+
+// CHECKLIST
+const CLD={
+  camera:['Camera principal + backup testada','Baterias (min. 4) carregadas','Cartoes de memoria formatados','Lentes limpas (wide, normal, tele)','Filtros ND (ND4, ND8, ND64)','Tripe com cabeca fluida','Monope / Shoulder rig','Gimbal/Steadicam calibrado','Monitor externo + cabos HDMI','Carregadores + cabos extras','Panos de microfibra','Mochila / Case seguro'],
+  audio:['Microfone shotgun (camera)','Microfone boom + vara','Microfones de lapela wireless','Gravador externo (Zoom H6)','Fones de ouvido para monitoramento','Cabos XLR (min. 4)','Baterias para microfones','Protetor de vento (dead cat)','Claquete para sync de audio','Espumas extras'],
+  luz:['Luz principal (key light)','Fill light / rebatedor','Backlight / rim light','Difusores e softboxes','Rebatedores (branco/prata/dourado)','Extensoes e reguas (min. 15m)','Dimmer / controle','Gelatinas (CTO, CTB, ND)','Bandeiras / flags','Verificar voltagem da locacao'],
+  prod:['Callsheet impresso para equipe','Roteiro e decupagem impressos','Autorizacao de locacao assinada','Autorizacoes de imagem','Kit primeiros socorros','Fita gaffer preta e branca','Walkie-talkies ou grupo WhatsApp','Folha de continuidade','Snacks e agua para equipe','Dinheiro em especie (emergencias)'],
+  pos:['HDs formatados e testados','HD de backup (regra 3-2-1)','Software atualizado','LUTs de referencia salvas','Estrutura de pastas definida','Briefing de edicao revisado','Canais de entrega confirmados'],
+  ia:[]
+};
+let clTab='camera';
+function swCL(idx,tab,btn){clTab=tab;document.querySelectorAll('#panel-checklist .itab').forEach((t,i)=>t.classList.toggle('active',i===idx));renderCL();}
+function renderCL(){
+  const body=document.getElementById('clBody');
+  if(clTab==='ia'){
+    body.innerHTML=`<div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:12px">// Gerar lista personalizada com IA</div>
+      <div class="field"><label>Tipo de producao</label><input type="text" id="cl-tipo" placeholder="Filmagem de casamento, publicidade de luxo..."></div>
+      <button class="gbtn" id="btn-cl-ia" onclick="genCL()" style="margin-bottom:16px">► Gerar lista</button>
+      <div id="cl-ia-out" style="display:none"><pre id="cl-ia-txt" style="white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:.83rem;line-height:1.75;color:var(--cream)"></pre></div>
+    </div>`;return;
+  }
+  const items=CLD[clTab]||[];
+  const saved=JSON.parse(localStorage.getItem('cl-'+clTab)||'{}');
+  const done=items.filter((_,i)=>saved[i]).length;
+  const pct=items.length?Math.round(done/items.length*100):0;
+  body.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:7px">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--gl)">${done}/${items.length} concluidos</span>
+    <div style="flex:1;max-width:150px;height:3px;background:var(--g3);border-radius:2px"><div style="height:100%;width:${pct}%;background:var(--orange);border-radius:2px;transition:width .3s"></div></div>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--orange)">${pct}%</span>
+  </div>
+  <div class="cllist">${items.map((it,i)=>`<div class="clitem${saved[i]?' done':''}" onclick="tgCk('${clTab}',${i})"><input type="checkbox" ${saved[i]?'checked':''} onclick="event.stopPropagation();tgCk('${clTab}',${i})"><label>${it}</label></div>`).join('')}</div>`;
+}
+function tgCk(tab,idx){const s=JSON.parse(localStorage.getItem('cl-'+tab)||'{}');s[idx]=!s[idx];localStorage.setItem('cl-'+tab,JSON.stringify(s));renderCL();}
+function ckAll(val){const s={};(CLD[clTab]||[]).forEach((_,i)=>s[i]=val);val?localStorage.setItem('cl-'+clTab,JSON.stringify(s)):localStorage.removeItem('cl-'+clTab);renderCL();}
+function rstCL(){['camera','audio','luz','prod','pos'].forEach(t=>localStorage.removeItem('cl-'+t));renderCL();toast('✓ Checklist resetado');}
+function cpCL(){const items=CLD[clTab];if(!items){toast('⚠ Sem lista');return;}const s=JSON.parse(localStorage.getItem('cl-'+clTab)||'{}');navigator.clipboard.writeText('CHECKLIST -- '+clTab.toUpperCase()+'\n\n'+items.map((it,i)=>`[${s[i]?'X':' '}] ${it}`).join('\n')).then(()=>toast('✓ Copiado'));}
+async function genCL(){
+  const tipo=document.getElementById('cl-tipo')?.value||'producao audiovisual';
+  const btn=document.getElementById('btn-cl-ia');btn.disabled=true;btn.textContent='⟳ Gerando...';
+  const{text}=await callAI(`Gere checklist detalhado para: ${tipo}. Categorias claras com emoji. Itens tecnicos especificos. Formato: categoria MAIUSCULO, depois itens com [ ] no inicio.`,null,'checklist-ia');
+  btn.disabled=false;btn.textContent='► Gerar lista';
+  document.getElementById('cl-ia-out').style.display='block';
+  document.getElementById('cl-ia-txt').textContent=text;
+  toast('✓ Lista gerada!');
+}
+renderCL();
+
+// ADMIN
+function aTab(sec,btn){
+  document.querySelectorAll('.adm-sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.adm-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('adm-'+sec).classList.add('active');btn.classList.add('active');
+  if(sec==='users')renderUsers();
+  if(sec==='logs')renderLogs();
+  if(sec==='api')loadCfg();
+  if(sec==='dash')renderDash();
+}
+function renderAdmin(){renderDash();renderUsers();renderLogs();loadCfg();renderUso();}
+function renderDash(){
+  const users=gusers();const logs=glogs();const cfg=gcfg();
+  if(document.getElementById('st-users'))document.getElementById('st-users').textContent=users.length;
+  if(document.getElementById('st-gens'))document.getElementById('st-gens').textContent=logs.filter(l=>l.tag==='gen').length;
+  if(document.getElementById('st-mdl'))document.getElementById('st-mdl').textContent=cfg.mdl.replace('claude-','').replace('-','|');
+  const hk=!!cfg.key;
+  if(document.getElementById('st-api'))document.getElementById('st-api').textContent=hk?'✓':'✗';
+  if(document.getElementById('st-api-txt'))document.getElementById('st-api-txt').textContent=hk?'API configurada':'Sem API Key';
+  const dashEl=document.getElementById('dash-logs');
+  if(dashEl)dashEl.innerHTML=logs.slice(0,8).map(l=>`<div class="loge"><span class="lg-time">${l.t}</span><span class="lg-user">${(l.u||'').split('@')[0]}</span><span class="lg-act">${l.act}</span><span class="lg-tag lt-${l.tag}">${l.tag}</span></div>`).join('')||'<div style="padding:14px;color:var(--gl);font-size:.82rem">Sem atividade.</div>';
+}
+function renderUsers(){
+  const users=gusers();const q=document.getElementById('usr-search')?.value?.toLowerCase()||'';
+  const flt=q?users.filter(u=>u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q)):users;
+  const tb=document.getElementById('usr-tbody');if(!tb)return;
+  tb.innerHTML=flt.map(u=>`<tr><td>${u.name}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.7rem">${u.email}</td><td><span class="rbadge ${u.type==='admin'?'rb-a':'rb-u'}">${u.type==='admin'?'❖ Admin':'◈ Filmmaker'}</span></td><td><span class="sdot ${u.active?'on':'off'}"></span>${u.active?'Ativo':'Inativo'}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.7rem">${u.gens||0}</td><td><button class="tbtn" onclick="tglUser('${u.id}')">${u.active?'Desativar':'Ativar'}</button><button class="tbtn dg" onclick="delUser('${u.id}')">Remover</button></td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:18px;color:var(--gl)">Nenhum usuario.</td></tr>';
+}
+function tglUser(id){const u=gusers();const usr=u.find(x=>x.id==id);if(usr){usr.active=!usr.active;susers(u);renderUsers();addLog(`${usr.active?'Ativou':'Desativou'}: ${usr.name}`,'admin');toast('✓ Atualizado');}}
+function delUser(id){if(!confirm('Remover usuario?'))return;susers(gusers().filter(x=>x.id!=id));renderUsers();toast('✓ Removido');}
+function addUsr(){
+  const nm=document.getElementById('nu-name').value.trim();
+  const em=document.getElementById('nu-email').value.trim();
+  const pw=document.getElementById('nu-pw').value;
+  const type=document.getElementById('nu-type').value;
+  if(!nm||!em||!pw){toast('⚠ Preencha nome, email e senha');return;}
+  const u=gusers();if(u.find(x=>x.email===em)){toast('⚠ Email ja cadastrado');return;}
+  u.push({id:Date.now(),name:nm,email:em,pw:btoa(pw),type,active:true,gens:0,createdAt:new Date().toLocaleDateString('pt-BR')});
+  susers(u);renderUsers();
+  ['nu-name','nu-email','nu-pw'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  addLog(`Admin adicionou: ${nm}`,'admin');toast('✓ Usuario adicionado!');
+}
+function renderLogs(){const el=document.getElementById('logs-list');if(!el)return;const logs=glogs();el.innerHTML=logs.map(l=>`<div class="loge"><span class="lg-time">${l.t}</span><span class="lg-user">${(l.u||'--').split('@')[0]}</span><span class="lg-act">${l.act}</span><span class="lg-tag lt-${l.tag}">${l.tag}</span></div>`).join('')||'<div style="padding:14px;color:var(--gl);font-size:.82rem">Sem logs.</div>';}
+function clrLogs(){if(!confirm('Limpar logs?'))return;slogs([]);renderLogs();renderDash();toast('✓ Logs limpos');}
+function exportLogs(){const l=glogs();const csv='Hora,Usuario,Acao,Tipo\n'+l.map(x=>`${x.t},${x.u},${x.act},${x.tag}`).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='frameai-logs.csv';a.click();toast('↓ Exportado');}
+function loadCfg(){
+  const cfg=gcfg();
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+  set('cfg-key',cfg.key);set('cfg-mdl',cfg.mdl);set('cfg-tok',cfg.tok);
+  set('cfg-sp',cfg.sp);set('cfg-acode',cfg.acode);set('cfg-lim',cfg.lim);set('cfg-mode',cfg.mode);
+  renderUso();
+}
+function saveCfg(){
+  const key=document.getElementById('cfg-key').value.trim();
+  const mdl=document.getElementById('cfg-mdl').value;
+  const tok=document.getElementById('cfg-tok').value;
+  if(!key.startsWith('sk-')){toast('⚠ API Key invalida. Deve comecar com sk-');return;}
+  localStorage.setItem('fa_key',key);localStorage.setItem('fa_mdl',mdl);localStorage.setItem('fa_tok',tok);
+  updApiStatus();addLog('API Key atualizada','admin');toast('✓ Config de API salva!');
+}
+function saveSp(){const sp=document.getElementById('cfg-sp').value.trim();if(!sp){toast('⚠ Prompt vazio');return;}localStorage.setItem('fa_sp',sp);addLog('System prompt atualizado','admin');toast('✓ Prompt salvo!');}
+function saveAccess(){
+  const acode=document.getElementById('cfg-acode').value.trim();
+  const lim=document.getElementById('cfg-lim').value;
+  const mode=document.getElementById('cfg-mode').value;
+  if(acode)localStorage.setItem('fa_acode',acode);
+  localStorage.setItem('fa_lim',lim);localStorage.setItem('fa_mode',mode);
+  addLog('Controle de acesso atualizado','admin');toast('✓ Controle de acesso salvo!');
+}
+async function testApi(){
+  const key=document.getElementById('cfg-key').value.trim();
+  const mdl=document.getElementById('cfg-mdl').value;
+  if(!key.startsWith('sk-')){toast('⚠ API Key invalida');return;}
+  const dot=document.getElementById('a-dot');const txt=document.getElementById('a-txt');
+  dot.className='adot testing';txt.textContent='Testando...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:mdl,max_tokens:20,messages:[{role:'user',content:'Say: OK'}]})});
+    const d=await r.json();if(d.error)throw new Error(d.error.message);
+    dot.className='adot ok';txt.textContent='✓ Conectado -- '+mdl;
+    if(document.getElementById('st-api'))document.getElementById('st-api').innerHTML='✓';
+    if(document.getElementById('st-api-txt'))document.getElementById('st-api-txt').textContent='API online';
+    addLog('Teste API: sucesso','admin');toast('✓ API Anthropic conectada!');
+  }catch(e){dot.className='adot err';txt.textContent='✗ Erro: '+e.message.substring(0,50);toast('✗ Falha: '+e.message.substring(0,60),5000);}
+}
+function renderUso(){
+  const el=document.getElementById('uso-stats');if(!el)return;
+  const logs=glogs();const gens=logs.filter(l=>l.tag==='gen');
+  const byU={};gens.forEach(l=>{byU[l.u]=(byU[l.u]||0)+1;});
+  const top=Object.entries(byU).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  el.innerHTML=`<div style="font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.12em;color:var(--gl);margin-bottom:7px">TOP USUARIOS</div>`+
+    (top.length?top.map(([u,n])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--g3);font-size:.79rem"><span style="color:var(--gl)">${u.split('@')[0]}</span><span style="font-family:'JetBrains Mono',monospace;color:var(--orange)">${n}x</span></div>`).join(''):'<div style="color:var(--gl);font-size:.79rem">Sem dados.</div>')+
+    `<div style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--gl)">TOTAL GERACOES</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--orange)">${gens.length}</div>`;
+}
+
+// INIT
+
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function resetAndSetup() {
+  if (!confirm('Isso irá limpar as configurações de API e reiniciar o assistente. Continuar?')) return;
+  localStorage.removeItem(STORAGE_KEYS.setupDone);
+  localStorage.removeItem(STORAGE_KEYS.apiKey);
+  localStorage.removeItem(STORAGE_KEYS.model);
+  logout();
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-setup').classList.add('active');
+  initSetup();
+  toast('↺ Setup reiniciado');
+}
+
+function init() {
+  const sess = getSession();
+  
+  // First-run: no setup done yet
+  if (!isSetupDone()) {
+    // Check if there are already admin users (imported/migrated state)
+    const users = getUsers();
+    const hasAdmin = users.some(u => u.type === 'admin');
+    
+    if (!hasAdmin && !getCfg().apiKey) {
+      // Truly first run — show setup wizard
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const setupPage = document.getElementById('page-setup');
+      if (setupPage) { setupPage.classList.add('active'); initSetup(); return; }
+    }
+  }
+  
+  // Restore session
+  if (sess) {
+    currentUser = sess;
+    // Validate user still exists and is active
+    const users = getUsers();
+    const fresh = users.find(u => u.id === sess.id && u.active);
+    if (!fresh) { clearSession(); showPg('login'); return; }
+    currentUser = fresh;
+    setupNav();
+    if (fresh.type === 'admin') showPg('admin');
+    else showPg('landing');
+  } else {
+    showPg('login');
+  }
+
+  // Default dates
+  const today = new Date().toISOString().split('T')[0];
+  ['cs-data','cr-ini','en-ini','en-ent'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.value) el.value = today;
+  });
+
+  // Re-run scroll observer
+  setTimeout(() => document.querySelectorAll('.fu:not(.vis)').forEach(el => obs.observe(el)), 300);
+}
+
+init();
+</script>
+</body>
+</html>

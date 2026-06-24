@@ -1,0 +1,404 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./design-system/tokens.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ─── FRAME.AI Design System (index_1.html / index_2.html) ─── */
+@theme inline {
+  --font-frame-display: "Bebas Neue", sans-serif;
+  --font-frame-body: "DM Sans", sans-serif;
+  --font-frame-mono: "JetBrains Mono", monospace;
+
+  --color-frame-black: #080808;
+  --color-frame-white: #f5f0e8;
+  --color-frame-cream: #e8e0d0;
+  --color-frame-orange: #ff4d00;
+  --color-frame-orange-dark: #cc3d00;
+  --color-frame-gray-1: #141414;
+  --color-frame-gray-2: #1e1e1e;
+  --color-frame-gray-3: #2a2a2a;
+  --color-frame-gray-light: #777777;
+  --color-frame-gray-muted: #444444;
+  --color-frame-green: #00c864;
+  --color-frame-red: #ff3b3b;
+  --color-frame-gold: #ffb800;
+
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --frame-orange-bg: rgba(255, 77, 0, 0.09);
+  --radius: 2px;
+
+  --background: #080808;
+  --foreground: #f5f0e8;
+  --card: #1e1e1e;
+  --card-foreground: #f5f0e8;
+  --popover: #1e1e1e;
+  --popover-foreground: #f5f0e8;
+  --primary: #ff4d00;
+  --primary-foreground: #080808;
+  --secondary: #141414;
+  --secondary-foreground: #f5f0e8;
+  --muted: #1e1e1e;
+  --muted-foreground: #777777;
+  --accent: rgba(255, 77, 0, 0.09);
+  --accent-foreground: #ff4d00;
+  --destructive: #ff3b3b;
+  --destructive-foreground: #f5f0e8;
+  --border: #2a2a2a;
+  --input: #141414;
+  --ring: #ff4d00;
+  --sidebar: #141414;
+  --sidebar-foreground: #f5f0e8;
+  --sidebar-primary: #ff4d00;
+  --sidebar-primary-foreground: #080808;
+  --sidebar-accent: #1e1e1e;
+  --sidebar-accent-foreground: #f5f0e8;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #ff4d00;
+}
+
+.dark {
+  --background: #080808;
+  --foreground: #f5f0e8;
+  --card: #1e1e1e;
+  --card-foreground: #f5f0e8;
+  --primary: #ff4d00;
+  --primary-foreground: #080808;
+  --muted-foreground: #777777;
+  --border: #2a2a2a;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-frame-body);
+  }
+
+  /* Unified focus ring (premium, minimal) */
+  :where(button, a, input, textarea, select, [role="button"], [tabindex]):focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px rgba(255, 77, 0, 0.35), 0 0 0 4px rgba(255, 77, 0, 0.12);
+  }
+
+  .frame-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9990;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  a[href],
+  select:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer components {
+  .font-frame-display {
+    font-family: var(--font-frame-display);
+  }
+
+  .font-frame-body {
+    font-family: var(--font-frame-body);
+  }
+
+  .font-frame-mono {
+    font-family: var(--font-frame-mono);
+  }
+
+  /* Section label — // FERRAMENTAS */
+  .frame-label {
+    font-family: var(--font-frame-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--color-frame-orange);
+  }
+
+  /* Display title — Bebas Neue */
+  .frame-title {
+    font-family: var(--font-frame-display);
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+  }
+
+  /* Primary CTA — angled clip-path */
+  .frame-btn-primary {
+    background: var(--color-frame-orange);
+    color: var(--color-frame-black);
+    font-family: var(--font-frame-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 14px 28px;
+    border: none;
+    transition: background var(--ds-dur-2) var(--ds-ease-out),
+      transform var(--ds-dur-2) var(--ds-ease-out),
+      box-shadow var(--ds-dur-2) var(--ds-ease-out);
+    clip-path: polygon(
+      0 0,
+      calc(100% - 10px) 0,
+      100% 10px,
+      100% 100%,
+      10px 100%,
+      0 calc(100% - 10px)
+    );
+  }
+
+  .frame-btn-primary:hover:not(:disabled) {
+    background: var(--color-frame-orange-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--ds-shadow-glow);
+  }
+
+  .frame-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Ghost / secondary */
+  .frame-btn-ghost {
+    color: var(--color-frame-gray-light);
+    font-family: var(--font-frame-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--color-frame-gray-3);
+    padding: 12px 18px;
+    transition: color var(--ds-dur-2) var(--ds-ease-out),
+      border-color var(--ds-dur-2) var(--ds-ease-out),
+      background var(--ds-dur-2) var(--ds-ease-out);
+  }
+
+  .frame-btn-ghost:hover {
+    color: var(--color-frame-white);
+    border-color: #555555;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  /* Tool card — tcard */
+  .frame-card {
+    background: var(--color-frame-gray-2);
+    border: 1px solid transparent;
+    padding: 34px 30px;
+    position: relative;
+    overflow: hidden;
+    transition: background var(--ds-dur-3) var(--ds-ease-out),
+      border-color var(--ds-dur-3) var(--ds-ease-out),
+      transform var(--ds-dur-3) var(--ds-ease-out);
+  }
+
+  .frame-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 0;
+    background: var(--color-frame-orange);
+    transition: height 0.35s;
+  }
+
+  .frame-card:hover {
+    background: #1c1c1c;
+    border-color: var(--color-frame-orange);
+    transform: translateY(-1px);
+  }
+
+  .frame-card:hover::before {
+    height: 100%;
+  }
+
+  /* Input fields */
+  .frame-input {
+    width: 100%;
+    background: var(--color-frame-gray-2);
+    border: 1px solid var(--color-frame-gray-3);
+    color: var(--color-frame-white);
+    padding: 12px 15px;
+    font-family: var(--font-frame-body);
+    font-size: 0.88rem;
+    border-radius: 0;
+    outline: none;
+    transition: border-color var(--ds-dur-2) var(--ds-ease-out),
+      background var(--ds-dur-2) var(--ds-ease-out);
+  }
+
+  .frame-input:focus {
+    border-color: var(--color-frame-orange);
+  }
+
+  .frame-input::placeholder {
+    color: #2a2a2a;
+  }
+
+  /* App nav — fixed glass */
+  .frame-nav {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 36px;
+    background: rgba(8, 8, 8, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-frame-gray-2);
+  }
+
+  .frame-nav-link {
+    font-family: var(--font-frame-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-frame-gray-light);
+    transition: color 0.2s;
+    background: none;
+    border: none;
+  }
+
+  .frame-nav-link:hover,
+  .frame-nav-link.active {
+    color: var(--color-frame-white);
+  }
+
+  .frame-badge {
+    font-family: var(--font-frame-mono);
+    font-size: 0.48rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    background: var(--frame-orange-bg);
+    color: var(--color-frame-orange);
+    border: 1px solid rgba(255, 77, 0, 0.28);
+  }
+
+  .frame-tag {
+    font-family: var(--font-frame-mono);
+    font-size: 0.53rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    background: #1e1e1e;
+    color: var(--color-frame-gray-light);
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+
+  /* Reusable surfaces */
+  .ds-surface {
+    background: var(--color-frame-gray-2);
+    border: 1px solid var(--color-frame-gray-3);
+  }
+
+  .ds-toolbar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 12px 18px;
+    background: var(--color-frame-gray-1);
+    border-top: 1px solid #1a1a1a;
+  }
+
+  .ds-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .ds-table th {
+    font-family: var(--font-frame-mono);
+    font-size: 0.53rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-frame-gray-light);
+    padding: 10px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-frame-gray-3);
+  }
+
+  .ds-table td {
+    padding: 11px 15px;
+    border-bottom: 1px solid #0f0f0f;
+    font-size: 0.81rem;
+    color: var(--color-frame-cream);
+  }
+
+  .ds-table tr:hover td {
+    background: #1d1d1d;
+  }
+
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1280px;
+    }
+  }
+}

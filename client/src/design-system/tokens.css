@@ -1,0 +1,70 @@
+/* FRAME.AI Design System Tokens
+   Source of truth for global variables (used by Tailwind + components)
+*/
+
+:root {
+  /* Typography */
+  --ds-font-display: "Bebas Neue", sans-serif;
+  --ds-font-body: "DM Sans", sans-serif;
+  --ds-font-mono: "JetBrains Mono", monospace;
+
+  /* Color system */
+  --ds-black: #080808;
+  --ds-white: #f5f0e8;
+  --ds-cream: #e8e0d0;
+  --ds-orange: #ff4d00;
+  --ds-orange-2: #cc3d00;
+
+  --ds-surface-0: #080808; /* app bg */
+  --ds-surface-1: #141414; /* chrome */
+  --ds-surface-2: #1e1e1e; /* cards */
+  --ds-surface-3: #2a2a2a; /* borders */
+
+  --ds-text-1: #f5f0e8;
+  --ds-text-2: #e8e0d0;
+  --ds-text-3: #777777;
+  --ds-text-4: #444444;
+
+  --ds-success: #00c864;
+  --ds-danger: #ff3b3b;
+  --ds-warning: #ffb800;
+
+  /* Border system */
+  --ds-border-1: 1px;
+  --ds-border-2: 2px;
+  --ds-radius-0: 0px;
+  --ds-radius-1: 2px;
+
+  /* Spacing scale (4pt-ish, tuned for cinematic density) */
+  --ds-space-0: 0px;
+  --ds-space-1: 2px;
+  --ds-space-2: 4px;
+  --ds-space-3: 6px;
+  --ds-space-4: 8px;
+  --ds-space-5: 10px;
+  --ds-space-6: 12px;
+  --ds-space-7: 14px;
+  --ds-space-8: 16px;
+  --ds-space-10: 20px;
+  --ds-space-12: 24px;
+  --ds-space-14: 28px;
+  --ds-space-16: 32px;
+  --ds-space-18: 36px;
+  --ds-space-20: 40px;
+  --ds-space-24: 48px;
+  --ds-space-28: 56px;
+  --ds-space-32: 64px;
+
+  /* Shadows (subtle, premium) */
+  --ds-shadow-1: 0 1px 0 rgba(0, 0, 0, 0.6);
+  --ds-shadow-2: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --ds-shadow-glow: 0 0 0 1px rgba(255, 77, 0, 0.18), 0 0 40px rgba(255, 77, 0, 0.06);
+
+  /* Motion */
+  --ds-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ds-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ds-dur-1: 120ms;
+  --ds-dur-2: 180ms;
+  --ds-dur-3: 280ms;
+}
+
