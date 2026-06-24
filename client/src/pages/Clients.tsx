@@ -66,6 +66,21 @@ interface Client {
   total_spent: number;
   created_at: string;
   updated_at: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  website?: string;
+  linkedin?: string;
+  instagram?: string;
+  industry?: string;
+  company_size?: string;
+  annual_revenue?: number;
+  contact_person?: string;
+  contact_role?: string;
+  billing_cycle?: string;
+  payment_method?: string;
+  tax_id?: string;
 }
 
 const WORKFLOW_STAGES = [
@@ -168,6 +183,23 @@ function ClientsContent() {
   const [status, setStatus] = useState("lead");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Additional detailed fields
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+  const [website, setWebsite] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [companySize, setCompanySize] = useState("");
+  const [annualRevenue, setAnnualRevenue] = useState("");
+  const [contactPerson, setContactPerson] = useState("");
+  const [contactRole, setContactRole] = useState("");
+  const [billingCycle, setBillingCycle] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [taxId, setTaxId] = useState("");
 
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
@@ -269,6 +301,21 @@ function ClientsContent() {
           segment,
           status,
           notes: notes.trim() || undefined,
+          address: address.trim() || undefined,
+          city: city.trim() || undefined,
+          state: state.trim() || undefined,
+          country: country.trim() || undefined,
+          website: website.trim() || undefined,
+          linkedin: linkedin.trim() || undefined,
+          instagram: instagram.trim() || undefined,
+          industry: industry.trim() || undefined,
+          company_size: companySize.trim() || undefined,
+          annual_revenue: annualRevenue ? parseInt(annualRevenue) : undefined,
+          contact_person: contactPerson.trim() || undefined,
+          contact_role: contactRole.trim() || undefined,
+          billing_cycle: billingCycle.trim() || undefined,
+          payment_method: paymentMethod.trim() || undefined,
+          tax_id: taxId.trim() || undefined,
         }),
       });
 
@@ -306,6 +353,21 @@ function ClientsContent() {
           segment,
           status,
           notes: notes.trim() || undefined,
+          address: address.trim() || undefined,
+          city: city.trim() || undefined,
+          state: state.trim() || undefined,
+          country: country.trim() || undefined,
+          website: website.trim() || undefined,
+          linkedin: linkedin.trim() || undefined,
+          instagram: instagram.trim() || undefined,
+          industry: industry.trim() || undefined,
+          company_size: companySize.trim() || undefined,
+          annual_revenue: annualRevenue ? parseInt(annualRevenue) : undefined,
+          contact_person: contactPerson.trim() || undefined,
+          contact_role: contactRole.trim() || undefined,
+          billing_cycle: billingCycle.trim() || undefined,
+          payment_method: paymentMethod.trim() || undefined,
+          tax_id: taxId.trim() || undefined,
         }),
       });
 
@@ -361,6 +423,21 @@ function ClientsContent() {
     setSegment(client.segment);
     setStatus(client.status);
     setNotes(client.notes || "");
+    setAddress(client.address || "");
+    setCity(client.city || "");
+    setState(client.state || "");
+    setCountry(client.country || "");
+    setWebsite(client.website || "");
+    setLinkedin(client.linkedin || "");
+    setInstagram(client.instagram || "");
+    setIndustry(client.industry || "");
+    setCompanySize(client.company_size || "");
+    setAnnualRevenue(client.annual_revenue?.toString() || "");
+    setContactPerson(client.contact_person || "");
+    setContactRole(client.contact_role || "");
+    setBillingCycle(client.billing_cycle || "");
+    setPaymentMethod(client.payment_method || "");
+    setTaxId(client.tax_id || "");
     setIsEditOpen(true);
   };
 
@@ -372,6 +449,21 @@ function ClientsContent() {
     setSegment("direct");
     setStatus("lead");
     setNotes("");
+    setAddress("");
+    setCity("");
+    setState("");
+    setCountry("");
+    setWebsite("");
+    setLinkedin("");
+    setInstagram("");
+    setIndustry("");
+    setCompanySize("");
+    setAnnualRevenue("");
+    setContactPerson("");
+    setContactRole("");
+    setBillingCycle("");
+    setPaymentMethod("");
+    setTaxId("");
     setSelectedClient(null);
   };
 
