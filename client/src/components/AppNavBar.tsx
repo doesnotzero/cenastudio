@@ -91,19 +91,23 @@ export default function AppNavBar({ children }: AppNavBarProps) {
         {navLink("/video-reviews", "Reviews")}
         {navLink("/collaborators", "Equipe")}
         {navLink("/analytics", "Analytics")}
+        {navLink("/profile", "Conta")}
         {isAdmin && navLink("/admin", "Admin")}
       </nav>
 
       <div className="flex items-center gap-2.5">
         {children}
         {user && (
-          <div
+          <button
+            type="button"
+            onClick={() => setLocation("/profile")}
             className={`w-7 h-7 rounded-full flex items-center justify-center text-[0.68rem] font-bold shrink-0 ${
               isAdmin ? "bg-frame-gold text-frame-black" : "bg-frame-orange text-frame-black"
             }`}
+            title="Abrir conta"
           >
             {(user.name ?? user.email).charAt(0).toUpperCase()}
-          </div>
+          </button>
         )}
         <span className="hidden sm:inline font-frame-mono text-[0.58rem] tracking-[0.09em] uppercase text-frame-gray-light">
           {user?.name ?? user?.email}

@@ -19,6 +19,7 @@ import ForgotPassword from "@/pages/ForgotPassword";
 import AuthCallback from "@/pages/AuthCallback";
 import Login from "@/pages/Login";
 import Pipeline from "@/pages/Pipeline";
+import Profile from "@/pages/Profile";
 import Register from "@/pages/Register";
 import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
@@ -45,7 +46,9 @@ function Router() {
       <Route path="/clients/:id" component={Clients} />
       <Route path="/pipeline" component={Pipeline} />
       <Route path="/interactions" component={Interactions} />
+      <Route path="/files" component={Files} />
       <Route path="/files/:projectId" component={Files} />
+      <Route path="/video-reviews" component={VideoReviews} />
       <Route path="/video-reviews/:projectId" component={VideoReviews} />
       <Route path="/review/:token" component={SharedReview} />
       <Route path="/collaborators" component={Collaborators} />
@@ -53,6 +56,7 @@ function Router() {
       <Route path="/success" component={Success} />
       <Route path="/tools" component={Tools} />
       <Route path="/tools/:id" component={ToolDetail} />
+      <Route path="/profile" component={Profile} />
       <Route path="/studio/:id" component={Studio} />
       <Route path="/project/:projectId/studio/:id" component={Studio} />
       <Route path="/admin" component={AdminDashboard} />

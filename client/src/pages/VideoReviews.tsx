@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Play, Plus, Share2, MessageSquare, Clock, CheckCircle, XCircle, Trash2, Copy, ExternalLink, Upload, Link as LinkIcon, FileVideo } from "lucide-react";
+import AppNavBar from "@/components/AppNavBar";
+import ProjectGateway from "@/components/ProjectGateway";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { Play, Plus, Share2, MessageSquare, Clock, CheckCircle, XCircle, Trash2, Copy, ExternalLink, FileVideo } from "lucide-react";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
 
 interface VideoReview {
   id: number;
@@ -30,10 +32,18 @@ interface VideoComment {
   created_at: string;
 }
 
-export default function VideoReviews() {
+interface ProjectFile {
+  id: number;
+  original_name: string;
+  mime_type: string | null;
+  size: number | null;
+}
+
+function VideoReviewsContent() {
   const { projectId } = useParams<{ projectId: string }>();
   const [, setLocation] = useLocation();
   const [reviews, setReviews] = useState<VideoReview[]>([]);
+  const [projectFiles, setProjectFiles] = useState<ProjectFile[]>([]);
   const [selectedReview, setSelectedReview] = useState<VideoReview | null>(null);
   const [comments, setComments] = useState<VideoComment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,14 +52,17 @@ export default function VideoReviews() {
   const [shareUrl, setShareUrl] = useState("");
   const [newReviewTitle, setNewReviewTitle] = useState("");
   const [newReviewDescription, setNewReviewDescription] = useState("");
+  const [selectedFileId, setSelectedFileId] = useState("");
   const [newComment, setNewComment] = useState("");
   const [newCommentTimestamp, setNewCommentTimestamp] = useState(0);
-  const [uploadMethod, setUploadMethod] = useState<"file" | "url">("file");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
-    loadReviews();
+    if (projectId) {
+      loadReviews();
+      loadProjectFiles();
+    } else {
+      setLoading(false);
+    }
   }, [projectId]);
 
   const loadReviews = async () => {
@@ -69,6 +82,22 @@ export default function VideoReviews() {
     }
   };
 
+  const loadProjectFiles = async () => {
+    if (!projectId) return;
+
+    try {
+      const response = await fetch(`/api/files/projects/${projectId}`, {
+        credentials: "include",
+      });
+      const data = await response.json();
+      if (data.success) {
+        setProjectFiles(data.data);
+      }
+    } catch {
+      toast.error("Erro ao carregar arquivos do projeto");
+    }
+  };
+
   const loadReviewDetails = async (reviewId: number) => {
     try {
       const response = await fetch(`/api/video-reviews/${reviewId}`, {
@@ -85,19 +114,29 @@ export default function VideoReviews() {
   };
 
   const handleCreateReview = async () => {
+    if (!projectId) {
+      toast.error("Selecione um projeto antes de criar review");
+      return;
+    }
+
     if (!newReviewTitle.trim()) {
       toast.error("Título é obrigatório");
       return;
     }
 
+    if (!selectedFileId) {
+      toast.error("Selecione um video do projeto");
+      return;
+    }
+
     try {
-      const response = await fetch("/api video-reviews", {
+      const response = await fetch("/api/video-reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          projectId: parseInt(projectId!),
-          fileId: 1, // TODO: Allow user to select file
+          projectId: parseInt(projectId),
+          fileId: parseInt(selectedFileId),
           title: newReviewTitle,
           description: newReviewDescription,
         }),
@@ -108,7 +147,10 @@ export default function VideoReviews() {
         setShowCreateModal(false);
         setNewReviewTitle("");
         setNewReviewDescription("");
+        setSelectedFileId("");
         loadReviews();
+      } else {
+        toast.error(data.error || "Erro ao criar review");
       }
     } catch (error) {
       toast.error("Erro ao criar review");
@@ -210,12 +252,30 @@ export default function VideoReviews() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const videoFiles = projectFiles.filter((file) => file.mime_type?.startsWith("video/"));
+
+  if (!projectId) {
+    return (
+      <div className="min-h-screen bg-frame-black text-frame-white font-frame-body flex flex-col">
+        <AppNavBar />
+        <ProjectGateway
+          eyebrow="// Reviews"
+          title="REVIEWS"
+          description="Escolha ou crie um projeto para revisar videos, gerar links compartilhaveis e concentrar comentarios por timestamp."
+          actionLabel="Criar e abrir reviews"
+          routeBase="video-reviews"
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-frame-black p-8">
+    <div className="min-h-screen bg-frame-black text-frame-white font-frame-body flex flex-col">
+      <AppNavBar />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-7xl mx-auto"
+        className="max-w-7xl w-full mx-auto px-6 py-10"
       >
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -223,7 +283,10 @@ export default function VideoReviews() {
             <p className="text-frame-gray-light">Gerencie reviews e comentários de vídeos do projeto</p>
           </div>
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={() => {
+              loadProjectFiles();
+              setShowCreateModal(true);
+            }}
             className="frame-btn-primary flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
@@ -241,7 +304,10 @@ export default function VideoReviews() {
             <h3 className="text-xl font-semibold text-frame-white mb-2">Nenhum review encontrado</h3>
             <p className="text-frame-gray-light mb-4">Crie seu primeiro review para começar</p>
             <button
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => {
+                loadProjectFiles();
+                setShowCreateModal(true);
+              }}
               className="frame-btn-primary"
             >
               Criar Review
@@ -414,6 +480,39 @@ export default function VideoReviews() {
           >
             <h2 className="text-2xl font-bold text-frame-white mb-4">Novo Review</h2>
             <div className="space-y-4">
+              <div className="border border-frame-gray-3 bg-frame-black/30 p-4">
+                <label className="block text-sm font-medium text-frame-gray-light mb-2">
+                  Video do projeto
+                </label>
+                {videoFiles.length > 0 ? (
+                  <select
+                    value={selectedFileId}
+                    onChange={(e) => setSelectedFileId(e.target.value)}
+                    className="frame-input w-full"
+                  >
+                    <option value="">Selecione um arquivo de video</option>
+                    {videoFiles.map((file) => (
+                      <option key={file.id} value={file.id}>
+                        {file.original_name}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-frame-gray-light text-sm">
+                      Este projeto ainda nao tem videos enviados.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setLocation(`/files/${projectId}`)}
+                      className="frame-btn-ghost flex items-center gap-2"
+                    >
+                      <FileVideo className="w-4 h-4" />
+                      Enviar video em Arquivos
+                    </button>
+                  </div>
+                )}
+              </div>
               <div>
                 <label className="block text-sm font-medium text-frame-gray-light mb-2">Título</label>
                 <input
@@ -443,6 +542,7 @@ export default function VideoReviews() {
               </button>
               <button
                 onClick={handleCreateReview}
+                disabled={videoFiles.length === 0 || !selectedFileId}
                 className="frame-btn-primary flex-1"
               >
                 Criar
@@ -500,5 +600,13 @@ export default function VideoReviews() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function VideoReviews() {
+  return (
+    <ProtectedRoute>
+      <VideoReviewsContent />
+    </ProtectedRoute>
   );
 }

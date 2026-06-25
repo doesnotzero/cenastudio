@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "wouter";
-import { useAuth } from "@/contexts/AuthContext";
 import AppNavBar from "@/components/AppNavBar";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ProjectGateway from "@/components/ProjectGateway";
 import {
   Upload,
   Download,
@@ -30,17 +30,17 @@ import { motion } from "framer-motion";
 
 interface FileData {
   id: number;
-  user_id: number;
-  project_id: number;
-  file_name: string;
-  file_type: string;
-  file_size: number;
-  file_path: string;
+  user_id?: number;
+  project_id: number | null;
+  filename: string;
+  original_name: string;
+  mime_type: string | null;
+  size: number | null;
+  path: string;
   created_at: string;
 }
 
 function FilesContent() {
-  const { user } = useAuth();
   const params = useParams();
   const projectId = params.projectId ? parseInt(params.projectId) : null;
 
@@ -65,7 +65,9 @@ function FilesContent() {
     if (!projectId) return;
 
     try {
-      const response = await fetch(`/api/files/projects/${projectId}`);
+      const response = await fetch(`/api/files/projects/${projectId}`, {
+        credentials: "include",
+      });
       const data = await response.json();
       if (data.success) {
         setFiles(data.data);
@@ -192,9 +194,13 @@ function FilesContent() {
     return (
       <div className="min-h-screen bg-frame-black text-frame-white font-frame-body flex flex-col">
         <AppNavBar />
-        <main className="flex-1 flex items-center justify-center">
-          <p className="text-frame-gray-light">Projeto não especificado</p>
-        </main>
+        <ProjectGateway
+          eyebrow="// Arquivos"
+          title="ARQUIVOS"
+          description="Escolha ou crie um projeto para organizar documentos, roteiros, videos, referencias e entregaveis."
+          actionLabel="Criar e abrir arquivos"
+          routeBase="files"
+        />
       </div>
     );
   }
@@ -247,7 +253,7 @@ function FilesContent() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {files.map((file) => {
-              const Icon = getFileIcon(file.file_type);
+              const Icon = getFileIcon(file.mime_type || "");
 
               return (
                 <motion.div
@@ -282,11 +288,11 @@ function FilesContent() {
                   </div>
 
                   <h3 className="text-sm font-semibold text-frame-white mb-1 truncate">
-                    {file.file_name}
+                    {file.original_name}
                   </h3>
 
                   <div className="flex items-center justify-between text-xs text-frame-gray-light mt-2">
-                    <span>{formatFileSize(file.file_size)}</span>
+                    <span>{formatFileSize(file.size || 0)}</span>
                     <span>{formatDate(file.created_at)}</span>
                   </div>
                 </motion.div>
