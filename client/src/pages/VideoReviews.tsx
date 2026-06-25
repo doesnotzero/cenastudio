@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Play, Plus, Share2, MessageSquare, Clock, CheckCircle, XCircle, Trash2, Copy, ExternalLink } from "lucide-react";
+import { Play, Plus, Share2, MessageSquare, Clock, CheckCircle, XCircle, Trash2, Copy, ExternalLink, Upload, Link as LinkIcon, FileVideo } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
 
@@ -44,6 +44,9 @@ export default function VideoReviews() {
   const [newReviewDescription, setNewReviewDescription] = useState("");
   const [newComment, setNewComment] = useState("");
   const [newCommentTimestamp, setNewCommentTimestamp] = useState(0);
+  const [uploadMethod, setUploadMethod] = useState<"file" | "url">("file");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     loadReviews();

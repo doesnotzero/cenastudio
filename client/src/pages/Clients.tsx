@@ -88,6 +88,13 @@ const WORKFLOW_STAGES = [
   { id: "lost", label: "Perdido", color: "border-red-500/30 bg-red-500/5" },
 ];
 
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
+};
+
 function SortableClientCard({ client, onEdit, onDelete }: { client: Client; onEdit: (client: Client) => void; onDelete: (client: Client) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: client.id });
 
@@ -458,13 +465,6 @@ function ClientsContent() {
     setPaymentMethod("");
     setTaxId("");
     setSelectedClient(null);
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
   };
 
   const formatDate = (dateString: string) => {

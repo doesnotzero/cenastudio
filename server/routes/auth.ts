@@ -9,7 +9,7 @@ import {
   registerSchema,
   resetPasswordSchema,
 } from "../schemas/auth.js";
-import passport from "../config/passport.js";
+import passport, { isGitHubAuthConfigured } from "../config/passport.js";
 
 const router = Router();
 
@@ -34,10 +34,16 @@ router.post("/logout", authController.logout);
 router.get("/me", authenticate, authController.me);
 
 // GitHub OAuth routes for admin login
-router.get("/github", passport.authenticate("github", { scope: ["user:email"] }));
+router.get("/github", (req, res, next) => {
+  if (!isGitHubAuthConfigured) {
+    res.status(503).json({ success: false, error: "GitHub OAuth is not configured" });
+    return;
+  }
+  passport.authenticate("github", { scope: ["user:email"], session: false })(req, res, next);
+});
 router.get(
   "/github/callback",
-  passport.authenticate("github", { failureRedirect: "/login" }),
+  passport.authenticate("github", { failureRedirect: "/login", session: false }),
   authController.githubCallback,
 );
 

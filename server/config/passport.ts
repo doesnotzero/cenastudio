@@ -10,13 +10,20 @@ interface GitHubProfile {
   photos: [{ value: string }];
 }
 
+export const isGitHubAuthConfigured = Boolean(
+  process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET,
+);
+
+const githubClientId = process.env.GITHUB_CLIENT_ID;
+const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+
 // Configure GitHub Strategy for admin login (only if credentials are provided)
-if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+if (githubClientId && githubClientSecret) {
   passport.use(
     new GitHubStrategy(
       {
-        clientID: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        clientID: githubClientId,
+        clientSecret: githubClientSecret,
         callbackURL: process.env.GITHUB_CALLBACK_URL || "http://localhost:5000/api/auth/github/callback",
       },
       async (accessToken: string, refreshToken: string, profile: GitHubProfile, done: any) => {
@@ -74,7 +81,7 @@ passport.serializeUser((user: any, done) => {
 // Deserialize user from session
 passport.deserializeUser((id: number, done) => {
   try {
-    const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+    const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id) as Express.User | null;
     done(null, user);
   } catch (error) {
     done(error);

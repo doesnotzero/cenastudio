@@ -1,5 +1,5 @@
 import { db } from "../models/db.js";
-import { getToolById, TOOLS } from "@shared/tools";
+import { getToolById, TOOLS } from "../../shared/tools.js";
 import { AppError } from "../middleware/errorHandler.js";
 import type { CreateToolInput, UpdateToolInput } from "../schemas/admin.js";
 
