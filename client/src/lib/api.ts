@@ -71,6 +71,11 @@ export const api = {
       }),
     logout: () => request<null>("/auth/logout", { method: "POST" }),
     me: () => request<{ user: AuthUser; plan: UserPlan | null }>("/auth/me"),
+    supabase: (accessToken: string) =>
+      request<{ user: AuthUser }>("/auth/supabase", {
+        method: "POST",
+        body: JSON.stringify({ accessToken }),
+      }),
   },
   tools: {
     list: () => request<ToolFromApi[]>("/tools"),

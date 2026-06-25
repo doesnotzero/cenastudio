@@ -16,6 +16,7 @@ import Files from "@/pages/Files";
 import Interactions from "@/pages/Interactions";
 import Landing from "@/pages/Landing";
 import ForgotPassword from "@/pages/ForgotPassword";
+import AuthCallback from "@/pages/AuthCallback";
 import Login from "@/pages/Login";
 import Pipeline from "@/pages/Pipeline";
 import Register from "@/pages/Register";
@@ -35,6 +36,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
+      <Route path="/auth/callback" component={AuthCallback} />
       <Route path="/register" component={Register} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />

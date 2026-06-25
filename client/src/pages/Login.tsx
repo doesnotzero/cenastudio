@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { Github } from "lucide-react";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -31,6 +32,24 @@ export default function Login() {
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleLogin();
+  };
+
+  const handleGitHubLogin = async () => {
+    if (!isSupabaseConfigured || !supabase) {
+      toast.error("Supabase não está configurado para login GitHub.");
+      return;
+    }
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "github",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -77,11 +96,11 @@ export default function Login() {
 
       <button
         type="button"
-        onClick={() => (window.location.href = "/api/auth/github")}
+        onClick={handleGitHubLogin}
         className="frame-btn-ghost w-full flex items-center justify-center gap-2"
       >
         <Github className="w-5 h-5" />
-        Entrar com GitHub (Admin)
+        Entrar com GitHub
       </button>
 
       <AuthLink>

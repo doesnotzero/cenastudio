@@ -31,6 +31,7 @@ router.post(
 );
 router.post("/reset-password", validateBody(resetPasswordSchema), authController.resetPassword);
 router.post("/logout", authController.logout);
+router.post("/supabase", authController.supabaseLogin);
 router.get("/me", authenticate, authController.me);
 
 // GitHub OAuth routes for admin login

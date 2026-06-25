@@ -1,0 +1,54 @@
+import AuthLayout from "@/components/AuthLayout";
+import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/lib/api";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
+
+export default function AuthCallback() {
+  const [, setLocation] = useLocation();
+  const { refresh } = useAuth();
+  const [message, setMessage] = useState("Finalizando login...");
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function finishLogin() {
+      try {
+        if (!isSupabaseConfigured || !supabase) {
+          throw new Error("Supabase não está configurado no frontend.");
+        }
+
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        const accessToken = data.session?.access_token;
+        if (!accessToken) {
+          throw new Error("Sessão do GitHub não encontrada.");
+        }
+
+        await api.auth.supabase(accessToken);
+        await refresh();
+        if (mounted) setLocation("/tools");
+      } catch (error) {
+        if (mounted) {
+          setMessage(error instanceof Error ? error.message : "Falha ao finalizar login.");
+          window.setTimeout(() => setLocation("/login"), 2500);
+        }
+      }
+    }
+
+    finishLogin();
+
+    return () => {
+      mounted = false;
+    };
+  }, [refresh, setLocation]);
+
+  return (
+    <AuthLayout mode="login" title="Entrando" subtitle={message}>
+      <div className="h-2 w-full overflow-hidden rounded-full bg-frame-gray-3">
+        <div className="h-full w-1/2 animate-pulse rounded-full bg-frame-orange" />
+      </div>
+    </AuthLayout>
+  );
+}

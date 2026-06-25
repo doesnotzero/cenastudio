@@ -35,6 +35,23 @@ function hashPassword(password: string): string {
   return bcrypt.hashSync(password, 12);
 }
 
+function ensureUserSubscription(userId: number, planId: string, status = "active") {
+  const existing = db.prepare("SELECT id FROM subscriptions WHERE user_id = ?").get(userId);
+  if (!existing) {
+    db.prepare(
+      `INSERT INTO subscriptions (user_id, plan_id, status, current_period_end)
+       VALUES (?, ?, ?, datetime('now', '+1 month'))`,
+    ).run(userId, planId, status);
+  }
+}
+
+function createTrialSubscription(userId: number) {
+  const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
+  db.prepare(
+    "INSERT INTO subscriptions (user_id, plan_id, status, trial_ends_at, current_period_end) VALUES (?, ?, ?, ?, ?)",
+  ).run(userId, "pro", "trial", trialEnd, trialEnd);
+}
+
 export function formatUserPlan(row: UserPlanRow | undefined): FormattedUserPlan | null {
   if (!row) return null;
   let features: string[] = [];
@@ -76,6 +93,34 @@ export function getUserById(id: number): AuthUser | null {
   return row ?? null;
 }
 
+export function upsertOAuthUser(email: string, name?: string | null): AuthUser {
+  const normalized = email.toLowerCase().trim();
+  const existing = db
+    .prepare("SELECT id, email, role, name FROM users WHERE email = ?")
+    .get(normalized) as AuthUser | undefined;
+
+  if (existing) {
+    return existing;
+  }
+
+  const hash = hashPassword(crypto.randomBytes(24).toString("hex"));
+  const result = db
+    .prepare(
+      "INSERT INTO users (name, email, password_hash, role, email_verified) VALUES (?, ?, ?, ?, ?)",
+    )
+    .run(name ?? normalized.split("@")[0], normalized, hash, "user", 1);
+
+  const userId = Number(result.lastInsertRowid);
+  createTrialSubscription(userId);
+
+  return {
+    id: userId,
+    email: normalized,
+    role: "user",
+    name: name ?? undefined,
+  };
+}
+
 /** Public registration: user + 14-day Pro trial */
 export function registerUser(name: string, email: string, password: string) {
   const normalized = email.toLowerCase().trim();
@@ -92,11 +137,7 @@ export function registerUser(name: string, email: string, password: string) {
     .run(name, normalized, hash, "user", 0);
 
   const userId = Number(result.lastInsertRowid);
-  const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
-
-  db.prepare(
-    "INSERT INTO subscriptions (user_id, plan_id, status, trial_ends_at, current_period_end) VALUES (?, ?, ?, ?, ?)",
-  ).run(userId, "pro", "trial", trialEnd, trialEnd);
+  createTrialSubscription(userId);
 
   return { id: userId, name, email: normalized, role: "user" as const };
 }

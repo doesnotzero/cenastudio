@@ -5,7 +5,8 @@ import path from "path";
 import fs from "fs";
 
 // Ensure uploads directory exists
-const UPLOADS_DIR = path.join(process.cwd(), "uploads");
+const UPLOADS_DIR =
+  process.env.VERCEL === "1" ? path.join("/tmp", "uploads") : path.join(process.cwd(), "uploads");
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
@@ -81,10 +82,10 @@ export const uploadFile: RequestHandler = (req, res, next) => {
     // Save file metadata to database
     const result = db
       .prepare(
-        `INSERT INTO files (user_id, project_id, file_name, file_type, file_size, file_path, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
+        `INSERT INTO files (user_id, project_id, filename, original_name, mime_type, size, path, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
       )
-      .run(userId, projectId, fileName, fileType, fileSize, filePath);
+      .run(userId, projectId, uniqueFileName, fileName, fileType, fileSize, filePath);
 
     const newFile = db
       .prepare("SELECT * FROM files WHERE id = ?")
@@ -116,8 +117,8 @@ export const deleteFile: RequestHandler = (req, res, next) => {
     }
 
     // Delete physical file
-    if (fs.existsSync(file.file_path)) {
-      fs.unlinkSync(file.file_path);
+    if (fs.existsSync(file.path)) {
+      fs.unlinkSync(file.path);
     }
 
     // Delete from database
@@ -171,11 +172,11 @@ export const downloadFile: RequestHandler = (req, res, next) => {
       throw new AppError("File not found", 404);
     }
 
-    if (!fs.existsSync(file.file_path)) {
+    if (!fs.existsSync(file.path)) {
       throw new AppError("File not found on disk", 404);
     }
 
-    res.download(file.file_path, file.file_name);
+    res.download(file.path, file.original_name);
   } catch (e) {
     next(e);
   }

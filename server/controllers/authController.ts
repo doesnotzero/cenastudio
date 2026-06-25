@@ -6,6 +6,15 @@ import {
 } from "../middleware/authenticate.js";
 import * as authService from "../services/authService.js";
 
+interface SupabaseUserResponse {
+  email?: string;
+  user_metadata?: {
+    name?: string;
+    full_name?: string;
+    user_name?: string;
+  };
+}
+
 export const login: RequestHandler = (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -57,6 +66,53 @@ export const resetPassword: RequestHandler = (req, res, next) => {
 export const logout: RequestHandler = (_req, res) => {
   res.clearCookie(COOKIE_NAME, { path: "/" });
   res.json({ success: true, data: null });
+};
+
+export const supabaseLogin: RequestHandler = async (req, res, next) => {
+  try {
+    const { accessToken } = req.body as { accessToken?: string };
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+
+    if (!accessToken) {
+      res.status(400).json({ success: false, error: "Missing Supabase access token" });
+      return;
+    }
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      res.status(503).json({ success: false, error: "Supabase is not configured" });
+      return;
+    }
+
+    const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      headers: {
+        apikey: supabaseAnonKey,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      res.status(401).json({ success: false, error: "Invalid Supabase session" });
+      return;
+    }
+
+    const supabaseUser = (await response.json()) as SupabaseUserResponse;
+    if (!supabaseUser.email) {
+      res.status(400).json({ success: false, error: "GitHub account has no email" });
+      return;
+    }
+
+    const name =
+      supabaseUser.user_metadata?.name ||
+      supabaseUser.user_metadata?.full_name ||
+      supabaseUser.user_metadata?.user_name;
+    const user = authService.upsertOAuthUser(supabaseUser.email, name);
+    const token = signToken(user);
+    res.cookie(COOKIE_NAME, token, cookieOptions);
+    res.json({ success: true, data: { user } });
+  } catch (e) {
+    next(e);
+  }
 };
 
 export const me: RequestHandler = (req, res, next) => {
