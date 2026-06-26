@@ -20,6 +20,15 @@ export const isGitHubAuthConfigured = Boolean(
 const githubClientId = process.env.GITHUB_CLIENT_ID;
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
 
+const adminEmails = (process.env.ADMIN_EMAILS || "")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+
+function getRoleForEmail(email: string): string {
+  return adminEmails.includes(email.toLowerCase()) ? "admin" : "user";
+}
+
 // Configure GitHub Strategy for admin login (only if credentials are provided)
 if (githubClientId && githubClientSecret) {
   passport.use(
@@ -48,24 +57,32 @@ if (githubClientId && githubClientSecret) {
 
           if (user) {
             // Link GitHub account to existing user
-            db.prepare("UPDATE users SET github_id = ? WHERE id = ?").run(profile.id, user.id);
+            const role = getRoleForEmail(profile.emails[0].value);
+            db.prepare(
+              role === "admin"
+                ? "UPDATE users SET github_id = ?, role = 'admin' WHERE id = ?"
+                : "UPDATE users SET github_id = ? WHERE id = ?",
+            ).run(profile.id, user.id);
             user.github_id = profile.id;
+            user.role = role;
             return done(null, user);
           }
 
           // Create new user from GitHub
+          const role = getRoleForEmail(profile.emails[0].value);
           const randomPass = crypto.randomBytes(24).toString("hex");
           const hash = bcrypt.hashSync(randomPass, 10);
           const result = db
             .prepare(
               `INSERT INTO users (email, name, github_id, password_hash, role, created_at)
-               VALUES (?, ?, ?, ?, 'user', datetime('now'))`,
+               VALUES (?, ?, ?, ?, ?, datetime('now'))`,
             )
             .run(
               profile.emails[0].value,
               profile.displayName || profile.username,
               profile.id,
               hash,
+              role,
             );
 
           user = db.prepare("SELECT * FROM users WHERE id = ?").get(result.lastInsertRowid);
