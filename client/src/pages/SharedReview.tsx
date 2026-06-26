@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "wouter";
 import { motion } from "framer-motion";
-import { Play, MessageSquare, Clock, Send, AlertCircle } from "lucide-react";
+import VideoPlayer from "@/components/VideoPlayer";
+import {
+  Play, MessageSquare, Clock, Send, AlertCircle, User,
+} from "lucide-react";
 import { toast } from "sonner";
 
 interface SharedReview {
@@ -10,8 +13,10 @@ interface SharedReview {
   description: string | null;
   original_name: string;
   file_path: string;
+  file_id: number;
   project_name: string;
   expires_at: string | null;
+  video_url?: string;
 }
 
 interface VideoComment {
@@ -29,8 +34,9 @@ export default function SharedReview() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState("");
-  const [newCommentTimestamp, setNewCommentTimestamp] = useState(0);
+  const [newCommentTimestamp, setNewCommentTimestamp] = useState<number>(0);
   const [authorName, setAuthorName] = useState("");
+  const [seekTo, setSeekTo] = useState<number | null>(null);
 
   useEffect(() => {
     loadSharedReview();
@@ -47,11 +53,20 @@ export default function SharedReview() {
       } else {
         setError(data.error || "Erro ao carregar review");
       }
-    } catch (error) {
+    } catch {
       setError("Erro ao carregar review");
     } finally {
       setLoading(false);
     }
+  };
+
+  const resolveVideoUrl = (review: SharedReview): string => {
+    if (review.video_url) return review.video_url;
+    if (review.file_path) {
+      if (review.file_path.startsWith("http")) return review.file_path;
+      if (review.file_id) return `/api/files/${review.file_id}/download`;
+    }
+    return "";
   };
 
   const handleAddComment = async () => {
@@ -59,7 +74,6 @@ export default function SharedReview() {
       toast.error("Nome e comentário são obrigatórios");
       return;
     }
-
     try {
       const response = await fetch(`/api/public/video-reviews/shared/${token}/comments`, {
         method: "POST",
@@ -77,9 +91,17 @@ export default function SharedReview() {
         setNewCommentTimestamp(0);
         loadSharedReview();
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao adicionar comentário");
     }
+  };
+
+  const handleTimestampClick = (seconds: number) => {
+    setSeekTo(seconds);
+  };
+
+  const handlePlayerProgress = (seconds: number) => {
+    setNewCommentTimestamp(Math.floor(seconds));
   };
 
   const formatTimestamp = (seconds: number) => {
@@ -112,6 +134,16 @@ export default function SharedReview() {
 
   return (
     <div className="min-h-screen bg-frame-black">
+      {/* Brand Header */}
+      <div className="border-b border-frame-gray-3 px-6 py-4">
+        <p className="text-frame-orange font-bold text-lg tracking-wider">
+          FRAME<span className="text-frame-white">.</span>AI
+          <span className="text-frame-gray-light text-sm font-normal ml-2 tracking-normal">
+            — Review de Vídeo
+          </span>
+        </p>
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -134,14 +166,14 @@ export default function SharedReview() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Video + Comment Form */}
           <div className="space-y-6">
             <div className="bg-frame-gray-1 rounded-lg border border-frame-gray-3 p-6">
-              <div className="aspect-video bg-frame-black rounded-lg flex items-center justify-center border border-frame-gray-3">
-                <div className="text-center">
-                  <Play className="w-16 h-16 mx-auto mb-4 text-frame-orange" />
-                  <p className="text-frame-gray-light">{review.original_name}</p>
-                </div>
-              </div>
+              <VideoPlayer
+                url={resolveVideoUrl(review)}
+                onProgress={handlePlayerProgress}
+                seekTo={seekTo}
+              />
             </div>
 
             <div className="bg-frame-gray-1 rounded-lg border border-frame-gray-3 p-6">
@@ -151,27 +183,42 @@ export default function SharedReview() {
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-frame-gray-light mb-2">Seu Nome</label>
-                  <input
-                    type="text"
-                    value={authorName}
-                    onChange={(e) => setAuthorName(e.target.value)}
-                    className="frame-input w-full"
-                    placeholder="Digite seu nome"
-                  />
+                  <label className="block text-sm font-medium text-frame-gray-light mb-2 uppercase tracking-wider text-xs">
+                    Seu Nome
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-frame-gray-light" />
+                    <input
+                      type="text"
+                      value={authorName}
+                      onChange={(e) => setAuthorName(e.target.value)}
+                      className="frame-input w-full pl-10"
+                      placeholder="Digite seu nome"
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-frame-gray-light mb-2">Timestamp (segundos)</label>
+                  <label className="block text-sm font-medium text-frame-gray-light mb-2 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-frame-orange" />
+                    <span className="uppercase tracking-wider text-xs">
+                      Timestamp: {formatTimestamp(newCommentTimestamp)}
+                    </span>
+                  </label>
+                  <p className="text-xs text-frame-gray-light/60 -mt-1 mb-2">
+                    Pause o vídeo no momento exato ou digite o timestamp manualmente
+                  </p>
                   <input
                     type="number"
                     value={newCommentTimestamp}
                     onChange={(e) => setNewCommentTimestamp(parseFloat(e.target.value) || 0)}
                     className="frame-input w-full"
-                    placeholder="Ex: 45"
+                    placeholder="Segundos: 45"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-frame-gray-light mb-2">Comentário</label>
+                  <label className="block text-sm font-medium text-frame-gray-light mb-2 uppercase tracking-wider text-xs">
+                    Comentário
+                  </label>
                   <textarea
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
@@ -190,6 +237,7 @@ export default function SharedReview() {
             </div>
           </div>
 
+          {/* Comments List */}
           <div className="bg-frame-gray-1 rounded-lg border border-frame-gray-3 p-6">
             <h3 className="text-xl font-bold text-frame-white mb-4 flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
@@ -203,29 +251,30 @@ export default function SharedReview() {
                 <p className="text-sm">Seja o primeiro a deixar um feedback!</p>
               </div>
             ) : (
-              <div className="space-y-4 max-h-[600px] overflow-y-auto">
+              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                 {comments.map((comment) => (
                   <motion.div
                     key={comment.id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="p-4 rounded-lg border border-frame-gray-3 bg-frame-gray-2"
+                    className="p-4 border-l-2 border-frame-orange bg-frame-gray-2/50"
                   >
                     <div className="flex items-start gap-3 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-frame-orange flex items-center justify-center text-frame-black font-bold flex-shrink-0">
-                        {comment.author_name.charAt(0)}
+                      <div className="w-8 h-8 rounded-full bg-frame-orange flex items-center justify-center text-frame-black font-bold shrink-0">
+                        {comment.author_name.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-frame-white">{comment.author_name}</p>
-                        <div className="flex items-center gap-2 text-xs text-frame-gray-4">
+                        <button
+                          onClick={() => handleTimestampClick(comment.timestamp_seconds)}
+                          className="text-xs text-frame-orange hover:underline font-mono flex items-center gap-1 mt-0.5"
+                        >
                           <Clock className="w-3 h-3" />
-                          <span>{formatTimestamp(comment.timestamp_seconds)}</span>
-                          <span>•</span>
-                          <span>{new Date(comment.created_at).toLocaleDateString("pt-BR")}</span>
-                        </div>
+                          {formatTimestamp(comment.timestamp_seconds)}
+                        </button>
                       </div>
                     </div>
-                    <p className="text-frame-gray-light">{comment.comment}</p>
+                    <p className="text-frame-gray-light pl-11">{comment.comment}</p>
                   </motion.div>
                 ))}
               </div>

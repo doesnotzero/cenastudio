@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 import { db } from "../models/db.js";
 import { AppError } from "../middleware/errorHandler.js";
+import type { DbClient, DbCount, DbSum } from "../models/types.js";
 
 // List all clients for current user
 export const listClients: RequestHandler = (req, res, next) => {
@@ -83,7 +84,12 @@ export const getClient: RequestHandler = (req, res, next) => {
 export const createClient: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
-    const { name, company, email, phone, segment, status, notes } = req.body;
+    const {
+      name, company, email, phone, segment, status, notes,
+      address, city, state, country, website, linkedin, instagram,
+      industry, company_size, annual_revenue, contact_person, contact_role,
+      billing_cycle, payment_method, tax_id,
+    } = req.body;
 
     if (!name || !name.trim()) {
       throw new AppError("O nome do cliente é obrigatório", 400);
@@ -91,8 +97,19 @@ export const createClient: RequestHandler = (req, res, next) => {
 
     const result = db
       .prepare(
-        `INSERT INTO clients (user_id, name, company, email, phone, segment, status, notes, first_contact_at, last_contact_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+        `INSERT INTO clients (
+          user_id, name, company, email, phone, segment, status, notes,
+          address, city, state, country, website, linkedin, instagram,
+          industry, company_size, annual_revenue, contact_person, contact_role,
+          billing_cycle, payment_method, tax_id,
+          first_contact_at, last_contact_at
+        ) VALUES (
+          ?, ?, ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?, ?,
+          ?, ?, ?,
+          datetime('now'), datetime('now')
+        )`,
       )
       .run(
         userId,
@@ -103,6 +120,21 @@ export const createClient: RequestHandler = (req, res, next) => {
         segment || "direct",
         status || "lead",
         notes?.trim() || null,
+        address?.trim() || null,
+        city?.trim() || null,
+        state?.trim() || null,
+        country?.trim() || null,
+        website?.trim() || null,
+        linkedin?.trim() || null,
+        instagram?.trim() || null,
+        industry?.trim() || null,
+        company_size || null,
+        annual_revenue != null ? annual_revenue : null,
+        contact_person?.trim() || null,
+        contact_role?.trim() || null,
+        billing_cycle || null,
+        payment_method || null,
+        tax_id?.trim() || null,
       );
 
     const newClient = db.prepare("SELECT * FROM clients WHERE id = ?").get(result.lastInsertRowid);
@@ -118,11 +150,16 @@ export const updateClient: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
     const clientId = req.params.id;
-    const { name, company, email, phone, segment, status, notes, total_spent } = req.body;
+    const {
+      name, company, email, phone, segment, status, notes, total_spent,
+      address, city, state, country, website, linkedin, instagram,
+      industry, company_size, annual_revenue, contact_person, contact_role,
+      billing_cycle, payment_method, tax_id,
+    } = req.body;
 
     const client = db
       .prepare("SELECT * FROM clients WHERE id = ? AND user_id = ?")
-      .get(clientId, userId) as Record<string, any> | undefined;
+      .get(clientId, userId) as DbClient | undefined;
 
     if (!client) {
       throw new AppError("Cliente não encontrado ou acesso não autorizado", 404);
@@ -130,13 +167,12 @@ export const updateClient: RequestHandler = (req, res, next) => {
 
     db.prepare(
       `UPDATE clients SET
-        name = ?,
-        company = ?,
-        email = ?,
-        phone = ?,
-        segment = ?,
-        status = ?,
-        notes = ?,
+        name = ?, company = ?, email = ?, phone = ?, segment = ?, status = ?, notes = ?,
+        address = ?, city = ?, state = ?, country = ?,
+        website = ?, linkedin = ?, instagram = ?,
+        industry = ?, company_size = ?, annual_revenue = COALESCE(?, annual_revenue),
+        contact_person = ?, contact_role = ?,
+        billing_cycle = ?, payment_method = ?, tax_id = ?,
         total_spent = COALESCE(?, total_spent),
         last_contact_at = datetime('now'),
         updated_at = datetime('now')
@@ -149,10 +185,54 @@ export const updateClient: RequestHandler = (req, res, next) => {
       segment ?? client.segment,
       status ?? client.status,
       notes?.trim() ?? client.notes,
+      address?.trim() ?? null,
+      city?.trim() ?? null,
+      state?.trim() ?? null,
+      country?.trim() ?? null,
+      website?.trim() ?? null,
+      linkedin?.trim() ?? null,
+      instagram?.trim() ?? null,
+      industry?.trim() ?? null,
+      company_size ?? null,
+      annual_revenue != null ? annual_revenue : null,
+      contact_person?.trim() ?? null,
+      contact_role?.trim() ?? null,
+      billing_cycle ?? null,
+      payment_method ?? null,
+      tax_id?.trim() ?? null,
       total_spent !== undefined ? total_spent : null,
       clientId,
       userId,
     );
+
+    const updated = db.prepare("SELECT * FROM clients WHERE id = ?").get(clientId);
+
+    res.json({ success: true, data: updated });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// Patch client (partial update for workflow_stage, etc.)
+export const patchClient: RequestHandler = (req, res, next) => {
+  try {
+    const userId = req.user!.id;
+    const clientId = req.params.id;
+    const { workflow_stage } = req.body;
+
+    const client = db
+      .prepare("SELECT * FROM clients WHERE id = ? AND user_id = ?")
+      .get(clientId, userId) as DbClient | undefined;
+
+    if (!client) {
+      throw new AppError("Cliente não encontrado ou acesso não autorizado", 404);
+    }
+
+    if (workflow_stage) {
+      db.prepare(
+        `UPDATE clients SET workflow_stage = ?, updated_at = datetime('now') WHERE id = ? AND user_id = ?`,
+      ).run(workflow_stage, clientId, userId);
+    }
 
     const updated = db.prepare("SELECT * FROM clients WHERE id = ?").get(clientId);
 
@@ -185,10 +265,10 @@ export const getClientStats: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
 
-    const totalClients = db.prepare("SELECT COUNT(*) as c FROM clients WHERE user_id = ?").get(userId) as { c: number };
-    const activeClients = db.prepare("SELECT COUNT(*) as c FROM clients WHERE user_id = ? AND status = 'active'").get(userId) as { c: number };
-    const leadClients = db.prepare("SELECT COUNT(*) as c FROM clients WHERE user_id = ? AND status = 'lead'").get(userId) as { c: number };
-    const totalRevenue = db.prepare("SELECT COALESCE(SUM(total_spent), 0) as s FROM clients WHERE user_id = ?").get(userId) as { s: number };
+    const totalClients = db.prepare("SELECT COUNT(*) as c FROM clients WHERE user_id = ?").get(userId) as DbCount;
+    const activeClients = db.prepare("SELECT COUNT(*) as c FROM clients WHERE user_id = ? AND status = 'active'").get(userId) as DbCount;
+    const leadClients = db.prepare("SELECT COUNT(*) as c FROM clients WHERE user_id = ? AND status = 'lead'").get(userId) as DbCount;
+    const totalRevenue = db.prepare("SELECT COALESCE(SUM(total_spent), 0) as s FROM clients WHERE user_id = ?").get(userId) as DbSum;
 
     // Clients by segment
     const bySegment = db.prepare("SELECT segment, COUNT(*) as count FROM clients WHERE user_id = ? GROUP BY segment").all(userId);

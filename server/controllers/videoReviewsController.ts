@@ -30,7 +30,15 @@ export const listVideoReviews: RequestHandler = (req, res, next) => {
          WHERE vr.project_id = ?
          ORDER BY vr.created_at DESC`,
       )
-      .all(projectId);
+      .all(projectId) as any[];
+
+    const mapped = reviews.map((r: any) => ({
+      ...r,
+      video_url: r.video_url || undefined,
+    }));
+
+    res.json({ success: true, data: mapped });
+    return;
 
     res.json({ success: true, data: reviews });
   } catch (e) {
@@ -79,6 +87,7 @@ export const getVideoReview: RequestHandler = (req, res, next) => {
       )
       .all(reviewId);
 
+    review.video_url = review.video_url || undefined;
     res.json({ success: true, data: { ...review, comments } });
   } catch (e) {
     next(e);
@@ -89,10 +98,14 @@ export const getVideoReview: RequestHandler = (req, res, next) => {
 export const createVideoReview: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
-    const { projectId, fileId, title, description, status } = req.body;
+    const { projectId, fileId, title, description, status, videoUrl } = req.body;
 
-    if (!projectId || !fileId || !title) {
-      throw new AppError("Project ID, File ID, and Title are required", 400);
+    if (!projectId || !title) {
+      throw new AppError("Project ID and Title are required", 400);
+    }
+
+    if (!fileId && !videoUrl) {
+      throw new AppError("File ID or Video URL is required", 400);
     }
 
     // Verify user owns the project
@@ -104,21 +117,23 @@ export const createVideoReview: RequestHandler = (req, res, next) => {
       throw new AppError("Project not found", 404);
     }
 
-    // Verify file belongs to project
-    const file = db
-      .prepare("SELECT * FROM files WHERE id = ? AND project_id = ?")
-      .get(fileId, projectId);
+    // Verify file belongs to project (only if fileId provided)
+    if (fileId) {
+      const file = db
+        .prepare("SELECT * FROM files WHERE id = ? AND project_id = ?")
+        .get(fileId, projectId);
 
-    if (!file) {
-      throw new AppError("File not found in this project", 404);
+      if (!file) {
+        throw new AppError("File not found in this project", 404);
+      }
     }
 
     const result = db
       .prepare(
-        `INSERT INTO video_reviews (project_id, file_id, user_id, title, description, status, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+        `INSERT INTO video_reviews (project_id, file_id, user_id, title, description, status, video_url, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       )
-      .run(projectId, fileId, userId, title, description || null, status || "draft");
+      .run(projectId, fileId || null, userId, title, description || null, status || "draft", videoUrl || null);
 
     const newReview = db
       .prepare(
@@ -127,7 +142,11 @@ export const createVideoReview: RequestHandler = (req, res, next) => {
          LEFT JOIN files f ON vr.file_id = f.id
          WHERE vr.id = ?`,
       )
-      .get(result.lastInsertRowid);
+      .get(result.lastInsertRowid) as any;
+
+    if (newReview) {
+      newReview.video_url = newReview.video_url || undefined;
+    }
 
     res.json({ success: true, data: newReview });
   } catch (e) {
@@ -140,7 +159,7 @@ export const updateVideoReview: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
     const reviewId = parseInt(req.params.id);
-    const { title, description, status } = req.body;
+    const { title, description, status, videoUrl } = req.body;
 
     if (!reviewId) {
       throw new AppError("Review ID is required", 400);
@@ -166,10 +185,16 @@ export const updateVideoReview: RequestHandler = (req, res, next) => {
     db
       .prepare(
         `UPDATE video_reviews 
-         SET title = ?, description = ?, status = ?, updated_at = datetime('now')
+         SET title = ?, description = ?, status = ?, video_url = ?, updated_at = datetime('now')
          WHERE id = ?`,
       )
-      .run(title || review.title, description || review.description, status || review.status, reviewId);
+      .run(
+        title || review.title,
+        description || review.description,
+        status || review.status,
+        videoUrl !== undefined ? videoUrl : review.video_url,
+        reviewId,
+      );
 
     const updatedReview = db
       .prepare(
@@ -310,6 +335,7 @@ export const accessSharedReview: RequestHandler = (req, res, next) => {
       )
       .all(review.id);
 
+    review.video_url = review.video_url || undefined;
     res.json({ success: true, data: { ...review, comments } });
   } catch (e) {
     next(e);

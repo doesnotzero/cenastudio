@@ -115,6 +115,15 @@ function ensureClientColumns() {
   }
 }
 
+function ensureVideoReviewColumns() {
+  const cols = (db.prepare("PRAGMA table_info(video_reviews)").all() as { name: string }[]).map(
+    (c) => c.name,
+  );
+  if (!cols.includes("video_url")) {
+    db.prepare("ALTER TABLE video_reviews ADD COLUMN video_url TEXT").run();
+  }
+}
+
 function ensureSubscription(userId: number, planId: string, status = "active") {
   const existing = db.prepare("SELECT id FROM subscriptions WHERE user_id = ?").get(userId);
   if (!existing) {
@@ -160,15 +169,6 @@ export function initDatabase() {
       phone TEXT,
       message TEXT NOT NULL,
       type TEXT DEFAULT 'contact',
-      created_at TEXT DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS checkout_sessions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL,
-      plan_id TEXT NOT NULL,
-      full_name TEXT,
-      status TEXT DEFAULT 'pending',
       created_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -341,6 +341,7 @@ export function initDatabase() {
   ensureSubscriptionColumns();
   ensureProjectColumns();
   ensureClientColumns();
+  ensureVideoReviewColumns();
 
   const planCount = db.prepare("SELECT COUNT(*) as c FROM plans").get() as { c: number };
   if (planCount.c === 0) {

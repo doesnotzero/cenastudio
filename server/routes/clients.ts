@@ -15,6 +15,7 @@ router.get("/", clientsController.listClients);
 router.get("/:id", clientsController.getClient);
 router.post("/", clientsController.createClient);
 router.put("/:id", clientsController.updateClient);
+router.patch("/:id", clientsController.patchClient);
 router.delete("/:id", clientsController.deleteClient);
 
 // Opportunities
