@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
 import { api } from "@/lib/api";
+import { toStripePlanId } from "@/lib/plans";
 import type { AppContextType, CheckoutFormData, ContactFormData } from "@/lib/types";
 import type { PlanTier } from "@shared/site";
 import { toast } from "sonner";
@@ -44,18 +45,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     async (data: CheckoutFormData) => {
       setIsLoading(true);
       try {
-        const result = await api.contact.checkout({
-          planId: data.planId,
-          fullName: data.fullName,
-          email: data.email,
-          company: data.company,
-          phone: data.phone,
-        });
-        toast.success(result.message);
-        closeModal("checkout");
-        if (result.redirectUrl) {
-          window.location.href = result.redirectUrl;
+        const stripePlanId = toStripePlanId(data.planId);
+        if (!stripePlanId) {
+          toast.error("Plano inválido.");
+          return;
         }
+        const { url } = await api.checkout.session(stripePlanId);
+        closeModal("checkout");
+        window.location.href = url;
       } catch (error) {
         toast.error(error instanceof Error ? error.message : "Erro ao processar checkout");
         throw error;

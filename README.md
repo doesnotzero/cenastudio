@@ -4,14 +4,17 @@ Inteligência artificial para produção audiovisual — roteiros, callsheets, d
 
 ## 🚀 Novidades Recentes
 
-- **CRM Completo**: Gestão de clientes, pipeline de vendas (Kanban), histórico de interações
-- **Reviews de Vídeos**: Sistema estilo Frame.io com comentários timestamped e links compartilháveis
+- **Dark/Light Mode**: Tema completo com `next-themes` — CSS variables de tema sem valores hardcoded
+- **CRM Reformulado**: Create/Edit de clientes agora em páginas dedicadas (`/clients/new`, `/clients/:id/edit`) com componente `ClientFormFields.tsx` compartilhado
+- **Video Player Real**: Player server-side com anotações no frame (`AnnotationCanvas.tsx`), sem dependência de Cloudflare
+- **Video Reviews Aprimorado**: Workflow com limite de 2 revisões, notificações internas e Google Drive
+- **Review de Vídeos**: Sistema estilo Frame.io com comentários timestamped e links compartilháveis
 - **Login GitHub**: Autenticação OAuth para administradores
-- **Gestão de Equipe**: Sistema de colaboradores e permissões por projeto
-- **Upload de Arquivos**: Organização de arquivos por projeto
-- **Export Avançado**: Exportação em JSON, CSV, PDF, DOCX com branding customizável
+- **Gestão de Equipe**: Colaboradores e permissões por projeto
+- **Upload de Arquivos**: Organização por projeto com upload local
+- **Export Avançado**: JSON, CSV com branding customizável
 - **Dashboard Analytics**: Métricas de projetos, clientes, receita e equipe
-- **Multi-usuário**: Múltiplos colaboradores por projeto com controle de permissões
+- **Site Config Compartilhado**: `shared/site.ts` centraliza dados de landing, pricing, navegação e footer
 
 ## 📍 Rotas Principais
 
@@ -23,17 +26,23 @@ Inteligência artificial para produção audiovisual — roteiros, callsheets, d
 | `/forgot-password` | Solicitação de reset de senha |
 | `/reset-password` | Definir nova senha (`?token=`) |
 | `/dashboard` | **App entry** — redireciona para `/tools` após login |
-| `/clients` | **CRM** — gestão de clientes |
+| `/clients` | **CRM** — listagem de clientes |
+| `/clients/new` | **CRM** — criação de cliente |
+| `/clients/:id/edit` | **CRM** — edição de cliente |
 | `/pipeline` | **Pipeline** — Kanban de oportunidades de vendas |
 | `/interactions` | **Interações** — histórico de contatos com clientes |
 | `/files/:projectId` | **Arquivos** — upload e gestão de arquivos por projeto |
-| `/video-reviews/:projectId` | **Reviews** — sistema de review de vídeos estilo Frame.io |
+| `/video-reviews/:projectId` | **Reviews** — reviews de vídeos com anotações no frame |
+| `/review/:token` | **Review Público** — link compartilhável para clientes |
 | `/collaborators` | **Equipe** — gestão de colaboradores |
 | `/analytics` | **Analytics** — dashboard de métricas e relatórios |
 | `/tools` | **Ferramentas** — 12 ferramentas IA de produção |
+| `/tools/:id` | **Detalhe** — página individual da ferramenta |
+| `/studio/:id` | **Estúdio** — workspace completo da ferramenta |
+| `/profile` | **Perfil** — conta e preferências do usuário |
 | `/admin` | **Admin** — painel administrativo |
 
-Rotas autenticadas: `/tools`, `/tools/:id`, `/studio/:id`, `/admin`, `/clients`, `/pipeline`, `/interactions`, `/files/:projectId`, `/video-reviews/:projectId`, `/collaborators`, `/analytics`.
+Rotas autenticadas: `/tools`, `/tools/:id`, `/studio/:id`, `/admin`, `/clients`, `/clients/new`, `/clients/:id/edit`, `/pipeline`, `/interactions`, `/files/:projectId`, `/video-reviews/:projectId`, `/collaborators`, `/analytics`, `/profile`.
 
 ## 🛠️ Setup
 
@@ -45,7 +54,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-- Frontend: http://localhost:5173  
+- Frontend: http://localhost:5173
 - API: http://localhost:5000 (proxied via Vite como `/api`)
 
 ### Contas Padrão (primeiro boot)
@@ -65,6 +74,7 @@ Altere estas senhas imediatamente em produção.
 | `pnpm build` | Build client + bundle server |
 | `pnpm start` | Servidor produção (serve SPA + API) |
 | `pnpm lint` | TypeScript check (`tsc --noEmit`) |
+| `pnpm format` | Prettier format |
 
 ## 🏗️ Arquitetura
 
@@ -79,7 +89,11 @@ Express (server/index.ts)
     └── SQLite (better-sqlite3)
 ```
 
-Metadados de ferramentas definidos em `shared/tools.ts` (12 ferramentas, IDs `01`–`12`) e seeded no banco na inicialização.
+Metadados de ferramentas definidos em `shared/tools.ts` (12 ferramentas, IDs `01`–`12`) e seeded no banco na inicialização. Configurações de site em `shared/site.ts`.
+
+## 🎨 Temas
+
+Dark e Light mode com `next-themes` + `ThemeProvider`. CSS variables de tema em `client/src/index.css` (sem valores hardcoded como `bg-[#111]`). Alternável via toggle no `AppNavBar`.
 
 ## 🔌 API Routes
 
@@ -206,11 +220,35 @@ Todas respostas JSON: `{ success: true, data: ... }` ou `{ success: false, error
 
 Veja `.env.example`. O servidor **falha ao iniciar** se `JWT_SECRET` estiver faltando. Rotas IA retornam **503** se `ANTHROPIC_API_KEY` não estiver configurado. Login GitHub requer `GITHUB_CLIENT_ID` e `GITHUB_CLIENT_SECRET`.
 
+## 🧩 Dependências Principais
+
+| Pacote | Uso |
+|--------|-----|
+| React 19 + Vite 7 | Framework frontend |
+| Express + tsx | Servidor backend |
+| better-sqlite3 | Banco de dados SQLite |
+| tailwindcss v4 | Estilização utilitária |
+| framer-motion | Animações e transições |
+| next-themes | Dark/light mode |
+| @anthropic-ai/sdk | Geração IA (Claude) |
+| stripe | Pagamentos e assinaturas |
+| passport + passport-github2 | OAuth GitHub |
+| wouter | Roteamento SPA |
+| @supabase/supabase-js | Integração Supabase |
+| react-player | Player de vídeo |
+| sonner | Toast notifications |
+| zod + react-hook-form | Validação de formulários |
+| @dnd-kit | Drag & drop (Kanban) |
+| Radix UI | Componentes acessíveis |
+| lucide-react | Ícones |
+
 ## 📚 Documentação Adicional
 
 - `UPGRADE_LOG.md` — Detalhes completos de todas implementações e migrações
 - `.env.example` — Template de variáveis de ambiente
 - `shared/tools.ts` — Definição das 12 ferramentas IA
+- `shared/site.ts` — Configurações de landing, pricing e navegação
+- `OPENCODE>SKILL/architecture.md` — Arquitetura detalhada do sistema
 
 ## 🗄️ Banco de Dados
 

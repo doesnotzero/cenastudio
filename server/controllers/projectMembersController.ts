@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { db } from "../models/db.js";
 import { AppError } from "../middleware/errorHandler.js";
+import type { DbProjectMember, DbProject } from "../models/types.js";
 
 // List members for a project
 export const listProjectMembers: RequestHandler = (req, res, next) => {

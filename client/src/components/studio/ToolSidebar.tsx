@@ -76,7 +76,7 @@ export default function ToolSidebar({ tools, activeToolId, onSelectTool }: ToolS
                       className={`flex items-center gap-2.5 px-[15px] lg:px-[18px] py-2 lg:py-2.5 text-left border-l-2 transition-colors shrink-0 lg:shrink bg-transparent border-t-0 border-r-0 border-b-0 ${
                         active
                           ? "border-l-frame-orange bg-[rgba(255,77,0,0.08)] text-frame-white"
-                          : "border-l-transparent text-frame-gray-light hover:bg-[#151515] hover:text-frame-white"
+                          : "border-l-transparent text-frame-gray-light hover:bg-frame-gray-1 hover:text-frame-white"
                       }`}
                     >
                       <TIcon className={`w-4 h-4 shrink-0 transition-colors ${active ? "text-frame-orange" : "text-frame-gray-light"}`} />

@@ -5,10 +5,7 @@ import * as stripeService from "../services/stripeService.js";
 export const createSession: RequestHandler = async (req, res, next) => {
   try {
     const user = req.user;
-    if (!user) {
-      res.status(401).json({ success: false, error: "Unauthorized" });
-      return;
-    }
+    if (!user) throw new AppError("Unauthorized", 401);
     const { planId } = req.body as { planId?: string };
     if (!planId || !["pro", "studio"].includes(planId)) {
       throw new AppError("Plano inválido.", 400);
@@ -32,10 +29,7 @@ export const createSession: RequestHandler = async (req, res, next) => {
 export const createPortal: RequestHandler = async (req, res, next) => {
   try {
     const user = req.user;
-    if (!user) {
-      res.status(401).json({ success: false, error: "Unauthorized" });
-      return;
-    }
+    if (!user) throw new AppError("Unauthorized", 401);
     const origin = req.headers.origin || process.env.CLIENT_ORIGIN || "http://localhost:5173";
     const session = await stripeService.createPortalSession(user.id, `${origin}/tools`);
     res.json({ success: true, data: { url: session.url } });

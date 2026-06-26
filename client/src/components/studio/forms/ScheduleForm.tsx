@@ -21,7 +21,7 @@ export default function ScheduleForm({ data, onChange }: FormProps) {
               value={data.nome || ""}
               onChange={(e) => onChange("nome", e.target.value)}
               placeholder="Ex: Vídeo Institucional ABC"
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
             />
           </div>
 
@@ -34,7 +34,7 @@ export default function ScheduleForm({ data, onChange }: FormProps) {
                 type="date"
                 value={data.inicio || ""}
                 onChange={(e) => onChange("inicio", e.target.value)}
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
               />
             </div>
             <div>
@@ -45,7 +45,7 @@ export default function ScheduleForm({ data, onChange }: FormProps) {
                 type="date"
                 value={data.entrega || ""}
                 onChange={(e) => onChange("entrega", e.target.value)}
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
               />
             </div>
           </div>
@@ -58,7 +58,7 @@ export default function ScheduleForm({ data, onChange }: FormProps) {
               <select
                 value={data.tipo || "Vídeo Institucional"}
                 onChange={(e) => onChange("tipo", e.target.value)}
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
               >
                 <option value="Vídeo Institucional">Vídeo Institucional</option>
                 <option value="Curta-metragem">Curta-metragem</option>
@@ -77,7 +77,7 @@ export default function ScheduleForm({ data, onChange }: FormProps) {
                 value={data.dias || "3"}
                 onChange={(e) => onChange("dias", e.target.value)}
                 placeholder="3"
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
               />
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function ScheduleForm({ data, onChange }: FormProps) {
       </div>
 
       {/* Seção 2: Equipe e Entregas */}
-      <div className="pt-2 border-t border-[#1a1a1a]">
+      <div className="pt-2 border-t border-frame-gray-2">
         <p className="font-frame-mono text-[0.54rem] tracking-[0.17em] uppercase text-frame-orange mb-3">
           // Equipe & Entregáveis
         </p>
@@ -99,7 +99,7 @@ export default function ScheduleForm({ data, onChange }: FormProps) {
               onChange={(e) => onChange("equipe", e.target.value)}
               placeholder="Ex: Diretor, Produtor, DOP, Editor, Gaffer, Técnico de Áudio..."
               rows={2}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
             />
           </div>
 
@@ -112,7 +112,7 @@ export default function ScheduleForm({ data, onChange }: FormProps) {
               onChange={(e) => onChange("entregaveis", e.target.value)}
               placeholder="Ex: 1 vídeo principal de 2min, 3 cortes verticais de 30s..."
               rows={3}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
             />
           </div>
         </div>

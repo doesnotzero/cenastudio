@@ -3,6 +3,33 @@ import { db } from "../models/db.js";
 import { AppError } from "../middleware/errorHandler.js";
 import { randomBytes } from "crypto";
 
+// List all video reviews for the authenticated user
+export const listAllVideoReviews: RequestHandler = (req, res, next) => {
+  try {
+    const userId = req.user!.id;
+
+    const reviews = db
+      .prepare(
+        `SELECT vr.*, f.original_name, f.path as file_path
+         FROM video_reviews vr
+         LEFT JOIN files f ON vr.file_id = f.id
+         WHERE vr.user_id = ?
+         ORDER BY vr.created_at DESC`,
+      )
+      .all(userId) as any[];
+
+    const mapped = reviews.map((r: any) => ({
+      ...r,
+      video_url: r.video_url || undefined,
+    }));
+
+    res.json({ success: true, data: mapped });
+    return;
+  } catch (e) {
+    next(e);
+  }
+};
+
 // List video reviews for a project
 export const listVideoReviews: RequestHandler = (req, res, next) => {
   try {
@@ -79,13 +106,16 @@ export const getVideoReview: RequestHandler = (req, res, next) => {
     }
 
     // Get comments for this review
-    const comments = db
+    const comments = (db
       .prepare(
         `SELECT * FROM video_comments 
          WHERE review_id = ? 
          ORDER BY timestamp_seconds ASC`,
       )
-      .all(reviewId);
+      .all(reviewId) as any[]).map((c) => ({
+      ...c,
+      annotations: c.annotations ? JSON.parse(c.annotations) : [],
+    }));
 
     review.video_url = review.video_url || undefined;
     res.json({ success: true, data: { ...review, comments } });
@@ -98,14 +128,24 @@ export const getVideoReview: RequestHandler = (req, res, next) => {
 export const createVideoReview: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
-    const { projectId, fileId, title, description, status, videoUrl } = req.body;
+    let { projectId, fileId, title, description, status, videoUrl } = req.body;
 
-    if (!projectId || !title) {
-      throw new AppError("Project ID and Title are required", 400);
+    if (!title) {
+      throw new AppError("Title is required", 400);
     }
 
     if (!fileId && !videoUrl) {
       throw new AppError("File ID or Video URL is required", 400);
+    }
+
+    // If no projectId, auto-create a sandbox project for reviews
+    if (!projectId) {
+      const result = db
+        .prepare(
+          "INSERT INTO projects (user_id, name, description, created_at, updated_at) VALUES (?, ?, ?, datetime('now'), datetime('now'))",
+        )
+        .run(userId, "Aprovação de Vídeo", "Projeto para aprovação de vídeos");
+      projectId = result.lastInsertRowid as number;
     }
 
     // Verify user owns the project
@@ -327,13 +367,16 @@ export const accessSharedReview: RequestHandler = (req, res, next) => {
     }
 
     // Get comments for this review
-    const comments = db
+    const comments = (db
       .prepare(
         `SELECT * FROM video_comments 
          WHERE review_id = ? 
          ORDER BY timestamp_seconds ASC`,
       )
-      .all(review.id);
+      .all(review.id) as any[]).map((c) => ({
+      ...c,
+      annotations: c.annotations ? JSON.parse(c.annotations) : [],
+    }));
 
     review.video_url = review.video_url || undefined;
     res.json({ success: true, data: { ...review, comments } });
@@ -347,9 +390,9 @@ export const addComment: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
     const reviewId = parseInt(req.params.id);
-    const { timestampSeconds, comment, authorName } = req.body;
+    const { timestampSeconds, comment, authorName, annotations } = req.body;
 
-    if (!reviewId || !timestampSeconds || !comment) {
+    if (!reviewId || timestampSeconds === undefined || !comment) {
       throw new AppError("Review ID, timestamp, and comment are required", 400);
     }
 
@@ -370,12 +413,14 @@ export const addComment: RequestHandler = (req, res, next) => {
       throw new AppError("You don't have permission to comment on this review", 403);
     }
 
+    const annsJson = annotations ? JSON.stringify(annotations) : "[]";
+
     const result = db
       .prepare(
-        `INSERT INTO video_comments (review_id, user_id, author_name, timestamp_seconds, comment, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+        `INSERT INTO video_comments (review_id, user_id, author_name, timestamp_seconds, comment, annotations, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       )
-      .run(reviewId, userId, authorName || "Anonymous", timestampSeconds, comment);
+      .run(reviewId, userId, authorName || "Anonymous", timestampSeconds, comment, annsJson);
 
     const newComment = db.prepare("SELECT * FROM video_comments WHERE id = ?").get(result.lastInsertRowid);
 
@@ -389,9 +434,9 @@ export const addComment: RequestHandler = (req, res, next) => {
 export const addSharedComment: RequestHandler = (req, res, next) => {
   try {
     const { token } = req.params;
-    const { timestampSeconds, comment, authorName } = req.body;
+    const { timestampSeconds, comment, authorName, annotations } = req.body;
 
-    if (!token || !timestampSeconds || !comment) {
+    if (!token || timestampSeconds === undefined || !comment) {
       throw new AppError("Token, timestamp, and comment are required", 400);
     }
 
@@ -408,12 +453,14 @@ export const addSharedComment: RequestHandler = (req, res, next) => {
       throw new AppError("Share link has expired", 410);
     }
 
+    const annsJson = annotations ? JSON.stringify(annotations) : "[]";
+
     const result = db
       .prepare(
-        `INSERT INTO video_comments (review_id, user_id, author_name, timestamp_seconds, comment, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+        `INSERT INTO video_comments (review_id, user_id, author_name, timestamp_seconds, comment, annotations, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       )
-      .run(review.id, review.user_id, authorName || "Anonymous", timestampSeconds, comment);
+      .run(review.id, review.user_id, authorName || "Anonymous", timestampSeconds, comment, annsJson);
 
     const newComment = db.prepare("SELECT * FROM video_comments WHERE id = ?").get(result.lastInsertRowid);
 

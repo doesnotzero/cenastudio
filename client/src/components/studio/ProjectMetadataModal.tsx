@@ -129,7 +129,7 @@ export default function ProjectMetadataModal({
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-3">
           {/* Seção 1: Identificação Básica */}
-          <div className="border-b border-[#1a1a1a] pb-3 mb-2">
+          <div className="border-b border-frame-gray-2 pb-3 mb-2">
             <span className="block font-frame-mono text-[0.52rem] tracking-[0.2em] text-frame-orange uppercase mb-3">
               // Identificação do Projeto
             </span>
@@ -146,7 +146,7 @@ export default function ProjectMetadataModal({
                   placeholder="ex: Videoclipe Retrofuturista"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2 md:p-2.5 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
+                  className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2 md:p-2.5 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
                 />
               </div>
 
@@ -159,7 +159,7 @@ export default function ProjectMetadataModal({
                   disabled={isSubmitting}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2 md:p-2.5 font-frame-body text-[0.8rem] outline-none transition resize-none h-[65px] focus:border-frame-orange rounded-none"
+                  className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2 md:p-2.5 font-frame-body text-[0.8rem] outline-none transition resize-none h-[65px] focus:border-frame-orange rounded-none"
                 />
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function ProjectMetadataModal({
                   placeholder="ex: Curta-Metragem, Comercial"
                   value={format}
                   onChange={(e) => setFormat(e.target.value)}
-                  className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
+                  className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
                 />
               </div>
 
@@ -196,7 +196,7 @@ export default function ProjectMetadataModal({
                   placeholder="ex: Universal Music, Coca-Cola"
                   value={client}
                   onChange={(e) => setClient(e.target.value)}
-                  className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
+                  className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
                 />
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function ProjectMetadataModal({
                   placeholder="ex: Sci-Fi Noir, Cyberpunk"
                   value={tone}
                   onChange={(e) => setTone(e.target.value)}
-                  className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
+                  className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
                 />
               </div>
 
@@ -226,7 +226,7 @@ export default function ProjectMetadataModal({
                   placeholder="ex: Arri Alexa, Anamórficas"
                   value={cameraModel}
                   onChange={(e) => setCameraModel(e.target.value)}
-                  className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
+                  className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
                 />
               </div>
             </div>
@@ -241,12 +241,12 @@ export default function ProjectMetadataModal({
                 placeholder="ex: R$ 50.000, US$ 10,000"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
+                className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2 font-frame-body text-[0.8rem] outline-none transition focus:border-frame-orange rounded-none"
               />
             </div>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t border-[#1a1a1a] mt-4">
+          <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t border-frame-gray-2 mt-4">
             <button
               type="button"
               disabled={isSubmitting}

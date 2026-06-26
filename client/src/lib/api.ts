@@ -152,11 +152,6 @@ export const api = {
         method: "POST",
         body: JSON.stringify(data),
       }),
-    checkout: (data: CheckoutPayload) =>
-      request<{ message: string; redirectUrl?: string }>("/checkout/start", {
-        method: "POST",
-        body: JSON.stringify(data),
-      }),
   },
   checkout: {
     session: (planId: string) =>
@@ -202,14 +197,6 @@ export interface ContactPayload {
   phone?: string;
   message: string;
   type?: "contact" | "demo" | "support";
-}
-
-export interface CheckoutPayload {
-  planId: "iniciante" | "profissional" | "produtora";
-  fullName: string;
-  email: string;
-  company?: string;
-  phone?: string;
 }
 
 export interface Project {

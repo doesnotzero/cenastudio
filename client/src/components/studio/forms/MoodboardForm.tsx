@@ -19,7 +19,7 @@ export default function MoodboardForm({ data, onChange }: FormProps) {
             <select
               value={data.tom || "Moderno e tecnológico"}
               onChange={(e) => onChange("tom", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Moderno e tecnológico">Moderno e tecnológico</option>
               <option value="Quente e humano">Quente e humano</option>
@@ -41,7 +41,7 @@ export default function MoodboardForm({ data, onChange }: FormProps) {
               onChange={(e) => onChange("referencias", e.target.value)}
               placeholder="Ex: Wong Kar-Wai, Terrence Malick, Ari Aster, Roger Deakins..."
               rows={2}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
             />
           </div>
 
@@ -54,14 +54,14 @@ export default function MoodboardForm({ data, onChange }: FormProps) {
               value={data.cores || ""}
               onChange={(e) => onChange("cores", e.target.value)}
               placeholder="Ex: Tons terrosos, azul frio, preto e laranja, pastel neon..."
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
             />
           </div>
         </div>
       </div>
 
       {/* Seção 2: Aspectos Técnicos */}
-      <div className="pt-2 border-t border-[#1a1a1a]">
+      <div className="pt-2 border-t border-frame-gray-2">
         <p className="font-frame-mono text-[0.54rem] tracking-[0.17em] uppercase text-frame-orange mb-3">
           // Aspectos Técnicos do Look
         </p>
@@ -73,7 +73,7 @@ export default function MoodboardForm({ data, onChange }: FormProps) {
             <select
               value={data.aspecto || "16:9 — Cinema/TV"}
               onChange={(e) => onChange("aspecto", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="16:9 — Cinema/TV">16:9 — Cinema/TV</option>
               <option value="2.39:1 — Cinemascope">2.39:1 — Cinemascope</option>
@@ -91,7 +91,7 @@ export default function MoodboardForm({ data, onChange }: FormProps) {
             <select
               value={data.colorizacao || "Cinematográfico — alto contraste"}
               onChange={(e) => onChange("colorizacao", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Natural / realista">Natural / realista</option>
               <option value="Cinematográfico — alto contraste">Cinematográfico — alto contraste</option>
@@ -110,7 +110,7 @@ export default function MoodboardForm({ data, onChange }: FormProps) {
             <select
               value={data.luz || "Natural — golden hour"}
               onChange={(e) => onChange("luz", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Natural — golden hour">Natural — golden hour</option>
               <option value="Natural — dia difuso / nublado">Natural — dia difuso / nublado</option>
@@ -129,7 +129,7 @@ export default function MoodboardForm({ data, onChange }: FormProps) {
               onChange={(e) => onChange("descricao", e.target.value)}
               placeholder="Descreva o sentimento, atmosfera e o ambiente visual do projeto..."
               rows={3}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
             />
           </div>
         </div>

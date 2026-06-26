@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/authenticate.js";
 import {
+  listAllVideoReviews,
   listVideoReviews,
   getVideoReview,
   createVideoReview,
@@ -18,6 +19,9 @@ const router = Router();
 
 // All video review routes require authentication except shared access
 router.use(authenticate);
+
+// List all reviews for the current user
+router.get("/", listAllVideoReviews);
 
 // List reviews for a project
 router.get("/projects/:projectId", listVideoReviews);

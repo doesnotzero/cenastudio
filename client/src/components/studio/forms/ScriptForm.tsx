@@ -21,7 +21,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
               value={data.titulo || ""}
               onChange={(e) => onChange("titulo", e.target.value)}
               placeholder="Ex: Deriva Urbana"
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
             />
           </div>
 
@@ -32,7 +32,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
             <select
               value={data.formato || "Curta-metragem (ficção)"}
               onChange={(e) => onChange("formato", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Curta-metragem (ficção)">Curta-metragem (ficção)</option>
               <option value="Vídeo Institucional">Vídeo Institucional</option>
@@ -55,7 +55,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
                 value={data.duracao || ""}
                 onChange={(e) => onChange("duracao", e.target.value)}
                 placeholder="Ex: 5 min"
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
               />
             </div>
             <div>
@@ -67,7 +67,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
                 value={data.genero || ""}
                 onChange={(e) => onChange("genero", e.target.value)}
                 placeholder="Ex: Drama, humor..."
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
               />
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
       </div>
 
       {/* Seção 2: História */}
-      <div className="pt-2 border-t border-[#1a1a1a]">
+      <div className="pt-2 border-t border-frame-gray-2">
         <p className="font-frame-mono text-[0.54rem] tracking-[0.17em] uppercase text-frame-orange mb-3">
           // História & Conceito
         </p>
@@ -89,7 +89,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
               onChange={(e) => onChange("sinopse", e.target.value)}
               placeholder="Descreva a história ou o conceito..."
               rows={3}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
             />
           </div>
 
@@ -102,7 +102,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
               value={data.personagens || ""}
               onChange={(e) => onChange("personagens", e.target.value)}
               placeholder="Ex: João (30 anos), Maria (28 anos)"
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
             />
           </div>
 
@@ -115,7 +115,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
               value={data.locacoes || ""}
               onChange={(e) => onChange("locacoes", e.target.value)}
               placeholder="Ex: Metrô SP, apartamento, rua"
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
             />
           </div>
 
@@ -128,7 +128,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
               value={data.referencias || ""}
               onChange={(e) => onChange("referencias", e.target.value)}
               placeholder="Ex: Kiarostami, Nolan, Cidade de Deus"
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
             />
           </div>
 
@@ -141,7 +141,7 @@ export default function ScriptForm({ data, onChange }: FormProps) {
               onChange={(e) => onChange("observacoes", e.target.value)}
               placeholder="Restrições, mensagem central, chamadas de ação..."
               rows={2}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition resize-y"
             />
           </div>
         </div>

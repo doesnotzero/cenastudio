@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ─── FRAME.AI Design System (index_1.html / index_2.html) ─── */
-@theme inline {
+@theme {
   --font-frame-display: "Bebas Neue", sans-serif;
   --font-frame-body: "DM Sans", sans-serif;
   --font-frame-mono: "JetBrains Mono", monospace;
@@ -92,6 +92,65 @@
   --primary-foreground: #080808;
   --muted-foreground: #777777;
   --border: #2a2a2a;
+}
+
+:root:not(.dark) {
+  --color-frame-black: #ffffff;
+  --color-frame-white: #111111;
+  --color-frame-cream: #e8e0d0;
+  --color-frame-orange: #ff4d00;
+  --color-frame-orange-dark: #cc3d00;
+  --color-frame-gray-1: #f0f0f0;
+  --color-frame-gray-2: #e4e4e4;
+  --color-frame-gray-3: #d0d0d0;
+  --color-frame-gray-light: #666666;
+  --color-frame-gray-muted: #999999;
+  --color-frame-green: #00a85c;
+  --color-frame-red: #dc2626;
+  --color-frame-gold: #d49400;
+
+  --frame-orange-bg: rgba(255, 77, 0, 0.06);
+
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #f5f5f5;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #ff4d00;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f0f0;
+  --secondary-foreground: #111111;
+  --muted: #f0f0f0;
+  --muted-foreground: #666666;
+  --accent: rgba(255, 77, 0, 0.06);
+  --accent-foreground: #ff4d00;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #d0d0d0;
+  --input: #e4e4e4;
+  --ring: #ff4d00;
+  --sidebar: #f5f5f5;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #ff4d00;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e4e4e4;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: #d0d0d0;
+  --sidebar-ring: #ff4d00;
+}
+
+/* Light mode overrides for hardcoded component styles */
+:root:not(.dark) .frame-nav {
+  background: rgba(255, 255, 255, 0.95);
+}
+:root:not(.dark) .frame-card:hover {
+  background: #f8f8f8;
+  border-color: var(--color-frame-orange);
+}
+:root:not(.dark) .frame-btn-ghost:hover {
+  border-color: #aaaaaa;
+  background: rgba(0, 0, 0, 0.02);
 }
 
 @layer base {

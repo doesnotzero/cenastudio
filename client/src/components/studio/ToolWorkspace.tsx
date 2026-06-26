@@ -67,7 +67,7 @@ export default function ToolWorkspace({
   };
 
   return (
-    <div className="w-full lg:w-[360px] shrink-0 p-5 md:p-6 overflow-y-auto border-b lg:border-b-0 lg:border-r border-[#1a1a1a] flex flex-col justify-between h-full bg-frame-black select-none">
+    <div className="w-full lg:w-[360px] shrink-0 p-5 md:p-6 overflow-y-auto border-b lg:border-b-0 lg:border-r border-frame-gray-2 flex flex-col justify-between h-full bg-frame-black select-none">
       <div className="space-y-4">
         {/* Workspace Title & Input Marker */}
         <div className="flex justify-between items-center border-b border-frame-gray-3 pb-2 mb-2">
@@ -97,7 +97,7 @@ export default function ToolWorkspace({
 
       {/* Execution Button */}
       {tool.slug !== "checklist" && (
-        <div className="pt-4 mt-4 border-t border-[#1a1a1a]">
+        <div className="pt-4 mt-4 border-t border-frame-gray-2">
           <button
             type="button"
             onClick={onExecute}

@@ -106,7 +106,7 @@ ${userMessage}`;
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center font-frame-mono text-[0.6rem] font-semibold shrink-0 select-none ${
                   isUser
-                    ? "bg-[#222] text-frame-white border border-[#333]"
+                    ? "bg-frame-gray-3 text-frame-white border border-frame-gray-3"
                     : "bg-frame-orange text-frame-black"
                 }`}
               >
@@ -117,7 +117,7 @@ ${userMessage}`;
               <div
                 className={`p-3 font-frame-body text-[0.8rem] leading-relaxed rounded-[2px] ${
                   isUser
-                    ? "bg-frame-gray-2 border-r-2 border-[#333] text-frame-white"
+                    ? "bg-frame-gray-2 border-r-2 border-frame-gray-3 text-frame-white"
                     : "bg-frame-gray-1 border-l-2 border-frame-orange text-frame-cream"
                 }`}
               >
@@ -150,7 +150,7 @@ ${userMessage}`;
           onKeyDown={handleKeyDown}
           placeholder="Ex: reescreva a cena 2 com mais tensão dramática..."
           rows={2}
-          className="flex-1 bg-[#111] border border-[#222] text-frame-white px-3 py-2 font-frame-body text-[0.8rem] outline-none transition resize-none focus:border-frame-orange rounded-none min-h-[44px] max-h-[120px]"
+          className="flex-1 bg-frame-gray-1 border border-frame-gray-3 text-frame-white px-3 py-2 font-frame-body text-[0.8rem] outline-none transition resize-none focus:border-frame-orange rounded-none min-h-[44px] max-h-[120px]"
         />
         <button
           type="button"

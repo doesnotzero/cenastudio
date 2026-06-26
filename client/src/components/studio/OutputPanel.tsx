@@ -25,7 +25,7 @@ export default function OutputPanel({
   const [activeTab, setActiveTab] = useState<"document" | "refine">("document");
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-frame-black border-t lg:border-t-0 border-[#1a1a1a]">
+    <div className="flex-1 flex flex-col overflow-hidden bg-frame-black border-t lg:border-t-0 border-frame-gray-2">
       {/* Top Action Toolbar */}
       <ActionToolbar
         onCopy={onCopy}

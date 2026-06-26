@@ -18,34 +18,6 @@ export const submitContact: RequestHandler = (req, res, next) => {
   }
 };
 
-export const startCheckout: RequestHandler = (req, res, next) => {
-  try {
-    const { planId, fullName, email, company, phone } = req.body;
-    const result = db
-      .prepare(
-        "INSERT INTO checkout_sessions (email, plan_id, full_name, status) VALUES (?, ?, ?, 'pending')",
-      )
-      .run(email, planId, fullName);
-
-    // TODO: integrate payment provider (Stripe/Mercado Pago) — validate plan and create payment session
-    res.status(201).json({
-      success: true,
-      data: {
-        sessionId: Number(result.lastInsertRowid),
-        planId,
-        email,
-        company,
-        phone,
-        message:
-          "Plano selecionado com sucesso. Integração de pagamento pendente — nossa equipe entrará em contato.",
-        redirectUrl: "/success",
-      },
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-
 export const submitDemo: RequestHandler = (req, res, next) => {
   try {
     const { name, email } = req.body;

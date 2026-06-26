@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 import { db } from "../models/db.js";
 import { AppError } from "../middleware/errorHandler.js";
+import type { DbOpportunity, DbCount, DbSum } from "../models/types.js";
 
 // List all opportunities for current user
 export const listOpportunities: RequestHandler = (req, res, next) => {
@@ -113,7 +114,7 @@ export const updateOpportunity: RequestHandler = (req, res, next) => {
 
     const opportunity = db
       .prepare("SELECT * FROM opportunities WHERE id = ? AND user_id = ?")
-      .get(opportunityId, userId) as Record<string, any> | undefined;
+      .get(opportunityId, userId) as DbOpportunity | undefined;
 
     if (!opportunity) {
       throw new AppError("Oportunidade não encontrada ou acesso não autorizado", 404);
@@ -171,8 +172,8 @@ export const getPipelineStats: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
 
-    const totalOpportunities = db.prepare("SELECT COUNT(*) as c FROM opportunities WHERE user_id = ?").get(userId) as { c: number };
-    const totalValue = db.prepare("SELECT COALESCE(SUM(estimated_value), 0) as s FROM opportunities WHERE user_id = ? AND stage != 'lost'").get(userId) as { s: number };
+    const totalOpportunities = db.prepare("SELECT COUNT(*) as c FROM opportunities WHERE user_id = ?").get(userId) as DbCount;
+    const totalValue = db.prepare("SELECT COALESCE(SUM(estimated_value), 0) as s FROM opportunities WHERE user_id = ? AND stage != 'lost'").get(userId) as DbSum;
 
     // By stage
     const byStage = db
@@ -192,7 +193,7 @@ export const getPipelineStats: RequestHandler = (req, res, next) => {
          WHERE user_id = ? AND stage = 'won'
          AND strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')`,
       )
-      .get(userId) as { c: number; s: number };
+      .get(userId) as DbCount & DbSum;
 
     res.json({
       success: true,

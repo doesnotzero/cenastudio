@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { db } from "../models/db.js";
@@ -50,16 +52,19 @@ if (githubClientId && githubClientSecret) {
             return done(null, user);
           }
 
-          // Create new admin user from GitHub
+          // Create new user from GitHub
+          const randomPass = crypto.randomBytes(24).toString("hex");
+          const hash = bcrypt.hashSync(randomPass, 10);
           const result = db
             .prepare(
-              `INSERT INTO users (email, name, github_id, role, created_at)
-               VALUES (?, ?, ?, 'admin', datetime('now'))`,
+              `INSERT INTO users (email, name, github_id, password_hash, role, created_at)
+               VALUES (?, ?, ?, ?, 'user', datetime('now'))`,
             )
             .run(
               profile.emails[0].value,
               profile.displayName || profile.username,
               profile.id,
+              hash,
             );
 
           user = db.prepare("SELECT * FROM users WHERE id = ?").get(result.lastInsertRowid);

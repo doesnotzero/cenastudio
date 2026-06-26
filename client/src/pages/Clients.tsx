@@ -16,6 +16,51 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown } from "lucide-react";
+
+function CollapsibleSection({
+  title,
+  sectionKey,
+  expanded,
+  onToggle,
+  children,
+}: {
+  title: string;
+  sectionKey: string;
+  expanded: boolean;
+  onToggle: (key: string) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border border-frame-gray-3">
+      <button
+        type="button"
+        onClick={() => onToggle(sectionKey)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-frame-gray-1/20 transition"
+      >
+        <span className="font-frame-mono text-xs text-frame-orange uppercase tracking-wider">{title}</span>
+        <ChevronDown
+          className={`w-4 h-4 text-frame-gray-light transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 space-y-4">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 import {
   DndContext, DragOverlay, PointerSensor, useSensor, useSensors, DragStartEvent, DragEndEvent,
 } from "@dnd-kit/core";
@@ -178,40 +223,24 @@ function ClientsContent() {
   const [clients, setClients] = useState<Client[]>([]);
   const [stats, setStats] = useState<ClientStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
 
-  const [name, setName] = useState("");
-  const [company, setCompany] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [segment, setSegment] = useState("direct");
-  const [status, setStatus] = useState("lead");
-  const [notes, setNotes] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
-  const [website, setWebsite] = useState("");
-  const [linkedin, setLinkedin] = useState("");
-  const [instagram, setInstagram] = useState("");
-  const [industry, setIndustry] = useState("");
-  const [companySize, setCompanySize] = useState("");
-  const [annualRevenue, setAnnualRevenue] = useState("");
-  const [contactPerson, setContactPerson] = useState("");
-  const [contactRole, setContactRole] = useState("");
-  const [billingCycle, setBillingCycle] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [taxId, setTaxId] = useState("");
-
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterSegment, setFilterSegment] = useState("");
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    endereco: false,
+    social: false,
+    empresa: false,
+    contato: false,
+    financeiro: false,
+  });
+
+  const toggleSection = (section: string) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -301,90 +330,6 @@ function ClientsContent() {
     }
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-    setIsSubmitting(true);
-    try {
-      const response = await fetch("/api/clients", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(), company: company.trim() || undefined,
-          email: email.trim() || undefined, phone: phone.trim() || undefined,
-          segment, status, notes: notes.trim() || undefined,
-          address: address.trim() || undefined, city: city.trim() || undefined,
-          state: state.trim() || undefined, country: country.trim() || undefined,
-          website: website.trim() || undefined, linkedin: linkedin.trim() || undefined,
-          instagram: instagram.trim() || undefined, industry: industry.trim() || undefined,
-          company_size: companySize.trim() || undefined,
-          annual_revenue: annualRevenue ? parseInt(annualRevenue) : undefined,
-          contact_person: contactPerson.trim() || undefined,
-          contact_role: contactRole.trim() || undefined,
-          billing_cycle: billingCycle.trim() || undefined,
-          payment_method: paymentMethod.trim() || undefined,
-          tax_id: taxId.trim() || undefined,
-        }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Cliente criado com sucesso!");
-        setIsCreateOpen(false);
-        resetForm();
-        loadClients();
-        loadStats();
-      } else {
-        toast.error(data.error || "Erro ao criar cliente");
-      }
-    } catch {
-      toast.error("Erro ao criar cliente");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedClient || !name.trim()) return;
-    setIsSubmitting(true);
-    try {
-      const response = await fetch(`/api/clients/${selectedClient.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(), company: company.trim() || undefined,
-          email: email.trim() || undefined, phone: phone.trim() || undefined,
-          segment, status, notes: notes.trim() || undefined,
-          address: address.trim() || undefined, city: city.trim() || undefined,
-          state: state.trim() || undefined, country: country.trim() || undefined,
-          website: website.trim() || undefined, linkedin: linkedin.trim() || undefined,
-          instagram: instagram.trim() || undefined, industry: industry.trim() || undefined,
-          company_size: companySize.trim() || undefined,
-          annual_revenue: annualRevenue ? parseInt(annualRevenue) : undefined,
-          contact_person: contactPerson.trim() || undefined,
-          contact_role: contactRole.trim() || undefined,
-          billing_cycle: billingCycle.trim() || undefined,
-          payment_method: paymentMethod.trim() || undefined,
-          tax_id: taxId.trim() || undefined,
-        }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        toast.success("Cliente atualizado com sucesso!");
-        setIsEditOpen(false);
-        resetForm();
-        loadClients();
-        loadStats();
-      } else {
-        toast.error(data.error || "Erro ao atualizar cliente");
-      }
-    } catch {
-      toast.error("Erro ao atualizar cliente");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleDelete = async () => {
     if (!selectedClient) return;
     setIsSubmitting(true);
@@ -407,42 +352,8 @@ function ClientsContent() {
     }
   };
 
-  const openEditModal = (client: Client) => {
-    setSelectedClient(client);
-    setName(client.name);
-    setCompany(client.company || "");
-    setEmail(client.email || "");
-    setPhone(client.phone || "");
-    setSegment(client.segment);
-    setStatus(client.status);
-    setNotes(client.notes || "");
-    setAddress(client.address || "");
-    setCity(client.city || "");
-    setState(client.state || "");
-    setCountry(client.country || "");
-    setWebsite(client.website || "");
-    setLinkedin(client.linkedin || "");
-    setInstagram(client.instagram || "");
-    setIndustry(client.industry || "");
-    setCompanySize(client.company_size || "");
-    setAnnualRevenue(client.annual_revenue?.toString() || "");
-    setContactPerson(client.contact_person || "");
-    setContactRole(client.contact_role || "");
-    setBillingCycle(client.billing_cycle || "");
-    setPaymentMethod(client.payment_method || "");
-    setTaxId(client.tax_id || "");
-    setIsEditOpen(true);
-  };
-
-  const resetForm = () => {
-    setName(""); setCompany(""); setEmail(""); setPhone("");
-    setSegment("direct"); setStatus("lead"); setNotes("");
-    setAddress(""); setCity(""); setState(""); setCountry("");
-    setWebsite(""); setLinkedin(""); setInstagram("");
-    setIndustry(""); setCompanySize(""); setAnnualRevenue("");
-    setContactPerson(""); setContactRole("");
-    setBillingCycle(""); setPaymentMethod(""); setTaxId("");
-    setSelectedClient(null);
+  const openEditPage = (client: Client) => {
+    setLocation(`/clients/${client.id}/editar`);
   };
 
   const getStatusColor = (status: string) => {
@@ -475,12 +386,12 @@ function ClientsContent() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <p className="text-frame-orange font-frame-mono text-xs tracking-[0.2em] uppercase mb-2">// CRM</p>
+            <p className="text-frame-orange font-frame-mono text-xs tracking-[0.2em] uppercase mb-2">// CLIENTES</p>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">CLIENTES</h1>
             <p className="text-frame-gray-light text-sm mt-2">Gerencie seu portfólio de clientes e oportunidades</p>
           </div>
           <button
-            onClick={() => { resetForm(); setIsCreateOpen(true); }}
+            onClick={() => setLocation("/clients/novo")}
             className="frame-btn-primary flex items-center gap-2 shrink-0"
           >
             <Plus className="w-4 h-4" />
@@ -552,12 +463,104 @@ function ClientsContent() {
           </select>
         </div>
 
-        {/* Kanban Board */}
-        <DndContext
-          sensors={sensors}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
+        {/* Main Content with Sidebar */}
+        <div className="flex gap-6">
+          {/* Sidebar */}
+          <aside className="hidden lg:block w-56 shrink-0 space-y-4">
+            <div className="border border-frame-gray-3 bg-frame-gray-1/10 p-4">
+              <p className="font-frame-mono text-[0.55rem] tracking-[0.2em] uppercase text-frame-orange mb-3">Ações Rápidas</p>
+              <div className="space-y-2">
+                 <button onClick={() => setLocation("/clients/novo")} className="w-full text-left text-sm text-frame-gray-light hover:text-frame-white transition px-2 py-1.5 border border-frame-gray-3 hover:border-frame-orange/50">
+                  + Novo Cliente
+                </button>
+                <button className="w-full text-left text-sm text-frame-gray-light hover:text-frame-white transition px-2 py-1.5 border border-frame-gray-3 hover:border-frame-orange/50">
+                  📋 Exportar
+                </button>
+              </div>
+            </div>
+            <div className="border border-frame-gray-3 bg-frame-gray-1/10 p-4">
+              <p className="font-frame-mono text-[0.55rem] tracking-[0.2em] uppercase text-frame-orange mb-3">Segmentos</p>
+              <div className="space-y-1.5">
+                {[
+                  { id: "", label: "Todos", color: "bg-frame-gray-3" },
+                  { id: "direct", label: "Direto", color: "bg-blue-400" },
+                  { id: "agency", label: "Agência", color: "bg-purple-400" },
+                  { id: "brand", label: "Marca", color: "bg-green-400" },
+                ].map((seg) => (
+                  <button
+                    key={seg.id}
+                    onClick={() => setFilterSegment(seg.id)}
+                    className={`w-full text-left text-xs flex items-center gap-2 px-2 py-1.5 transition ${
+                      filterSegment === seg.id ? "text-frame-white bg-frame-gray-2" : "text-frame-gray-light hover:text-frame-white"
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${seg.color}`} />
+                    {seg.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="border border-frame-gray-3 bg-frame-gray-1/10 p-4">
+              <p className="font-frame-mono text-[0.55rem] tracking-[0.2em] uppercase text-frame-orange mb-3">Status</p>
+              <div className="space-y-1.5">
+                {[
+                  { id: "", label: "Todos", color: "bg-frame-gray-3" },
+                  { id: "active", label: "Ativo", color: "bg-green-400" },
+                  { id: "lead", label: "Lead", color: "bg-blue-400" },
+                  { id: "inactive", label: "Inativo", color: "bg-red-400" },
+                ].map((st) => (
+                  <button
+                    key={st.id}
+                    onClick={() => setFilterStatus(st.id)}
+                    className={`w-full text-left text-xs flex items-center gap-2 px-2 py-1.5 transition ${
+                      filterStatus === st.id ? "text-frame-white bg-frame-gray-2" : "text-frame-gray-light hover:text-frame-white"
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${st.color}`} />
+                    {st.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {stats && (
+              <div className="border border-frame-gray-3 bg-frame-gray-1/10 p-4">
+                <p className="font-frame-mono text-[0.55rem] tracking-[0.2em] uppercase text-frame-orange mb-3">Resumo</p>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-frame-gray-light">Total</span>
+                    <span className="font-semibold">{stats.totalClients}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-green-400">Ativos</span>
+                    <span className="font-semibold">{stats.activeClients}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-400">Leads</span>
+                    <span className="font-semibold">{stats.leadClients}</span>
+                  </div>
+                  {stats.bySegment.length > 0 && (
+                    <>
+                      <div className="border-t border-frame-gray-3 my-1" />
+                      {stats.bySegment.map((s) => (
+                        <div key={s.segment} className="flex justify-between">
+                          <span className="text-frame-gray-light">{s.segment || "Sem segmento"}</span>
+                          <span className="font-semibold">{s.count}</span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+          </aside>
+
+          {/* Kanban Board */}
+          <div className="flex-1 min-w-0">
+          <DndContext
+            sensors={sensors}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
           <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-thin" style={{ minHeight: "500px" }}>
             {WORKFLOW_STAGES.map((stage) => {
               const stageClients = clients.filter((c) => c.workflow_stage === stage.id);
@@ -583,10 +586,10 @@ function ClientsContent() {
                             exit={{ opacity: 0, scale: 0.95 }}
                           >
                             <SortableClientCard
-                              client={client}
-                              onEdit={openEditModal}
-                              onDelete={(c) => { setSelectedClient(c); setIsDeleteOpen(true); }}
-                              isDragging={activeDragId === `client-${client.id}`}
+                               client={client}
+                               onEdit={(c) => setLocation(`/clients/${c.id}/editar`)}
+                               onDelete={(c) => { setSelectedClient(c); setIsDeleteOpen(true); }}
+                               isDragging={activeDragId === `client-${client.id}`}
                             />
                           </motion.div>
                         ))}
@@ -616,7 +619,7 @@ function ClientsContent() {
             <Users className="w-12 h-12 text-frame-gray-light mx-auto mb-4" />
             <p className="text-frame-gray-light mb-4">Nenhum cliente encontrado</p>
             <button
-              onClick={() => { resetForm(); setIsCreateOpen(true); }}
+              onClick={() => setLocation("/clients/novo")}
               className="frame-btn-primary inline-flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
@@ -624,367 +627,11 @@ function ClientsContent() {
             </button>
           </div>
         )}
+        </div>{/* end kanban flex-1 */}
+      </div>{/* end sidebar layout */}
       </main>
 
-      {/* Create Modal */}
-      <AnimatedModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        title="NOVO CLIENTE"
-        description="Adicione um novo cliente ao seu CRM"
-        footer={
-          <div className="flex gap-3 w-full">
-            <button type="button" onClick={() => setIsCreateOpen(false)} disabled={isSubmitting} className="frame-btn-ghost flex-1">
-              Cancelar
-            </button>
-            <button type="submit" form="create-client-form" disabled={isSubmitting} className="frame-btn-primary flex-1">
-              {isSubmitting ? "Criando..." : "Criar Cliente"}
-            </button>
-          </div>
-        }
-      >
-        <form id="create-client-form" onSubmit={handleCreate} className="space-y-4">
-          <div className="space-y-2">
-            <label className="block font-frame-mono text-xs text-frame-orange uppercase">Nome *</label>
-            <input type="text" required disabled={isSubmitting} value={name} onChange={(e) => setName(e.target.value)}
-              className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="Nome do cliente" />
-          </div>
-          <div className="space-y-2">
-            <label className="block font-frame-mono text-xs text-frame-orange uppercase">Empresa</label>
-            <input type="text" disabled={isSubmitting} value={company} onChange={(e) => setCompany(e.target.value)}
-              className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="Nome da empresa" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-orange uppercase">Email</label>
-              <input type="email" disabled={isSubmitting} value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="email@exemplo.com" />
-            </div>
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-orange uppercase">Telefone</label>
-              <input type="text" disabled={isSubmitting} value={phone} onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="+55 11 99999-9999" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-orange uppercase">Segmento</label>
-              <select disabled={isSubmitting} value={segment} onChange={(e) => setSegment(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                <option value="direct">Direto</option>
-                <option value="agency">Agência</option>
-                <option value="brand">Marca</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-orange uppercase">Status</label>
-              <select disabled={isSubmitting} value={status} onChange={(e) => setStatus(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                <option value="lead">Lead</option>
-                <option value="active">Ativo</option>
-                <option value="inactive">Inativo</option>
-              </select>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Endereço</h4>
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Endereço</label>
-              <input type="text" disabled={isSubmitting} value={address} onChange={(e) => setAddress(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="Rua, número, complemento" />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Cidade</label>
-                <input type="text" disabled={isSubmitting} value={city} onChange={(e) => setCity(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Estado</label>
-                <input type="text" disabled={isSubmitting} value={state} onChange={(e) => setState(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">País</label>
-                <input type="text" disabled={isSubmitting} value={country} onChange={(e) => setCountry(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Redes Sociais</h4>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Website</label>
-                <input type="url" disabled={isSubmitting} value={website} onChange={(e) => setWebsite(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="https://" />
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">LinkedIn</label>
-                <input type="url" disabled={isSubmitting} value={linkedin} onChange={(e) => setLinkedin(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="https://linkedin.com/" />
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Instagram</label>
-                <input type="url" disabled={isSubmitting} value={instagram} onChange={(e) => setInstagram(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="https://instagram.com/" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Informações da Empresa</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Indústria</label>
-                <input type="text" disabled={isSubmitting} value={industry} onChange={(e) => setIndustry(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="Ex: Produção de Vídeo" />
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Tamanho</label>
-                <select disabled={isSubmitting} value={companySize} onChange={(e) => setCompanySize(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                  <option value="">Selecione</option>
-                  <option value="1-10">1-10 funcionários</option>
-                  <option value="11-50">11-50 funcionários</option>
-                  <option value="51-200">51-200 funcionários</option>
-                  <option value="201-500">201-500 funcionários</option>
-                  <option value="500+">500+ funcionários</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Receita Anual (R$)</label>
-                <input type="number" disabled={isSubmitting} value={annualRevenue} onChange={(e) => setAnnualRevenue(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="0.00" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Contato Principal</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Pessoa de Contato</label>
-                <input type="text" disabled={isSubmitting} value={contactPerson} onChange={(e) => setContactPerson(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Cargo</label>
-                <input type="text" disabled={isSubmitting} value={contactRole} onChange={(e) => setContactRole(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="Ex: Diretor de Marketing" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Financeiro</h4>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Ciclo de Cobrança</label>
-                <select disabled={isSubmitting} value={billingCycle} onChange={(e) => setBillingCycle(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                  <option value="">Selecione</option>
-                  <option value="monthly">Mensal</option>
-                  <option value="quarterly">Trimestral</option>
-                  <option value="annual">Anual</option>
-                  <option value="project">Por Projeto</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Método de Pagamento</label>
-                <select disabled={isSubmitting} value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                  <option value="">Selecione</option>
-                  <option value="pix">PIX</option>
-                  <option value="bank_transfer">Transferência</option>
-                  <option value="credit_card">Cartão</option>
-                  <option value="boleto">Boleto</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">CNPJ/CPF</label>
-                <input type="text" disabled={isSubmitting} value={taxId} onChange={(e) => setTaxId(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" placeholder="00.000.000/0000-00" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2 pt-4 border-t border-frame-gray-3">
-            <label className="block font-frame-mono text-xs text-frame-orange uppercase">Notas</label>
-            <textarea disabled={isSubmitting} value={notes} onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange resize-none" rows={3} placeholder="Observações sobre o cliente..." />
-          </div>
-        </form>
-      </AnimatedModal>
 
-      {/* Edit Modal */}
-      <AnimatedModal
-        isOpen={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
-        title="EDITAR CLIENTE"
-        description="Atualize as informações do cliente"
-        footer={
-          <div className="flex gap-3 w-full">
-            <button type="button" onClick={() => setIsEditOpen(false)} disabled={isSubmitting} className="frame-btn-ghost flex-1">
-              Cancelar
-            </button>
-            <button type="submit" form="edit-client-form" disabled={isSubmitting} className="frame-btn-primary flex-1">
-              {isSubmitting ? "Atualizando..." : "Atualizar"}
-            </button>
-          </div>
-        }
-      >
-        <form id="edit-client-form" onSubmit={handleUpdate} className="space-y-4">
-          <div className="space-y-2">
-            <label className="block font-frame-mono text-xs text-frame-orange uppercase">Nome *</label>
-            <input type="text" required disabled={isSubmitting} value={name} onChange={(e) => setName(e.target.value)}
-              className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-          </div>
-          <div className="space-y-2">
-            <label className="block font-frame-mono text-xs text-frame-orange uppercase">Empresa</label>
-            <input type="text" disabled={isSubmitting} value={company} onChange={(e) => setCompany(e.target.value)}
-              className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-orange uppercase">Email</label>
-              <input type="email" disabled={isSubmitting} value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-            </div>
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-orange uppercase">Telefone</label>
-              <input type="text" disabled={isSubmitting} value={phone} onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-orange uppercase">Segmento</label>
-              <select disabled={isSubmitting} value={segment} onChange={(e) => setSegment(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                <option value="direct">Direto</option>
-                <option value="agency">Agência</option>
-                <option value="brand">Marca</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-orange uppercase">Status</label>
-              <select disabled={isSubmitting} value={status} onChange={(e) => setStatus(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                <option value="lead">Lead</option>
-                <option value="active">Ativo</option>
-                <option value="inactive">Inativo</option>
-              </select>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Endereço</h4>
-            <div className="space-y-2">
-              <label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Endereço</label>
-              <input type="text" disabled={isSubmitting} value={address} onChange={(e) => setAddress(e.target.value)}
-                className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Cidade</label>
-                <input type="text" disabled={isSubmitting} value={city} onChange={(e) => setCity(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Estado</label>
-                <input type="text" disabled={isSubmitting} value={state} onChange={(e) => setState(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">País</label>
-                <input type="text" disabled={isSubmitting} value={country} onChange={(e) => setCountry(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Redes Sociais</h4>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Website</label>
-                <input type="url" disabled={isSubmitting} value={website} onChange={(e) => setWebsite(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">LinkedIn</label>
-                <input type="url" disabled={isSubmitting} value={linkedin} onChange={(e) => setLinkedin(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Instagram</label>
-                <input type="url" disabled={isSubmitting} value={instagram} onChange={(e) => setInstagram(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Informações da Empresa</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Indústria</label>
-                <input type="text" disabled={isSubmitting} value={industry} onChange={(e) => setIndustry(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Tamanho</label>
-                <select disabled={isSubmitting} value={companySize} onChange={(e) => setCompanySize(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                  <option value="">Selecione</option>
-                  <option value="1-10">1-10 funcionários</option>
-                  <option value="11-50">11-50 funcionários</option>
-                  <option value="51-200">51-200 funcionários</option>
-                  <option value="201-500">201-500 funcionários</option>
-                  <option value="500+">500+ funcionários</option>
-                </select>
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Receita Anual (R$)</label>
-                <input type="number" disabled={isSubmitting} value={annualRevenue} onChange={(e) => setAnnualRevenue(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Contato Principal</h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Pessoa</label>
-                <input type="text" disabled={isSubmitting} value={contactPerson} onChange={(e) => setContactPerson(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Cargo</label>
-                <input type="text" disabled={isSubmitting} value={contactRole} onChange={(e) => setContactRole(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4 pt-4 border-t border-frame-gray-3">
-            <h4 className="font-frame-mono text-xs text-frame-orange uppercase">Financeiro</h4>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Ciclo</label>
-                <select disabled={isSubmitting} value={billingCycle} onChange={(e) => setBillingCycle(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                  <option value="">Selecione</option>
-                  <option value="monthly">Mensal</option>
-                  <option value="quarterly">Trimestral</option>
-                  <option value="annual">Anual</option>
-                  <option value="project">Por Projeto</option>
-                </select>
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">Pagamento</label>
-                <select disabled={isSubmitting} value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange">
-                  <option value="">Selecione</option>
-                  <option value="pix">PIX</option>
-                  <option value="bank_transfer">Transferência</option>
-                  <option value="credit_card">Cartão</option>
-                  <option value="boleto">Boleto</option>
-                </select>
-              </div>
-              <div className="space-y-2"><label className="block font-frame-mono text-xs text-frame-gray-light uppercase">CNPJ/CPF</label>
-                <input type="text" disabled={isSubmitting} value={taxId} onChange={(e) => setTaxId(e.target.value)}
-                  className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange" />
-              </div>
-            </div>
-          </div>
-          <div className="space-y-2 pt-4 border-t border-frame-gray-3">
-            <label className="block font-frame-mono text-xs text-frame-orange uppercase">Notas</label>
-            <textarea disabled={isSubmitting} value={notes} onChange={(e) => setNotes(e.target.value)}
-              className="w-full bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange resize-none" rows={3} />
-          </div>
-        </form>
-      </AnimatedModal>
 
       {/* Delete Modal */}
       <AnimatedModal
@@ -992,6 +639,7 @@ function ClientsContent() {
         onClose={() => setIsDeleteOpen(false)}
         title="EXCLUIR CLIENTE"
         description="Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita."
+        className="max-w-md"
         footer={
           <div className="flex gap-3 w-full">
             <button type="button" onClick={() => setIsDeleteOpen(false)} disabled={isSubmitting} className="frame-btn-ghost flex-1">

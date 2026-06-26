@@ -1,5 +1,4 @@
 import { Router } from "express";
-import rateLimit from "express-rate-limit";
 import * as authController from "../controllers/authController.js";
 import { authenticate } from "../middleware/authenticate.js";
 import { validateBody } from "../middleware/validate.js";
@@ -13,22 +12,9 @@ import passport, { isGitHubAuthConfigured } from "../config/passport.js";
 
 const router = Router();
 
-const registerLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10 });
-const forgotLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5 });
-
 router.post("/login", validateBody(loginSchema), authController.login);
-router.post(
-  "/register",
-  registerLimiter,
-  validateBody(registerSchema),
-  authController.register,
-);
-router.post(
-  "/forgot-password",
-  forgotLimiter,
-  validateBody(forgotPasswordSchema),
-  authController.forgotPassword,
-);
+router.post("/register", validateBody(registerSchema), authController.register);
+router.post("/forgot-password", validateBody(forgotPasswordSchema), authController.forgotPassword);
 router.post("/reset-password", validateBody(resetPasswordSchema), authController.resetPassword);
 router.post("/logout", authController.logout);
 router.post("/supabase", authController.supabaseLogin);

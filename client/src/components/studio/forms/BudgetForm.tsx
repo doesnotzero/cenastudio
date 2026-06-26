@@ -19,7 +19,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
             <select
               value={data.tipo || "Vídeo Institucional (1-3 min)"}
               onChange={(e) => onChange("tipo", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Vídeo Institucional (1-3 min)">Vídeo Institucional (1-3 min)</option>
               <option value="Vídeo Publicitário / TVC 30s">Vídeo Publicitário / TVC 30s</option>
@@ -41,7 +41,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
                 value={data.dias || "2"}
                 onChange={(e) => onChange("dias", e.target.value)}
                 placeholder="2"
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
               />
             </div>
             <div>
@@ -53,7 +53,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
                 value={data.locacoes || "2"}
                 onChange={(e) => onChange("locacoes", e.target.value)}
                 placeholder="2"
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
               />
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
       </div>
 
       {/* Seção 2: Recursos */}
-      <div className="pt-2 border-t border-[#1a1a1a]">
+      <div className="pt-2 border-t border-frame-gray-2">
         <p className="font-frame-mono text-[0.54rem] tracking-[0.17em] uppercase text-frame-orange mb-3">
           // Recursos & Equipe
         </p>
@@ -73,7 +73,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
             <select
               value={data.equipe || "Média (5-8 pessoas)"}
               onChange={(e) => onChange("equipe", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Pequena (2-4 pessoas)">Pequena (2-4 pessoas)</option>
               <option value="Média (5-8 pessoas)">Média (5-8 pessoas)</option>
@@ -88,7 +88,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
             <select
               value={data.atores || "Não"}
               onChange={(e) => onChange("atores", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Não">Não</option>
               <option value="Equipe interna do cliente">Equipe interna do cliente</option>
@@ -100,7 +100,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
       </div>
 
       {/* Seção 3: Equipamento */}
-      <div className="pt-2 border-t border-[#1a1a1a]">
+      <div className="pt-2 border-t border-frame-gray-2">
         <p className="font-frame-mono text-[0.54rem] tracking-[0.17em] uppercase text-frame-orange mb-3">
           // Infraestrutura & Equipamento
         </p>
@@ -112,7 +112,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
             <select
               value={data.camera || "Câmera própria (sem custo)"}
               onChange={(e) => onChange("camera", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Câmera própria (sem custo)">Câmera própria (sem custo)</option>
               <option value="Aluguel básico (Sony A7, Lumix S5)">Aluguel básico (Sony A7, Lumix S5)</option>
@@ -128,7 +128,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
             <select
               value={data.drone || "Não"}
               onChange={(e) => onChange("drone", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Não">Não</option>
               <option value="Sim — próprio (sem custo operacional extra)">Sim — próprio (sem custo operacional extra)</option>
@@ -143,7 +143,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
             <select
               value={data.luz || "Luz natural (sem custo)"}
               onChange={(e) => onChange("luz", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Luz natural (sem custo)">Luz natural (sem custo)</option>
               <option value="Kit básico próprio (LEDs leves)">Kit básico próprio (LEDs leves)</option>
@@ -154,7 +154,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
       </div>
 
       {/* Seção 4: Pós-produção */}
-      <div className="pt-2 border-t border-[#1a1a1a]">
+      <div className="pt-2 border-t border-frame-gray-2">
         <p className="font-frame-mono text-[0.54rem] tracking-[0.17em] uppercase text-frame-orange mb-3">
           // Pós-Produção & Finalização
         </p>
@@ -166,7 +166,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
             <select
               value={data.edicao || "Básica (corte, color simples)"}
               onChange={(e) => onChange("edicao", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Básica (corte, color simples)">Básica (corte, color simples)</option>
               <option value="Profissional (color, motion, trilha)">Profissional (color, motion, trilha)</option>
@@ -181,7 +181,7 @@ export default function BudgetForm({ data, onChange }: FormProps) {
             <select
               value={data.trilha || "Banco royalty-free"}
               onChange={(e) => onChange("trilha", e.target.value)}
-              className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
+              className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition cursor-pointer"
             >
               <option value="Banco royalty-free">Banco royalty-free</option>
               <option value="Banco premium (licenciada)">Banco premium (licenciada)</option>

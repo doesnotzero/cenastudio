@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { db } from "../models/db.js";
 import { AppError } from "../middleware/errorHandler.js";
+import type { DbCollaborator, DbCountByCount } from "../models/types.js";
 
 // List all collaborators for the current user
 export const listCollaborators: RequestHandler = (req, res, next) => {
@@ -81,7 +82,7 @@ export const updateCollaborator: RequestHandler = (req, res, next) => {
 
     const collaborator = db
       .prepare("SELECT * FROM collaborators WHERE id = ? AND user_id = ?")
-      .get(collaboratorId, userId) as any;
+      .get(collaboratorId, userId) as DbCollaborator | undefined;
 
     if (!collaborator) {
       throw new AppError("Collaborator not found", 404);
@@ -149,23 +150,10 @@ export const getCollaboratorStats: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
 
-    const totalCollaborators = db
-      .prepare("SELECT COUNT(*) as count FROM collaborators WHERE user_id = ?")
-      .get(userId) as { count: number };
-
-    const activeCollaborators = db
-      .prepare("SELECT COUNT(*) as count FROM collaborators WHERE user_id = ? AND status = 'active'")
-      .get(userId) as { count: number };
-
-    const byRole = db
-      .prepare(
-        "SELECT role, COUNT(*) as count FROM collaborators WHERE user_id = ? GROUP BY role",
-      )
-      .all(userId);
-
-    const totalProjects = db
-      .prepare("SELECT COUNT(*) as count FROM project_members pm JOIN collaborators c ON pm.collaborator_id = c.id WHERE c.user_id = ?")
-      .get(userId) as { count: number };
+    const totalCollaborators = db.prepare("SELECT COUNT(*) as count FROM collaborators WHERE user_id = ?").get(userId) as DbCountByCount;
+    const activeCollaborators = db.prepare("SELECT COUNT(*) as count FROM collaborators WHERE user_id = ? AND status = 'active'").get(userId) as DbCountByCount;
+    const byRole = db.prepare("SELECT role, COUNT(*) as count FROM collaborators WHERE user_id = ? GROUP BY role").all(userId);
+    const totalProjects = db.prepare("SELECT COUNT(*) as count FROM project_members pm JOIN collaborators c ON pm.collaborator_id = c.id WHERE c.user_id = ?").get(userId) as DbCountByCount;
 
     res.json({
       success: true,

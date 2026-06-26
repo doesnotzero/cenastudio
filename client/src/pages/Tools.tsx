@@ -65,7 +65,7 @@ function ToolsContent() {
                 </div>
                 <button
                   type="button"
-                  className="w-full font-frame-mono text-[0.6rem] tracking-[0.11em] uppercase bg-transparent border border-[#2e2e2e] text-frame-gray-light py-1.5 px-3.5 transition hover:bg-frame-orange hover:text-frame-black hover:border-frame-orange"
+                  className="w-full font-frame-mono text-[0.6rem] tracking-[0.11em] uppercase bg-transparent border border-frame-gray-3 text-frame-gray-light py-1.5 px-3.5 transition hover:bg-frame-orange hover:text-frame-black hover:border-frame-orange"
                   onClick={(e) => {
                     e.stopPropagation();
                     setLocation(

@@ -10,6 +10,8 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import AdminDashboard from "@/pages/AdminDashboard";
 import Analytics from "@/pages/Analytics";
 import Clients from "@/pages/Clients";
+import NewClient from "@/pages/NewClient";
+import EditClient from "@/pages/EditClient";
 import Collaborators from "@/pages/Collaborators";
 import Dashboard from "@/pages/Dashboard";
 import Files from "@/pages/Files";
@@ -42,6 +44,8 @@ function Router() {
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/clients/new" component={NewClient} />
+      <Route path="/clients/:id/editar" component={EditClient} />
       <Route path="/clients" component={Clients} />
       <Route path="/clients/:id" component={Clients} />
       <Route path="/pipeline" component={Pipeline} />
@@ -69,7 +73,7 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="dark" switchable={true}>
         <AuthProvider>
           <ProjectProvider>
             <AppProvider>

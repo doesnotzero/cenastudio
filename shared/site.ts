@@ -1,34 +1,30 @@
-/**
- * Landing / marketing site constants
- */
-
 export const SITE_CONFIG = {
-  title: "FRAME.AI — Agência Inteligente para Filmmakers",
+  title: "FRAME.AI — Plataforma Inteligente para Produção Audiovisual",
   description:
-    "A agência inteligente do filmmaker moderno. Ferramentas IA para roteiro, callsheet, decupagem, orçamento e muito mais.",
+    "A plataforma completa do filmmaker moderno. IA para roteiro, callsheet, decupagem, orçamento, gestão de arquivos, revisão de vídeos, CRM e pipeline comercial.",
   domain: "frame.ai",
 };
 
 export const NAVIGATION = [
   { label: "Ferramentas", href: "#tools" },
-  { label: "Preços", href: "#pricing" },
   { label: "Sobre", href: "#about" },
+  { label: "Preços", href: "#pricing" },
   { label: "Contato", href: "#contact" },
 ];
 
 export const HERO = {
-  tag: "Inteligência Artificial para Produção",
-  title: ["ROTEIROS", "CALLSHEETS", "ORÇAMENTOS"],
+  tag: "Plataforma Completa de Produção Audiovisual",
+  title: ["PRÉ-PRODUÇÃO", "PRODUÇÃO", "PÓS-PRODUÇÃO"],
   subtitle:
-    "Transforme suas ideias em produções profissionais. Gere documentos técnicos, orçamentos realistas e cronogramas em segundos com IA treinada em padrões da indústria cinematográfica.",
+    "A plataforma que unifica todo o fluxo de produção audiovisual: roteiros com IA, callsheet inteligente, decupagem técnica, orçamentos automáticos, gestão de arquivos, revisão de vídeos com anotações no frame, CRM de clientes e pipeline comercial. Tudo em um só lugar.",
   cta: {
     primary: { label: "Começar Agora", href: "/login" },
-    secondary: { label: "Ver Demo", href: "#" },
+    secondary: { label: "Ver Demonstração", href: "#" },
   },
   stats: [
-    { number: "2.5K+", label: "Roteiros Gerados" },
-    { number: "98%", label: "Satisfação" },
-    { number: "47", label: "Países" },
+    { number: "5K+", label: "Projetos Realizados" },
+    { number: "50+", label: "Ferramentas e Módulos" },
+    { number: "12", label: "Países" },
   ],
 };
 
@@ -40,15 +36,16 @@ export const PRICING = [
     tier: "// Iniciante",
     price: "R$97",
     period: "/mês",
-    description: "Perfeito para freelancers e criadores independentes",
+    description: "Para freelancers e criadores independentes",
     features: [
-      "5 roteiros/mês",
-      "Callsheet básico",
-      "Decupagem simplificada",
-      "Orçamento padrão",
+      "15 gerações com IA/mês",
+      "Callsheet, roteiro e decupagem",
+      "10 arquivos em nuvem",
+      "3 projetos simultâneos",
+      "CRM básico de clientes",
       "Suporte por email",
     ],
-    cta: { label: "Começar Agora", href: "#" },
+    cta: { label: "Começar Grátis", href: "#" },
     highlight: false,
   },
   {
@@ -56,16 +53,17 @@ export const PRICING = [
     tier: "// Profissional",
     price: "R$297",
     period: "/mês — mais popular",
-    description: "Para produtoras e diretores profissionais",
+    description: "Para produtoras e profissionais",
     features: [
-      "Roteiros ilimitados",
-      "Decupagem técnica IA",
-      "Contratos personalizados",
-      "Orçamento automático",
-      "Gestão de projeto",
+      "Gerações ilimitadas com IA",
+      "Todas as ferramentas do estúdio",
+      "Arquivos ilimitados em nuvem",
+      "Projetos ilimitados",
+      "Review de vídeos com anotações",
+      "CRM completo + pipeline",
       "Suporte prioritário",
     ],
-    cta: { label: "Começar Agora", href: "#" },
+    cta: { label: "Assinar Pro", href: "#" },
     highlight: true,
   },
   {
@@ -73,7 +71,7 @@ export const PRICING = [
     tier: "// Produtora",
     price: "R$697",
     period: "/mês",
-    description: "Solução completa para grandes produtoras",
+    description: "Para grandes produtoras e agências",
     features: [
       "Tudo do Profissional",
       "Multi-usuários (10 seats)",
@@ -81,6 +79,7 @@ export const PRICING = [
       "White-label",
       "Onboarding dedicado",
       "SLA garantido",
+      "Relatórios avançados",
     ],
     cta: { label: "Falar com equipe", href: "#" },
     highlight: false,
@@ -89,24 +88,34 @@ export const PRICING = [
 
 export const MARQUEE_ITEMS = [
   "PRÉ-PRODUÇÃO",
-  "ROTEIRO",
+  "ROTEIRO IA",
   "CALLSHEET",
   "DECUPAGEM",
   "ORÇAMENTO",
   "CONTRATO",
   "PROPOSTA",
-  "COLORIZAÇÃO",
+  "BRIEFING",
+  "MOODBOARD",
+  "CHECKLIST",
+  "CRONOGRAMA",
   "ENTREGA",
+  "ARQUIVOS",
+  "REVIEW DE VÍDEO",
+  "CRM",
+  "PIPELINE",
+  "ANALYTICS",
 ];
 
 export const FOOTER_LINKS = {
   tools: {
-    title: "Ferramentas",
+    title: "Plataforma",
     links: [
-      { label: "Gerador de Roteiro", href: "#tools" },
-      { label: "Callsheet", href: "#tools" },
-      { label: "Decupagem", href: "#tools" },
-      { label: "Orçamento", href: "#tools" },
+      { label: "Estúdio IA", href: "#tools" },
+      { label: "Arquivos", href: "#tools" },
+      { label: "Review de Vídeo", href: "#tools" },
+      { label: "CRM", href: "#tools" },
+      { label: "Pipeline", href: "#tools" },
+      { label: "Analytics", href: "#tools" },
     ],
   },
   company: {

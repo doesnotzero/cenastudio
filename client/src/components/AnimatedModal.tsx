@@ -9,6 +9,7 @@ interface AnimatedModalProps {
   description?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
+  className?: string;
 }
 
 export default function AnimatedModal({
@@ -18,6 +19,7 @@ export default function AnimatedModal({
   description,
   children,
   footer,
+  className = "",
 }: AnimatedModalProps) {
   useEffect(() => {
     if (isOpen) {
@@ -49,17 +51,18 @@ export default function AnimatedModal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/85 backdrop-blur-md z-50"
+            className="fixed inset-0 bg-black/85 backdrop-blur-md z-40"
           />
 
           {/* Modal Container */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+            <div className={`pointer-events-auto w-full ${className || "max-w-2xl"}`}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="bg-frame-black border border-frame-gray-3 text-frame-white w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl"
+              className="bg-frame-black border border-frame-gray-3 text-frame-white w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
@@ -92,6 +95,7 @@ export default function AnimatedModal({
                 </div>
               )}
             </motion.div>
+            </div>
           </div>
         </>
       )}

@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 import { db } from "../models/db.js";
 import { AppError } from "../middleware/errorHandler.js";
+import type { DbProject, DbProjectState } from "../models/types.js";
 
 // List all projects for current user
 export const listProjects: RequestHandler = (req, res, next) => {
@@ -70,7 +71,7 @@ export const updateProject: RequestHandler = (req, res, next) => {
 
     const project = db
       .prepare("SELECT * FROM projects WHERE id = ? AND user_id = ?")
-      .get(projectId, userId) as Record<string, any> | undefined;
+      .get(projectId, userId) as DbProject | undefined;
 
     if (!project) {
       throw new AppError("Projeto não encontrado ou acesso não autorizado", 404);
@@ -181,7 +182,7 @@ export const getToolState: RequestHandler = (req, res, next) => {
 
     const state = db
       .prepare("SELECT * FROM project_states WHERE project_id = ? AND tool_id = ?")
-      .get(projectId, toolId) as Record<string, any> | undefined;
+      .get(projectId, toolId) as DbProjectState | undefined;
 
     if (!state) {
       res.json({ success: true, data: null });

@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
 import { db } from "../models/db.js";
 import { AppError } from "../middleware/errorHandler.js";
+import type { DbInteraction } from "../models/types.js";
 
 // List interactions for a client or opportunity
 export const listInteractions: RequestHandler = (req, res, next) => {
@@ -83,11 +84,11 @@ export const updateInteraction: RequestHandler = (req, res, next) => {
 
     const interaction = db
       .prepare(
-        `SELECT i.id FROM interactions i
+        `SELECT i.id, i.type, i.subject, i.notes, i.next_follow_up FROM interactions i
          JOIN clients c ON i.client_id = c.id
          WHERE i.id = ? AND c.user_id = ?`,
       )
-      .get(interactionId, userId) as Record<string, any> | undefined;
+      .get(interactionId, userId) as DbInteraction | undefined;
 
     if (!interaction) {
       throw new AppError("Interação não encontrada ou acesso não autorizado", 404);

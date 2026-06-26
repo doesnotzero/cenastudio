@@ -1,8 +1,9 @@
 import { useApp } from "@/contexts/AppContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { ApiError, openBillingPortal } from "@/lib/api";
 import { CHECKOUT_MODAL_PLAN, planDisplayLabel } from "@/lib/plans";
-import { LogOut } from "lucide-react";
+import { LogOut, Sun, Moon, ChevronDown } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -14,6 +15,7 @@ interface AppNavBarProps {
 export default function AppNavBar({ children }: AppNavBarProps) {
   const { logout, user, plan } = useAuth();
   const { openModal, selectPlan } = useApp();
+  const { theme, toggleTheme } = useTheme();
   const [location, setLocation] = useLocation();
 
   const handleLogout = async () => {
@@ -85,13 +87,12 @@ export default function AppNavBar({ children }: AppNavBarProps) {
       <nav className="hidden md:flex items-center gap-5">
         {navLink("/dashboard", "Painel")}
         {navLink("/tools", "Ferramentas")}
-        {navLink("/clients", "CRM")}
+        {navLink("/clients", "Clientes")}
         {navLink("/pipeline", "Pipeline")}
         {navLink("/files", "Arquivos")}
-        {navLink("/video-reviews", "Reviews")}
+        {navLink("/video-reviews", "Aprovação")}
         {navLink("/collaborators", "Equipe")}
         {navLink("/analytics", "Analytics")}
-        {navLink("/profile", "Conta")}
         {isAdmin && navLink("/admin", "Admin")}
       </nav>
 
@@ -101,17 +102,33 @@ export default function AppNavBar({ children }: AppNavBarProps) {
           <button
             type="button"
             onClick={() => setLocation("/profile")}
-            className={`w-7 h-7 rounded-full flex items-center justify-center text-[0.68rem] font-bold shrink-0 ${
-              isAdmin ? "bg-frame-gold text-frame-black" : "bg-frame-orange text-frame-black"
-            }`}
+            className="flex items-center gap-2.5 group"
             title="Abrir conta"
           >
-            {(user.name ?? user.email).charAt(0).toUpperCase()}
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[0.75rem] font-bold shrink-0 transition group-hover:scale-105 ${
+              isAdmin ? "bg-frame-gold text-frame-black" : "bg-frame-orange text-frame-black"
+            }`}>
+              {(user.name ?? user.email).charAt(0).toUpperCase()}
+            </div>
+            <div className="hidden sm:block text-left leading-tight">
+              <div className="font-frame-mono text-[0.6rem] tracking-[0.06em] text-frame-white truncate max-w-[100px]">
+                {user?.name ?? user?.email}
+              </div>
+              <div className="font-frame-mono text-[0.5rem] tracking-[0.08em] text-frame-gray-light">
+                {user?.email}
+              </div>
+            </div>
+            <ChevronDown className="w-3 h-3 text-frame-gray-light opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
         )}
-        <span className="hidden sm:inline font-frame-mono text-[0.58rem] tracking-[0.09em] uppercase text-frame-gray-light">
-          {user?.name ?? user?.email}
-        </span>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="p-2 border border-frame-gray-3 text-frame-gray-light hover:text-frame-orange hover:border-frame-orange transition rounded-none"
+          title={theme === "dark" ? "Modo claro" : "Modo escuro"}
+        >
+          {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+        </button>
         <button type="button" onClick={handleBadgeClick} className="frame-badge">
           {planLabel}
         </button>

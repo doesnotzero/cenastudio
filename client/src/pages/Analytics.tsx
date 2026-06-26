@@ -12,6 +12,9 @@ import {
   Calendar,
   Activity,
   RefreshCw,
+  PieChart,
+  ArrowUpRight,
+  ArrowDownRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -317,13 +320,28 @@ function AnalyticsContent() {
                       Receita por Segmento
                     </p>
                     {revenue.revenueBySegment.length > 0 ? (
-                      <div className="space-y-2">
-                        {revenue.revenueBySegment.map((item) => (
-                          <div key={item.segment} className="flex justify-between text-sm">
-                            <span className="text-frame-gray-light">{item.segment || "Sem segmento"}</span>
-                            <span className="font-semibold">{formatCurrency(item.revenue)}</span>
-                          </div>
-                        ))}
+                      <div className="space-y-3">
+                        {(() => {
+                          const maxRevenue = Math.max(...revenue.revenueBySegment.map((r) => r.revenue));
+                          const segmentColors = ["bg-blue-400", "bg-purple-400", "bg-green-400", "bg-yellow-400", "bg-pink-400", "bg-cyan-400"];
+                          return revenue.revenueBySegment.map((item, idx) => (
+                            <div key={item.segment}>
+                              <div className="flex justify-between text-sm mb-1">
+                                <span className="text-frame-gray-light">{item.segment || "Sem segmento"}</span>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-frame-gray-light">{item.count} negócios</span>
+                                  <span className="font-semibold min-w-[80px] text-right">{formatCurrency(item.revenue)}</span>
+                                </div>
+                              </div>
+                              <div className="w-full bg-frame-gray-3 rounded-full h-2.5">
+                                <div
+                                  className={`${segmentColors[idx % segmentColors.length]} h-2.5 rounded-full transition-all`}
+                                  style={{ width: `${(item.revenue / maxRevenue) * 100}%` }}
+                                />
+                              </div>
+                            </div>
+                          ));
+                        })()}
                       </div>
                     ) : (
                       <p className="text-frame-gray-light text-sm">Sem dados por segmento</p>
@@ -392,15 +410,24 @@ function AnalyticsContent() {
                 {activity.activityByDay.length > 0 && (
                   <div>
                     <p className="text-xs text-frame-gray-light font-frame-mono uppercase tracking-wider mb-2">
-                      Atividade Diária
+                      Atividade Diária (últimos 10 dias)
                     </p>
-                    <div className="space-y-2">
-                      {activity.activityByDay.slice(0, 10).map((item) => (
-                        <div key={item.day} className="flex justify-between text-sm">
-                          <span className="text-frame-gray-light">{item.day}</span>
-                          <span className="font-semibold">{item.count} ações</span>
-                        </div>
-                      ))}
+                    <div className="space-y-1.5">
+                      {(() => {
+                        const maxCount = Math.max(...activity.activityByDay.slice(0, 10).map((a) => a.count));
+                        return activity.activityByDay.slice(0, 10).map((item) => (
+                          <div key={item.day} className="flex items-center gap-3">
+                            <span className="text-xs text-frame-gray-light w-24 shrink-0 text-right">{item.day}</span>
+                            <div className="flex-1 bg-frame-gray-3 rounded-full h-3">
+                              <div
+                                className="bg-frame-orange h-3 rounded-full transition-all"
+                                style={{ width: `${maxCount > 0 ? (item.count / maxCount) * 100 : 0}%` }}
+                              />
+                            </div>
+                            <span className="text-xs font-semibold w-12 text-right">{item.count}</span>
+                          </div>
+                        ));
+                      })()}
                     </div>
                   </div>
                 )}

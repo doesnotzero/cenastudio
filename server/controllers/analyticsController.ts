@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { db } from "../models/db.js";
 import { AppError } from "../middleware/errorHandler.js";
+import type { DbCountByCount } from "../models/types.js";
 
 // Get overall analytics for the user
 export const getOverallAnalytics: RequestHandler = (req, res, next) => {
@@ -8,50 +9,19 @@ export const getOverallAnalytics: RequestHandler = (req, res, next) => {
     const userId = req.user!.id;
 
     // Project stats
-    const totalProjects = db
-      .prepare("SELECT COUNT(*) as count FROM projects WHERE user_id = ?")
-      .get(userId) as { count: number };
+    const totalProjects = db.prepare("SELECT COUNT(*) as count FROM projects WHERE user_id = ?").get(userId) as DbCountByCount;
+    const activeProjects = db.prepare("SELECT COUNT(*) as count FROM projects WHERE user_id = ? AND status = 'active'").get(userId) as DbCountByCount;
 
-    const activeProjects = db
-      .prepare("SELECT COUNT(*) as count FROM projects WHERE user_id = ? AND status = 'active'")
-      .get(userId) as { count: number };
+    const totalClients = db.prepare("SELECT COUNT(*) as count FROM clients WHERE user_id = ?").get(userId) as DbCountByCount;
+    const totalClientValue = db.prepare("SELECT COALESCE(SUM(total_spent), 0) as total FROM clients WHERE user_id = ?").get(userId) as { total: number };
 
-    // Client stats
-    const totalClients = db
-      .prepare("SELECT COUNT(*) as count FROM clients WHERE user_id = ?")
-      .get(userId) as { count: number };
+    const totalOpportunities = db.prepare("SELECT COUNT(*) as count FROM opportunities WHERE user_id = ?").get(userId) as DbCountByCount;
+    const pipelineValue = db.prepare("SELECT COALESCE(SUM(estimated_value), 0) as total FROM opportunities WHERE user_id = ? AND stage != 'lost'").get(userId) as { total: number };
 
-    const totalClientValue = db
-      .prepare("SELECT COALESCE(SUM(total_spent), 0) as total FROM clients WHERE user_id = ?")
-      .get(userId) as { total: number };
+    const wonThisMonth = db.prepare("SELECT COALESCE(SUM(estimated_value), 0) as total FROM opportunities WHERE user_id = ? AND stage = 'won' AND strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')").get(userId) as { total: number };
 
-    // Pipeline stats
-    const totalOpportunities = db
-      .prepare("SELECT COUNT(*) as count FROM opportunities WHERE user_id = ?")
-      .get(userId) as { count: number };
-
-    const pipelineValue = db
-      .prepare("SELECT COALESCE(SUM(estimated_value), 0) as total FROM opportunities WHERE user_id = ? AND stage != 'lost'")
-      .get(userId) as { total: number };
-
-    const wonThisMonth = db
-      .prepare(
-        `SELECT COALESCE(SUM(estimated_value), 0) as total 
-         FROM opportunities 
-         WHERE user_id = ? AND stage = 'won' 
-         AND strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')`,
-      )
-      .get(userId) as { total: number };
-
-    // AI generation stats
-    const totalGenerations = db
-      .prepare("SELECT COUNT(*) as count FROM generations WHERE user_id = ?")
-      .get(userId) as { count: number };
-
-    // Collaborator stats
-    const totalCollaborators = db
-      .prepare("SELECT COUNT(*) as count FROM collaborators WHERE user_id = ?")
-      .get(userId) as { count: number };
+    const totalGenerations = db.prepare("SELECT COUNT(*) as count FROM generations WHERE user_id = ?").get(userId) as DbCountByCount;
+    const totalCollaborators = db.prepare("SELECT COUNT(*) as count FROM collaborators WHERE user_id = ?").get(userId) as DbCountByCount;
 
     res.json({
       success: true,
@@ -112,19 +82,9 @@ export const getProjectAnalytics: RequestHandler = (req, res, next) => {
       .all(projectId);
 
     // Total generations for this project
-    const totalGenerations = db
-      .prepare("SELECT COUNT(*) as count FROM generations WHERE project_id = ?")
-      .get(projectId) as { count: number };
-
-    // Files count
-    const totalFiles = db
-      .prepare("SELECT COUNT(*) as count FROM files WHERE project_id = ?")
-      .get(projectId) as { count: number };
-
-    // Project members count
-    const totalMembers = db
-      .prepare("SELECT COUNT(*) as count FROM project_members WHERE project_id = ?")
-      .get(projectId) as { count: number };
+    const totalGenerations = db.prepare("SELECT COUNT(*) as count FROM generations WHERE project_id = ?").get(projectId) as DbCountByCount;
+    const totalFiles = db.prepare("SELECT COUNT(*) as count FROM files WHERE project_id = ?").get(projectId) as DbCountByCount;
+    const totalMembers = db.prepare("SELECT COUNT(*) as count FROM project_members WHERE project_id = ?").get(projectId) as DbCountByCount;
 
     res.json({
       success: true,
@@ -182,14 +142,8 @@ export const getRevenueAnalytics: RequestHandler = (req, res, next) => {
       )
       .get(userId) as { avg: number };
 
-    // Win rate
-    const totalOpps = db
-      .prepare("SELECT COUNT(*) as count FROM opportunities WHERE user_id = ?")
-      .get(userId) as { count: number };
-
-    const wonOpps = db
-      .prepare("SELECT COUNT(*) as count FROM opportunities WHERE user_id = ? AND stage = 'won'")
-      .get(userId) as { count: number };
+    const totalOpps = db.prepare("SELECT COUNT(*) as count FROM opportunities WHERE user_id = ?").get(userId) as DbCountByCount;
+    const wonOpps = db.prepare("SELECT COUNT(*) as count FROM opportunities WHERE user_id = ? AND stage = 'won'").get(userId) as DbCountByCount;
 
     const winRate = totalOpps.count > 0 ? (wonOpps.count / totalOpps.count) * 100 : 0;
 

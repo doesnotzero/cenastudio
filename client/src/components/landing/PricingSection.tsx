@@ -89,7 +89,7 @@ export default function PricingSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-0.5"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
           {PRICING.map((plan, idx) => (
             <motion.div

@@ -559,5 +559,172 @@ Para questões ou problemas, verifique:
 
 ---
 
-**Última Atualização:** 23 de Junho de 2026
-**Versão:** 2.0.0 (CRM Edition)
+---
+
+## Data: 25 de Junho de 2026
+
+### 11. Dark/Light Mode + Refatoração de Temas
+
+#### 11.1 Tema Completo com next-themes
+**Contexto:** Anteriormente o frontend usava cores hardcoded (`bg-[#111]`, `border-[#222]`, `text-white`, etc.), impossibilitando light mode e dificultando manutenção.
+
+**O que foi feito:**
+- Adicionado `next-themes` e `ThemeProvider` em `App.tsx`
+- Criado `ThemeContext` para gerenciamento de tema
+- Adicionado toggle de tema no `AppNavBar` (ícone de lua/sol)
+- Definidas CSS variables de tema em `client/src/index.css`:
+  - `--frame-bg`, `--frame-bg-secondary`, `--frame-bg-tertiary`
+  - `--frame-text`, `--frame-text-secondary`, `--frame-text-muted`
+  - `--frame-border`, `--frame-border-hover`
+  - `--frame-surface`, `--frame-surface-hover`
+  - Valores dark/light via `:root` e `@media (prefers-color-scheme: dark)`
+
+**Arquivos Modificados (35+):**
+- `client/src/index.css` — CSS variables de tema
+- `client/src/App.tsx` — Adicionado ThemeProvider
+- `client/src/components/AppNavBar.tsx` — Toggle de tema
+- `client/src/components/AnimatedModal.tsx` — Tema via variáveis
+- `client/src/components/VideoPlayer.tsx` — Tema via variáveis
+- `client/src/components/landing/PricingSection.tsx` — Tema via variáveis
+- `client/src/components/studio/*.tsx` — 10+ componentes de estúdio atualizados
+- `client/src/components/studio/forms/*.tsx` — 12 formulários atualizados
+- `client/src/pages/Clients.tsx`, `Analytics.tsx`, `Files.tsx`, `Landing.tsx`, `Tools.tsx`, `VideoReviews.tsx`
+- `client/src/contexts/AppContext.tsx`
+- `server/controllers/*.ts` — Diversos controllers
+
+#### 11.2 Resultado
+- ✅ Dark mode preservado (padrão)
+- ✅ Light mode funcional e consistente
+- ✅ Alternância suave via CSS variables
+- ✅ Sem valores hardcoded de cor
+- ✅ Preparado para tema do sistema (`prefers-color-scheme`)
+
+---
+
+### 12. CRM Reformulado — Páginas Dedicadas
+
+#### 12.1 Contexto
+Anteriormente, criar e editar clientes usava modais pesados com toda a lógica inline no `Clients.tsx`. Isso tornava o componente difícil de manter e os modais quebravam com frequência.
+
+#### 12.2 O que foi feito
+- Criado `ClientFormFields.tsx` — componente compartilhado de formulário de cliente com todos os campos (endereço, redes sociais, empresa, contato, financeiro, notas)
+- Criado `NewClient.tsx` — página dedicada para criação de clientes (`/clients/new`)
+- Criado `EditClient.tsx` — página dedicada para edição de clientes (`/clients/:id/edit`)
+- Removidos Create Modal e Edit Modal do `Clients.tsx` (redução de ~400 linhas)
+- Removidos estados e funções obsoletos de `Clients.tsx` (`isSubmitting`, `expandedSections`, `toggleSection`)
+- Atualizada navegação para redirecionar para as novas páginas
+
+#### 12.3 Resultado
+- ✅ `Clients.tsx` mais enxuto e focado em listagem
+- ✅ Formulário reutilizável (`ClientFormFields.tsx`)
+- ✅ URLs únicas para create/edit (compartilháveis, bookmarkable)
+- ✅ UX mais limpa sem modais gigantes
+
+---
+
+### 13. Video Player Real + Anotações no Frame
+
+#### 13.1 Video Player
+**Antes:** Usava player Cloudflare externo.
+**Depois:** Player server-side com `react-player` e controles customizados.
+
+**Arquivos:** `client/src/components/VideoPlayer.tsx`, `client/src/react-player.d.ts`
+
+#### 13.2 Annotation Canvas
+**Arquivo:** `client/src/components/AnnotationCanvas.tsx`
+
+Sistema de anotações sobre o frame do vídeo:
+- Draw de retângulos de anotação
+- Comentários vinculados a regiões do frame
+- Sincronizado com timestamps do vídeo
+
+#### 13.3 Server Types
+**Arquivo:** `server/models/types.ts`
+
+Tipos TypeScript compartilhados entre controllers de video reviews:
+- `VideoReview`, `VideoComment`, `CreateReviewInput`, `UpdateReviewInput`
+- `CreateCommentInput`, `ShareReviewResponse`
+
+---
+
+### 14. Site Config Compartilhado
+
+**Arquivo:** `shared/site.ts`
+
+Centraliza todos os dados de apresentação do site:
+- `SITE_CONFIG` — Título, descrição, domínio
+- `NAVIGATION` — Links de navegação da landing
+- `HERO` — Tagline, títulos, CTA, estatísticas
+- `PRICING` — 3 planos (Iniciante, Profissional, Produtora)
+- `MARQUEE_ITEMS` — Itens do marquee de ferramentas
+- `FOOTER_LINKS` — Links do footer agrupados
+
+Isso permite editar textos de marketing sem modificar componentes React.
+
+---
+
+### 15. Landing Page Dinâmica
+
+**Arquivo:** `client/src/pages/Landing.tsx`
+
+A landing page agora consome dados de `shared/site.ts` em vez de ter textos hardcoded:
+- Hero section com dados de `HERO`
+- Pricing section com `PRICING`
+- Footer com `FOOTER_LINKS`
+- Marquee com `MARQUEE_ITEMS`
+
+---
+
+### 16. Melhorias Gerais
+
+#### 16.1 Dependências Adicionadas
+- `framer-motion` — Animações em páginas e componentes
+- `sonner` — Toast notifications
+- `next-themes` — Dark/light mode
+- `@supabase/supabase-js` — Integração Supabase
+- `embla-carousel-react` — Carrossel na landing
+- `react-day-picker` — Date picker
+- `react-hook-form` + `zod` — Formulários com validação
+- `react-player` — Player de vídeo
+- `cmdk` — Command palette
+- `input-otp` — Input OTP
+- `vaul` — Drawer components
+- `class-variance-authority` — Variantes de classes
+
+#### 16.2 Componentes de UI Atualizados
+- `ToolSidebar.tsx` — Sidebar de ferramentas com tema
+- `RefineChatPanel.tsx` — Painel de chat com tema
+- `ProjectSelector.tsx` — Seletor de projetos com tema
+- `ActionToolbar.tsx` — Toolbar com tema
+- `OutputPanel.tsx` — Painel de output com tema
+- `ProjectMetadataModal.tsx` — Modal com tema
+- `ProjectTimeline.tsx` — Timeline com tema
+
+#### 16.3 Analytics
+- `Analytics.tsx` — Página de analytics atualizada com tema
+
+#### 16.4 Páginas
+- `Tools.tsx`, `Files.tsx`, `VideoReviews.tsx`, `Landing.tsx` — Atualizadas com tema
+
+---
+
+## 📊 Estatísticas do Projeto
+
+- **Arquivos:** 150+ componentes/páginas
+- **Dependências:** 80+ pacotes (30+ Radix UI, framer-motion, next-themes, supabase)
+- **Banco:** SQLite com 15+ tabelas
+- **API:** 50+ endpoints REST
+- **IA:** Integração Anthropic Claude
+- **Autenticação:** JWT httpOnly + GitHub OAuth
+
+---
+
+## 🐛 Erros Conhecidos
+
+- Nenhum erro crítico conhecido no momento
+- Alguns componentes de formulário podem precisar de atributos de acessibilidade adicionais (aria-label)
+
+---
+
+**Última Atualização:** 25 de Junho de 2026
+**Versão:** 3.0.0 (Theme + CRM Pages Edition)

@@ -116,11 +116,18 @@ function ensureClientColumns() {
 }
 
 function ensureVideoReviewColumns() {
-  const cols = (db.prepare("PRAGMA table_info(video_reviews)").all() as { name: string }[]).map(
+  const reviewsCols = (db.prepare("PRAGMA table_info(video_reviews)").all() as { name: string }[]).map(
     (c) => c.name,
   );
-  if (!cols.includes("video_url")) {
+  if (!reviewsCols.includes("video_url")) {
     db.prepare("ALTER TABLE video_reviews ADD COLUMN video_url TEXT").run();
+  }
+
+  const commentsCols = (db.prepare("PRAGMA table_info(video_comments)").all() as { name: string }[]).map(
+    (c) => c.name,
+  );
+  if (!commentsCols.includes("annotations")) {
+    db.prepare("ALTER TABLE video_comments ADD COLUMN annotations TEXT DEFAULT '[]'").run();
   }
 }
 

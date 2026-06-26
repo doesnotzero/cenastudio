@@ -172,7 +172,7 @@ export default function ChecklistForm({ data, onChange, onSetOutput }: Checklist
   return (
     <div className="space-y-4 font-frame-body">
       {/* Título & Tabs Internas */}
-      <div className="flex bg-[#121212] p-0.5 border border-frame-gray-3 overflow-x-auto select-none shrink-0 scrollbar-none">
+      <div className="flex bg-frame-gray-1 p-0.5 border border-frame-gray-3 overflow-x-auto select-none shrink-0 scrollbar-none">
         {["camera", "audio", "luz", "prod", "pos", "ia"].map((tab) => {
           const tabLabelMap: Record<string, string> = {
             camera: "📷 Câmera",
@@ -218,7 +218,7 @@ export default function ChecklistForm({ data, onChange, onSetOutput }: Checklist
                   onChange("prompt", `Gere um checklist de set personalizado para: ${e.target.value}`);
                 }}
                 placeholder="Ex: Casamento ao ar livre, comercial de moda em estúdio..."
-                className="bg-[#111] border border-[#222] focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
+                className="bg-frame-gray-1 border border-frame-gray-3 focus:border-frame-orange text-frame-white px-3 py-2 text-[0.8rem] rounded-none outline-none w-full font-frame-body transition"
               />
             </div>
             <button
@@ -239,7 +239,7 @@ export default function ChecklistForm({ data, onChange, onSetOutput }: Checklist
           </div>
 
           {aiOutput && (
-            <div className="p-3 bg-[#111] border border-[#1e1e1e] overflow-y-auto max-h-[220px]">
+            <div className="p-3 bg-frame-gray-1 border border-frame-gray-2 overflow-y-auto max-h-[220px]">
               <pre className="text-[0.74rem] leading-relaxed text-frame-cream whitespace-pre-wrap font-frame-mono">
                 {aiOutput}
               </pre>
@@ -249,11 +249,11 @@ export default function ChecklistForm({ data, onChange, onSetOutput }: Checklist
       ) : (
         <div className="space-y-4 pt-1 select-none">
           {/* Progress bar */}
-          <div className="flex items-center justify-between gap-3 text-frame-gray-light bg-[#121212] border border-frame-gray-3 px-3 py-2 shrink-0">
+          <div className="flex items-center justify-between gap-3 text-frame-gray-light bg-frame-gray-1 border border-frame-gray-3 px-3 py-2 shrink-0">
             <span className="font-frame-mono text-[0.63rem] uppercase tracking-wider">
               {completedCount} / {currentItems.length} concluídos
             </span>
-            <div className="flex-1 max-w-[120px] bg-[#1e1e1e] h-1.5 rounded-sm overflow-hidden">
+            <div className="flex-1 max-w-[120px] bg-frame-gray-2 h-1.5 rounded-sm overflow-hidden">
               <div
                 className="h-full bg-frame-orange transition-all duration-300 rounded-sm"
                 style={{ width: `${progressPercent}%` }}
@@ -269,21 +269,21 @@ export default function ChecklistForm({ data, onChange, onSetOutput }: Checklist
             <button
               type="button"
               onClick={() => handleMarkAll(true)}
-              className="py-1 font-frame-mono text-[0.52rem] uppercase border border-frame-gray-3 text-frame-gray-light bg-transparent hover:border-[#555] hover:text-frame-white transition"
+              className="py-1 font-frame-mono text-[0.52rem] uppercase border border-frame-gray-3 text-frame-gray-light bg-transparent hover:border-frame-gray-muted hover:text-frame-white transition"
             >
               Marcar todos
             </button>
             <button
               type="button"
               onClick={() => handleMarkAll(false)}
-              className="py-1 font-frame-mono text-[0.52rem] uppercase border border-frame-gray-3 text-frame-gray-light bg-transparent hover:border-[#555] hover:text-frame-white transition"
+              className="py-1 font-frame-mono text-[0.52rem] uppercase border border-frame-gray-3 text-frame-gray-light bg-transparent hover:border-frame-gray-muted hover:text-frame-white transition"
             >
               Desmarcar
             </button>
             <button
               type="button"
               onClick={handleCopyClipboard}
-              className="py-1 font-frame-mono text-[0.52rem] uppercase border border-frame-gray-3 text-frame-gray-light bg-transparent hover:border-[#555] hover:text-frame-white transition flex items-center justify-center gap-1"
+              className="py-1 font-frame-mono text-[0.52rem] uppercase border border-frame-gray-3 text-frame-gray-light bg-transparent hover:border-frame-gray-muted hover:text-frame-white transition flex items-center justify-center gap-1"
             >
               <Copy className="w-3 h-3" />
               Copiar
@@ -309,7 +309,7 @@ export default function ChecklistForm({ data, onChange, onSetOutput }: Checklist
                   className={`flex items-start gap-2.5 p-2.5 border transition cursor-pointer select-none ${
                     isChecked
                       ? "bg-[rgba(0,200,100,0.02)] border-[rgba(0,200,100,0.15)] text-frame-gray-light line-through"
-                      : "bg-[#111] border-[#1e1e1e] text-frame-white hover:bg-[#161616]"
+                      : "bg-frame-gray-1 border-frame-gray-2 text-frame-white hover:bg-frame-gray-1"
                   }`}
                 >
                   <div className="pt-0.5 shrink-0">

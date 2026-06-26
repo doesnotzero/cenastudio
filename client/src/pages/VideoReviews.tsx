@@ -1,14 +1,15 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useLocation } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import AppNavBar from "@/components/AppNavBar";
-import ProjectGateway from "@/components/ProjectGateway";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import VideoPlayer from "@/components/VideoPlayer";
+import type { Annotation } from "@/components/AnnotationCanvas";
 import {
-  Play, Plus, Share2, MessageSquare, Clock, CheckCircle, XCircle,
+  Plus, Share2, MessageSquare, Clock,
   Trash2, Copy, ExternalLink, FileVideo, Link as LinkIcon, Upload,
-  Film, CheckSquare, Square, AlertCircle, Send,
+  Film, CheckSquare, Square, Send, PenLine,
+  ChevronRight, Video,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,6 +35,7 @@ interface VideoComment {
   author_name: string;
   timestamp_seconds: number;
   comment: string;
+  annotations: Annotation[];
   resolved: number;
   created_at: string;
 }
@@ -44,6 +46,14 @@ interface ProjectFile {
   mime_type: string | null;
   size: number | null;
 }
+
+const REVIEW_STATUSES = [
+  { value: "draft", label: "Rascunho", color: "text-frame-gray-light border-frame-gray-3" },
+  { value: "pending_review", label: "Pendente", color: "text-yellow-400 border-yellow-500/30" },
+  { value: "changes_requested", label: "Alterações", color: "text-orange-400 border-orange-500/30" },
+  { value: "approved", label: "Aprovado", color: "text-green-400 border-green-500/30" },
+  { value: "rejected", label: "Rejeitado", color: "text-red-400 border-red-500/30" },
+];
 
 function VideoReviewsContent() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -71,24 +81,21 @@ function VideoReviewsContent() {
   const [playerReady, setPlayerReady] = useState(false);
 
   useEffect(() => {
+    loadAllReviews();
+  }, []);
+
+  useEffect(() => {
     if (projectId) {
-      loadReviews();
       loadProjectFiles();
-    } else {
-      setLoading(false);
     }
   }, [projectId]);
 
-  const loadReviews = async () => {
+  const loadAllReviews = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/video-reviews/projects/${projectId}`, {
-        credentials: "include",
-      });
+      const response = await fetch("/api/video-reviews", { credentials: "include" });
       const data = await response.json();
-      if (data.success) {
-        setReviews(data.data);
-      }
+      if (data.success) setReviews(data.data);
     } catch {
       toast.error("Erro ao carregar reviews");
     } finally {
@@ -99,16 +106,33 @@ function VideoReviewsContent() {
   const loadProjectFiles = async () => {
     if (!projectId) return;
     try {
-      const response = await fetch(`/api/files/projects/${projectId}`, {
-        credentials: "include",
-      });
+      const response = await fetch(`/api/files/projects/${projectId}`, { credentials: "include" });
       const data = await response.json();
-      if (data.success) {
-        setProjectFiles(data.data);
-      }
+      if (data.success) setProjectFiles(data.data);
     } catch {
       toast.error("Erro ao carregar arquivos do projeto");
     }
+  };
+
+  const ensureDefaultProject = async (): Promise<number> => {
+    if (projectId) return parseInt(projectId);
+    const response = await fetch("/api/projects", { credentials: "include" });
+    const data = await response.json();
+    if (data.success) {
+      const existing = data.data.find(
+        (p: any) => p.name === "Aprovação de Vídeo" || p.name === "Video Reviews"
+      );
+      if (existing) return existing.id;
+    }
+    const createRes = await fetch("/api/projects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ name: "Aprovação de Vídeo", description: "Projeto para aprovação de vídeos" }),
+    });
+    const createData = await createRes.json();
+    if (createData.success) return createData.data.id;
+    throw new Error("Erro ao criar projeto padrão");
   };
 
   const resolveVideoUrl = useCallback((review: VideoReview): string => {
@@ -122,9 +146,7 @@ function VideoReviewsContent() {
 
   const loadReviewDetails = async (reviewId: number) => {
     try {
-      const response = await fetch(`/api/video-reviews/${reviewId}`, {
-        credentials: "include",
-      });
+      const response = await fetch(`/api/video-reviews/${reviewId}`, { credentials: "include" });
       const data = await response.json();
       if (data.success) {
         setSelectedReview(data.data);
@@ -138,10 +160,6 @@ function VideoReviewsContent() {
   };
 
   const handleCreateReview = async () => {
-    if (!projectId) {
-      toast.error("Selecione um projeto antes de criar review");
-      return;
-    }
     if (!newReviewTitle.trim()) {
       toast.error("Título é obrigatório");
       return;
@@ -154,9 +172,11 @@ function VideoReviewsContent() {
     try {
       let fileId = selectedFileId ? parseInt(selectedFileId) : null;
       let videoUrl = driveLink.trim() || "";
+      let activeProjectId: number | null = projectId ? parseInt(projectId) : null;
 
-      if (selectedFileForUpload && projectId) {
+      if (selectedFileForUpload) {
         setIsUploading(true);
+        activeProjectId = await ensureDefaultProject();
         const reader = new FileReader();
         reader.onload = async () => {
           const base64 = reader.result as string;
@@ -165,7 +185,7 @@ function VideoReviewsContent() {
             headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify({
-              projectId: parseInt(projectId),
+              projectId: activeProjectId,
               fileName: selectedFileForUpload.name,
               fileType: selectedFileForUpload.type,
               fileSize: selectedFileForUpload.size,
@@ -175,7 +195,7 @@ function VideoReviewsContent() {
           const data = await response.json();
           if (data.success) {
             fileId = data.data.id;
-            await submitReview(fileId, videoUrl);
+            await submitReview(fileId, videoUrl, activeProjectId);
           } else {
             toast.error(data.error || "Erro ao fazer upload");
           }
@@ -185,20 +205,20 @@ function VideoReviewsContent() {
         return;
       }
 
-      await submitReview(fileId, videoUrl);
+      await submitReview(fileId, videoUrl, activeProjectId);
     } catch {
       toast.error("Erro ao criar review");
       setIsUploading(false);
     }
   };
 
-  const submitReview = async (fileId: number | null, videoUrl: string) => {
+  const submitReview = async (fileId: number | null, videoUrl: string, activeProjectId: number | null) => {
     const response = await fetch("/api/video-reviews", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
-        projectId: parseInt(projectId!),
+        projectId: activeProjectId,
         fileId,
         title: newReviewTitle,
         description: newReviewDescription,
@@ -210,7 +230,7 @@ function VideoReviewsContent() {
       toast.success("Review criado com sucesso!");
       setShowCreateModal(false);
       resetCreateForm();
-      loadReviews();
+      loadAllReviews();
     } else {
       toast.error(data.error || "Erro ao criar review");
     }
@@ -248,6 +268,31 @@ function VideoReviewsContent() {
   const handleCopyShareLink = () => {
     navigator.clipboard.writeText(shareUrl);
     toast.success("Link copiado!");
+  };
+
+  const handleAddAnnotatedComment = async (annotations: Annotation[], timestamp: number) => {
+    if (!selectedReview) return;
+    try {
+      const response = await fetch(`/api/video-reviews/${selectedReview.id}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          timestampSeconds: timestamp,
+          comment: newComment || "Feedback no frame",
+          authorName: "Você",
+          annotations,
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Feedback enviado!");
+        setNewComment("");
+        loadReviewDetails(selectedReview.id);
+      }
+    } catch {
+      toast.error("Erro ao adicionar feedback");
+    }
   };
 
   const handleAddComment = async () => {
@@ -311,6 +356,26 @@ function VideoReviewsContent() {
     }
   };
 
+  const handleUpdateReviewStatus = async (status: string) => {
+    if (!selectedReview) return;
+    try {
+      const response = await fetch(`/api/video-reviews/${selectedReview.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Status atualizado!");
+        setSelectedReview(data.data);
+        loadAllReviews();
+      }
+    } catch {
+      toast.error("Erro ao atualizar status");
+    }
+  };
+
   const handleTimestampClick = (seconds: number) => {
     setSeekTo(seconds);
   };
@@ -329,202 +394,261 @@ function VideoReviewsContent() {
     (file) => file.mime_type?.startsWith("video/") || file.original_name.match(/\.(mp4|mov|avi|mkv|webm)$/i)
   );
 
-  if (!projectId) {
-    return (
-      <div className="min-h-screen bg-frame-black text-frame-white font-frame-body flex flex-col">
-        <AppNavBar />
-        <ProjectGateway
-          eyebrow="// Reviews"
-          title="REVIEWS"
-          description="Escolha ou crie um projeto para revisar vídeos, gerar links compartilháveis e concentrar comentários por timestamp."
-          actionLabel="Criar e abrir reviews"
-          routeBase="video-reviews"
-        />
-      </div>
-    );
-  }
+  const commentMarkers = comments.map((c) => ({
+    id: c.id,
+    timestampSeconds: c.timestamp_seconds,
+    comment: c.comment,
+    resolved: !!c.resolved,
+    authorName: c.author_name,
+  }));
+
+  const currentStatus = selectedReview
+    ? REVIEW_STATUSES.find((s) => s.value === selectedReview.status) || REVIEW_STATUSES[0]
+    : null;
 
   return (
     <div className="min-h-screen bg-frame-black text-frame-white font-frame-body flex flex-col">
       <AppNavBar />
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-7xl w-full mx-auto px-6 py-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="max-w-7xl w-full mx-auto px-6 py-10 flex-1 flex flex-col"
       >
+        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-frame-white mb-2">Reviews de Vídeo</h1>
-            <p className="text-frame-gray-light">Gerencie reviews e comentários de vídeos do projeto</p>
+            <p className="frame-label mb-2">// APROVAÇÃO DE VÍDEO</p>
+            <h1 className="frame-title text-[clamp(2.1rem,4vw,3.5rem)]">
+              REVIEWS
+            </h1>
+            <p className="text-frame-gray-light text-sm mt-2">
+              {currentStatus && selectedReview && (
+                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-frame-mono border ${currentStatus.color} mr-2`}>
+                  {currentStatus.label}
+                </span>
+              )}
+              {selectedReview?.title || `${reviews.length} review${reviews.length !== 1 ? "s" : ""} cadastrado${reviews.length !== 1 ? "s" : ""}`}
+            </p>
           </div>
-          <button
-            onClick={() => {
-              loadProjectFiles();
-              setShowCreateModal(true);
-            }}
-            className="frame-btn-primary flex items-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            Novo Review
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-frame-orange" />
-          </div>
-        ) : reviews.length === 0 ? (
-          <div className="text-center py-12 bg-frame-gray-1 rounded-lg border border-frame-gray-3">
-            <MessageSquare className="w-16 h-16 mx-auto mb-4 text-frame-gray-4" />
-            <h3 className="text-xl font-semibold text-frame-white mb-2">Nenhum review encontrado</h3>
-            <p className="text-frame-gray-light mb-4">Crie seu primeiro review para começar</p>
+          <div className="flex items-center gap-2">
+            {selectedReview && (
+              <>
+                <div className="flex border border-frame-gray-3">
+                  {REVIEW_STATUSES.filter((s) => s.value !== "draft").map((s) => (
+                    <button
+                      key={s.value}
+                      onClick={() => handleUpdateReviewStatus(s.value)}
+                      className={`px-2.5 py-1.5 text-[0.6rem] font-frame-mono uppercase tracking-wider transition ${
+                        selectedReview.status === s.value
+                          ? s.color.split(" ")[0] + " bg-frame-gray-3"
+                          : "text-frame-gray-light hover:text-frame-white"
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={handleGenerateShareLink}
+                  className="frame-btn-ghost flex items-center gap-1.5 text-xs"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  Compartilhar
+                </button>
+              </>
+            )}
             <button
-              onClick={() => {
-                loadProjectFiles();
-                setShowCreateModal(true);
-              }}
-              className="frame-btn-primary"
+              onClick={() => { loadProjectFiles(); setShowCreateModal(true); }}
+              className="frame-btn-primary flex items-center gap-2"
             >
-              Criar Review
+              <Plus className="w-4 h-4" />
+              Novo Review
             </button>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Review List */}
-            <div className="lg:col-span-1 space-y-4">
-              {reviews.map((review) => (
-                <motion.div
-                  key={review.id}
-                  whileHover={{ scale: 1.02 }}
-                  onClick={() => loadReviewDetails(review.id)}
-                  className={`p-4 rounded-lg border cursor-pointer transition ${
-                    selectedReview?.id === review.id
-                      ? "bg-frame-orange/10 border-frame-orange"
-                      : "bg-frame-gray-1 border-frame-gray-3 hover:border-frame-gray-4"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded bg-frame-gray-3 flex items-center justify-center shrink-0">
-                      <Film className="w-5 h-5 text-frame-orange" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-frame-white truncate">{review.title}</h3>
-                      <p className="text-sm text-frame-gray-light truncate">{review.original_name || review.description || "Vídeo externo"}</p>
-                      <div className="flex items-center gap-2 mt-2 text-xs text-frame-gray-4">
-                        <Clock className="w-3 h-3" />
-                        {new Date(review.created_at).toLocaleDateString("pt-BR")}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+        </div>
+
+        {/* Loading */}
+        {loading ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-frame-orange" />
+          </div>
+        ) : reviews.length === 0 ? (
+          /* Empty State */
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center max-w-md">
+              <Video className="w-16 h-16 mx-auto mb-4 text-frame-gray-light" />
+              <h3 className="text-xl font-bold text-frame-white mb-2">Nenhum review ainda</h3>
+              <p className="text-frame-gray-light text-sm mb-6">
+                Crie um review para aprovar vídeos com anotações no frame, comentários com timestamp e status de aprovação.
+              </p>
+              <button
+                onClick={() => { loadProjectFiles(); setShowCreateModal(true); }}
+                className="frame-btn-primary"
+              >
+                Criar Primeiro Review
+              </button>
             </div>
-
-            {/* Review Detail */}
-            <div className="lg:col-span-2">
-              {selectedReview ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="space-y-6"
-                >
-                  {/* Header */}
-                  <div className="bg-frame-gray-1 rounded-lg border border-frame-gray-3 p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h2 className="text-2xl font-bold text-frame-white mb-2">{selectedReview.title}</h2>
-                        {selectedReview.description && (
-                          <p className="text-frame-gray-light">{selectedReview.description}</p>
-                        )}
+          </div>
+        ) : (
+          <div className="flex-1 flex gap-6 min-h-0">
+            {/* Sidebar: Review List */}
+            <aside className="w-72 shrink-0 overflow-y-auto space-y-2 pr-2 border-r border-frame-gray-3">
+              <p className="text-xs text-frame-gray-light font-frame-mono uppercase tracking-wider mb-3">
+                {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+              </p>
+              <AnimatePresence>
+                {reviews.map((review) => {
+                  const statusInfo = REVIEW_STATUSES.find((s) => s.value === review.status) || REVIEW_STATUSES[0];
+                  return (
+                    <motion.div
+                      key={review.id}
+                      layout
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      onClick={() => loadReviewDetails(review.id)}
+                      className={`p-3 border cursor-pointer transition ${
+                        selectedReview?.id === review.id
+                          ? "bg-frame-orange/10 border-frame-orange"
+                          : "bg-frame-gray-1/20 border-frame-gray-3 hover:border-frame-gray-4"
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 bg-frame-gray-3 flex items-center justify-center shrink-0">
+                          <Film className="w-4 h-4 text-frame-orange" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-frame-white text-sm truncate">{review.title}</h3>
+                            <span className={`shrink-0 w-1.5 h-1.5 rounded-full ${
+                              statusInfo.value === "approved" ? "bg-green-400" :
+                              statusInfo.value === "rejected" ? "bg-red-400" :
+                              statusInfo.value === "changes_requested" ? "bg-orange-400" :
+                              statusInfo.value === "pending_review" ? "bg-yellow-400" :
+                              "bg-frame-gray-4"
+                            }`} />
+                          </div>
+                          <p className="text-xs text-frame-gray-light truncate">{review.original_name || review.description || "Vídeo externo"}</p>
+                          <div className="flex items-center gap-2 mt-1.5 text-[0.6rem] text-frame-gray-4 font-frame-mono">
+                            <Clock className="w-2.5 h-2.5" />
+                            {new Date(review.created_at).toLocaleDateString("pt-BR")}
+                          </div>
+                        </div>
+                        <ChevronRight className={`w-3.5 h-3.5 text-frame-gray-light mt-1 transition ${
+                          selectedReview?.id === review.id ? "opacity-100" : "opacity-0"
+                        }`} />
                       </div>
-                      <button
-                        onClick={handleGenerateShareLink}
-                        className="frame-btn-ghost flex items-center gap-2"
-                      >
-                        <Share2 className="w-4 h-4" />
-                        Compartilhar
-                      </button>
-                    </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </aside>
 
-                    {/* Video Player */}
+            {/* Main: Player + Comments */}
+            <main className="flex-1 min-w-0 flex flex-col gap-4 overflow-y-auto">
+              {selectedReview ? (
+                <>
+                  <div className="bg-frame-gray-1/20 border border-frame-gray-3 p-4">
                     <VideoPlayer
                       url={resolveVideoUrl(selectedReview)}
                       onProgress={handlePlayerProgress}
                       onReady={() => setPlayerReady(true)}
                       seekTo={seekTo}
+                      commentMarkers={commentMarkers}
+                      onAddAnnotatedComment={handleAddAnnotatedComment}
                     />
+                    <div className="flex items-center gap-3 mt-3 text-[0.6rem] text-frame-gray-light/60 font-frame-mono flex-wrap">
+                      <span>J/K/L — navegar</span>
+                      <span>M — mudo</span>
+                      <span>F — tela cheia</span>
+                      <span>← → — 5s</span>
+                      <span>Pause para anotar o frame</span>
+                    </div>
                   </div>
 
-                  {/* Comments Section */}
-                  <div className="bg-frame-gray-1 rounded-lg border border-frame-gray-3 p-6">
-                    <h3 className="text-xl font-bold text-frame-white mb-4 flex items-center gap-2">
-                      <MessageSquare className="w-5 h-5" />
-                      Comentários ({comments.length})
-                    </h3>
+                  {/* Comments */}
+                  <div className="bg-frame-gray-1/20 border border-frame-gray-3 p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-frame-white flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4" />
+                        Comentários ({comments.length})
+                      </h3>
+                    </div>
 
-                    <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto">
-                      {comments.map((comment) => (
-                        <motion.div
-                          key={comment.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className={`p-4 border-l-2 ${
-                            comment.resolved
-                              ? "border-frame-gray-4 bg-frame-gray-2/50 opacity-60"
-                              : "border-frame-orange bg-frame-gray-1"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-frame-orange flex items-center justify-center text-frame-black font-bold text-sm">
-                                {comment.author_name.charAt(0).toUpperCase()}
+                    <div className="space-y-3 mb-4 max-h-[50vh] overflow-y-auto">
+                      <AnimatePresence>
+                        {comments.map((comment) => (
+                          <motion.div
+                            key={comment.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className={`p-3 border-l-2 ${
+                              comment.resolved
+                                ? "border-frame-gray-4 bg-frame-gray-2/30 opacity-60"
+                                : "border-frame-orange bg-frame-gray-1/10"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="w-7 h-7 rounded-full bg-frame-orange flex items-center justify-center text-frame-black font-bold text-xs shrink-0">
+                                  {comment.author_name.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="font-semibold text-frame-white text-xs">{comment.author_name}</p>
+                                  <button
+                                    onClick={() => handleTimestampClick(comment.timestamp_seconds)}
+                                    className="text-[0.6rem] text-frame-orange hover:underline font-mono flex items-center gap-1"
+                                  >
+                                    <Clock className="w-2.5 h-2.5" />
+                                    {formatTimestamp(comment.timestamp_seconds)}
+                                  </button>
+                                </div>
                               </div>
-                              <div>
-                                <p className="font-semibold text-frame-white text-sm">{comment.author_name}</p>
+                              <div className="flex items-center gap-1 shrink-0">
                                 <button
-                                  onClick={() => handleTimestampClick(comment.timestamp_seconds)}
-                                  className="text-xs text-frame-orange hover:underline font-mono flex items-center gap-1"
+                                  onClick={() => handleResolveComment(comment.id, !comment.resolved)}
+                                  className="p-1 hover:bg-frame-gray-3 transition"
+                                  title={comment.resolved ? "Reabrir" : "Resolver"}
                                 >
-                                  <Clock className="w-3 h-3" />
-                                  {formatTimestamp(comment.timestamp_seconds)}
+                                  {comment.resolved ? (
+                                    <Square className="w-3.5 h-3.5 text-frame-gray-4" />
+                                  ) : (
+                                    <CheckSquare className="w-3.5 h-3.5 text-frame-green" />
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteComment(comment.id)}
+                                  className="p-1 hover:bg-frame-red/20 transition"
+                                  title="Excluir"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5 text-frame-red" />
                                 </button>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => handleResolveComment(comment.id, !comment.resolved)}
-                                className="p-1 hover:bg-frame-gray-3 rounded transition"
-                                title={comment.resolved ? "Reabrir" : "Resolver"}
-                              >
-                                {comment.resolved ? (
-                                  <Square className="w-4 h-4 text-frame-gray-4" />
-                                ) : (
-                                  <CheckSquare className="w-4 h-4 text-frame-green" />
-                                )}
-                              </button>
-                              <button
-                                onClick={() => handleDeleteComment(comment.id)}
-                                className="p-1 hover:bg-frame-red/20 rounded transition"
-                                title="Excluir"
-                              >
-                                <Trash2 className="w-4 h-4 text-frame-red" />
-                              </button>
-                            </div>
-                          </div>
-                          <p className="text-frame-gray-light text-sm ml-11">{comment.comment}</p>
-                        </motion.div>
-                      ))}
+                            <p className="text-frame-gray-light text-xs ml-9">{comment.comment}</p>
+                            {comment.annotations && comment.annotations.length > 0 && (
+                              <div className="ml-9 mt-2 flex items-center gap-1 text-[0.6rem] text-frame-gray-light/60">
+                                <PenLine className="w-2.5 h-2.5" />
+                                <span>{comment.annotations.length} anotação{comment.annotations.length > 1 ? "ões" : ""} no frame</span>
+                              </div>
+                            )}
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                      {comments.length === 0 && (
+                        <p className="text-frame-gray-light text-sm text-center py-4">
+                          Nenhum comentário ainda. Adicione o primeiro abaixo.
+                        </p>
+                      )}
                     </div>
 
-                    {/* Add Comment Form */}
                     <div className="border-t border-frame-gray-3 pt-4">
-                      <div className="flex gap-2 mb-3">
+                      <div className="flex gap-2 mb-2">
                         <input
                           type="text"
-                          placeholder="Seu comentário..."
+                          placeholder="Comentário (ou pause o vídeo para anotar o frame)..."
                           value={newComment}
                           onChange={(e) => setNewComment(e.target.value)}
-                          className="frame-input flex-1"
+                          className="flex-1 bg-frame-gray-2 border border-frame-gray-3 px-3 py-2 text-sm outline-none focus:border-frame-orange"
                           onKeyDown={(e) => {
                             if (e.key === "Enter" && !e.shiftKey) {
                               e.preventDefault();
@@ -534,33 +658,40 @@ function VideoReviewsContent() {
                         />
                         <button
                           onClick={handleAddComment}
-                          className="frame-btn-primary flex items-center gap-2"
+                          className="frame-btn-primary flex items-center gap-2 text-sm"
                         >
-                          <Send className="w-4 h-4" />
+                          <Send className="w-3.5 h-3.5" />
                         </button>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-frame-gray-light/60">
-                        <Clock className="w-3 h-3" />
-                        <span>Timestamp automático: {newCommentTimestamp !== null ? formatTimestamp(newCommentTimestamp) : "--:--"}</span>
-                        <span className="text-frame-gray-4">|</span>
-                        <span>Pause o vídeo para marcar o frame exato</span>
+                      <div className="flex items-center gap-2 text-[0.6rem] text-frame-gray-light/60">
+                        <Clock className="w-2.5 h-2.5" />
+                        <span>Timestamp: {newCommentTimestamp !== null ? formatTimestamp(newCommentTimestamp) : "--:--"}</span>
+                        <span className="opacity-40">|</span>
+                        <span className="flex items-center gap-1">
+                          <PenLine className="w-2.5 h-2.5" />
+                          Pause o vídeo para desenhar anotações no frame
+                        </span>
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </>
               ) : (
-                <div className="bg-frame-gray-1 rounded-lg border border-frame-gray-3 p-12 text-center">
-                  <MessageSquare className="w-16 h-16 mx-auto mb-4 text-frame-gray-4" />
-                  <h3 className="text-xl font-semibold text-frame-white mb-2">Selecione um review</h3>
-                  <p className="text-frame-gray-light">Clique em um review da lista para ver os detalhes</p>
+                <div className="flex-1 flex items-center justify-center border border-dashed border-frame-gray-3">
+                  <div className="text-center p-12">
+                    <Film className="w-16 h-16 mx-auto mb-4 text-frame-gray-light" />
+                    <h3 className="text-xl font-bold text-frame-white mb-2">Selecione um review</h3>
+                    <p className="text-frame-gray-light text-sm">
+                      Clique em um review da lista ao lado para ver o player, comentários e opções de aprovação.
+                    </p>
+                  </div>
                 </div>
               )}
-            </div>
+            </main>
           </div>
         )}
       </motion.div>
 
-      {/* Create Review Modal */}
+      {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
           <motion.div
@@ -570,7 +701,6 @@ function VideoReviewsContent() {
           >
             <h2 className="text-2xl font-bold text-frame-white mb-4">Novo Review</h2>
             <div className="space-y-4">
-              {/* Source Selection */}
               <div className="border border-frame-gray-3 bg-frame-black/30 p-4">
                 <label className="block text-sm font-medium text-frame-gray-light mb-3 uppercase tracking-wider text-xs">
                   Fonte do Vídeo
@@ -602,7 +732,7 @@ function VideoReviewsContent() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setUploadMode(null)}
+                    onClick={() => { setUploadMode(null); loadProjectFiles(); }}
                     className={`p-3 border text-center transition ${
                       uploadMode === null && !selectedFileId
                         ? "border-frame-orange bg-frame-orange/10 text-frame-orange"
@@ -716,10 +846,7 @@ function VideoReviewsContent() {
             </div>
             <div className="flex gap-3 mt-6 border-t border-frame-gray-3 pt-4">
               <button
-                onClick={() => {
-                  setShowCreateModal(false);
-                  resetCreateForm();
-                }}
+                onClick={() => { setShowCreateModal(false); resetCreateForm(); }}
                 className="frame-btn-ghost flex-1"
               >
                 Cancelar
@@ -736,7 +863,6 @@ function VideoReviewsContent() {
         </div>
       )}
 
-      {/* Share Link Modal */}
       {showShareModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
           <motion.div

@@ -255,7 +255,7 @@ export default function ProjectSelector() {
                 placeholder="ex: Videoclipe Retrofuturista"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2.5 font-frame-body text-[0.83rem] outline-none transition focus:border-frame-orange rounded-none"
+                className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2.5 font-frame-body text-[0.83rem] outline-none transition focus:border-frame-orange rounded-none"
               />
             </div>
 
@@ -268,11 +268,11 @@ export default function ProjectSelector() {
                 disabled={isSubmitting}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2.5 font-frame-body text-[0.83rem] outline-none transition resize-none h-[75px] focus:border-frame-orange rounded-none"
+                className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2.5 font-frame-body text-[0.83rem] outline-none transition resize-none h-[75px] focus:border-frame-orange rounded-none"
               />
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-[#1a1a1a]">
+            <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-frame-gray-2">
               <button
                 type="button"
                 disabled={isSubmitting}
@@ -323,7 +323,7 @@ export default function ProjectSelector() {
                 disabled={isSubmitting}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2.5 font-frame-body text-[0.83rem] outline-none transition focus:border-frame-orange rounded-none"
+                className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2.5 font-frame-body text-[0.83rem] outline-none transition focus:border-frame-orange rounded-none"
               />
             </div>
 
@@ -335,11 +335,11 @@ export default function ProjectSelector() {
                 disabled={isSubmitting}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-[#111] border border-frame-gray-3 text-frame-white p-2.5 font-frame-body text-[0.83rem] outline-none transition resize-none h-[75px] focus:border-frame-orange rounded-none"
+                className="w-full bg-frame-gray-1 border border-frame-gray-3 text-frame-white p-2.5 font-frame-body text-[0.83rem] outline-none transition resize-none h-[75px] focus:border-frame-orange rounded-none"
               />
             </div>
 
-            <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-[#1a1a1a]">
+            <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-frame-gray-2">
               <button
                 type="button"
                 disabled={isSubmitting}
@@ -380,7 +380,7 @@ export default function ProjectSelector() {
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t border-[#1a1a1a]">
+          <DialogFooter className="gap-2 sm:gap-0 pt-4 border-t border-frame-gray-2">
             <button
               type="button"
               disabled={isSubmitting}
@@ -393,7 +393,7 @@ export default function ProjectSelector() {
               type="button"
               disabled={isSubmitting}
               onClick={handleDeleteConfirm}
-              className="font-frame-mono text-[0.62rem] tracking-[0.12em] uppercase font-semibold text-frame-white bg-frame-red hover:bg-[#d82a2a] py-2 px-4 transition duration-150 rounded-none cursor-pointer flex items-center justify-center gap-1.5"
+              className="font-frame-mono text-[0.62rem] tracking-[0.12em] uppercase font-semibold text-frame-white bg-frame-red hover:bg-frame-red/80 py-2 px-4 transition duration-150 rounded-none cursor-pointer flex items-center justify-center gap-1.5"
             >
               {isSubmitting ? (
                 <>
