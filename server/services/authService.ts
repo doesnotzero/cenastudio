@@ -93,13 +93,26 @@ export function getUserById(id: number): AuthUser | null {
   return row ?? null;
 }
 
+function roleForEmail(email: string): "user" | "admin" {
+  const adminEmails = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return adminEmails.includes(email.toLowerCase()) ? "admin" : "user";
+}
+
 export function upsertOAuthUser(email: string, name?: string | null): AuthUser {
   const normalized = email.toLowerCase().trim();
+  const role = roleForEmail(normalized);
   const existing = db
     .prepare("SELECT id, email, role, name FROM users WHERE email = ?")
     .get(normalized) as AuthUser | undefined;
 
   if (existing) {
+    if (role === "admin" && existing.role !== "admin") {
+      db.prepare("UPDATE users SET role = 'admin' WHERE id = ?").run(existing.id);
+      existing.role = "admin";
+    }
     return existing;
   }
 
@@ -108,7 +121,7 @@ export function upsertOAuthUser(email: string, name?: string | null): AuthUser {
     .prepare(
       "INSERT INTO users (name, email, password_hash, role, email_verified) VALUES (?, ?, ?, ?, ?)",
     )
-    .run(name ?? normalized.split("@")[0], normalized, hash, "user", 1);
+    .run(name ?? normalized.split("@")[0], normalized, hash, role, 1);
 
   const userId = Number(result.lastInsertRowid);
   createTrialSubscription(userId);
@@ -116,7 +129,7 @@ export function upsertOAuthUser(email: string, name?: string | null): AuthUser {
   return {
     id: userId,
     email: normalized,
-    role: "user",
+    role,
     name: name ?? undefined,
   };
 }
