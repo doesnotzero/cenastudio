@@ -1,4 +1,9 @@
-# Dev Practices — TypeScript & Project Conventions
+---
+name: dev-practices
+description: "Use when the user requests TypeScript conventions, code organization, component patterns, state management, API client structure, code splitting, lazy loading, or git workflow improvements. Front-loaded keywords: typescript, codigo, organizacao, componente, import, lazy, split, chunk, performance, git, commit, convencao."
+---
+
+# Skill: dev-practices
 
 ## TypeScript Strictness
 - `strict: true` in tsconfig — no `any` unless unavoidable, then `// eslint-disable-next-line @typescript-eslint/no-explicit-any` with a justification comment
