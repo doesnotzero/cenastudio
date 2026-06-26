@@ -13,6 +13,7 @@ import collaboratorsRoutes from "./routes/collaborators.js";
 import analyticsRoutes from "./routes/analytics.js";
 import projectMembersRoutes from "./routes/projectMembers.js";
 import videoReviewsRoutes, { publicRouter as videoReviewsPublicRoutes } from "./routes/videoReviews.js";
+import notificationsRoutes from "./routes/notifications.js";
 
 const router = Router();
 
@@ -31,5 +32,6 @@ router.use("/analytics", analyticsRoutes);
 router.use("/project-members", projectMembersRoutes);
 router.use("/video-reviews", videoReviewsRoutes);
 router.use("/public/video-reviews", videoReviewsPublicRoutes);
+router.use("/notifications", notificationsRoutes);
 
 export default router;

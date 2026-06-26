@@ -17,6 +17,7 @@ import {
   Filter,
   MoreVertical,
 } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -358,12 +359,7 @@ function InteractionsContent() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-frame-orange" />
           </div>
         ) : getFilteredInteractions().length === 0 ? (
-          <div className="border border-dashed border-frame-gray-3 p-12 text-center">
-            <MessageSquare className="w-12 h-12 text-frame-gray-light mx-auto mb-4" />
-            <p className="text-frame-gray-light">
-              Nenhuma interação encontrada
-            </p>
-          </div>
+          <EmptyState icon={MessageSquare} title="Nenhuma interação encontrada" />
         ) : (
           <div className="space-y-4">
             {getFilteredInteractions().map((interaction) => {

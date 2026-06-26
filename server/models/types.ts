@@ -140,6 +140,17 @@ export interface DbCountByCount {
   count: number;
 }
 
+export interface DbNotification {
+  id: number;
+  user_id: number;
+  title: string;
+  message: string;
+  type: string;
+  read: number;
+  link: string | null;
+  created_at: string;
+}
+
 export interface DbSum {
   s: number;
   total?: number;

@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "wouter";
-import { useAuth } from "@/contexts/AuthContext";
 import AppNavBar from "@/components/AppNavBar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AnimatedModal from "@/components/AnimatedModal";
 import {
-  Users, Plus, Search, Phone, Mail, Building2, MoreVertical,
-  Edit, Trash2, TrendingUp, DollarSign, GripVertical, X,
+  Users, Plus, Search, Phone, Mail, MoreVertical,
+  Edit, Trash2, TrendingUp, DollarSign, GripVertical,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -16,51 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
-
-function CollapsibleSection({
-  title,
-  sectionKey,
-  expanded,
-  onToggle,
-  children,
-}: {
-  title: string;
-  sectionKey: string;
-  expanded: boolean;
-  onToggle: (key: string) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="border border-frame-gray-3">
-      <button
-        type="button"
-        onClick={() => onToggle(sectionKey)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-frame-gray-1/20 transition"
-      >
-        <span className="font-frame-mono text-xs text-frame-orange uppercase tracking-wider">{title}</span>
-        <ChevronDown
-          className={`w-4 h-4 text-frame-gray-light transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
-        />
-      </button>
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 pb-4 space-y-4">
-              {children}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 import {
   DndContext, DragOverlay, PointerSensor, useSensor, useSensors, DragStartEvent, DragEndEvent,
 } from "@dnd-kit/core";
@@ -218,29 +172,18 @@ interface ClientStats {
 
 function ClientsContent() {
   const [, setLocation] = useLocation();
-  const { user } = useAuth();
 
   const [clients, setClients] = useState<Client[]>([]);
   const [stats, setStats] = useState<ClientStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterSegment, setFilterSegment] = useState("");
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    endereco: false,
-    social: false,
-    empresa: false,
-    contato: false,
-    financeiro: false,
-  });
-
-  const toggleSection = (section: string) => {
-    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -279,7 +222,7 @@ function ClientsContent() {
 
   useEffect(() => {
     loadClients();
-  }, [filterStatus, filterSegment]);
+  }, [filterStatus, filterSegment, searchTerm]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveDragId(String(event.active.id));
@@ -352,10 +295,6 @@ function ClientsContent() {
     }
   };
 
-  const openEditPage = (client: Client) => {
-    setLocation(`/clients/${client.id}/editar`);
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active": return "text-green-400 bg-green-400/10 border-green-400/20";
@@ -391,7 +330,7 @@ function ClientsContent() {
             <p className="text-frame-gray-light text-sm mt-2">Gerencie seu portfólio de clientes e oportunidades</p>
           </div>
           <button
-            onClick={() => setLocation("/clients/novo")}
+            onClick={() => setLocation("/clients/new")}
             className="frame-btn-primary flex items-center gap-2 shrink-0"
           >
             <Plus className="w-4 h-4" />
@@ -470,7 +409,7 @@ function ClientsContent() {
             <div className="border border-frame-gray-3 bg-frame-gray-1/10 p-4">
               <p className="font-frame-mono text-[0.55rem] tracking-[0.2em] uppercase text-frame-orange mb-3">Ações Rápidas</p>
               <div className="space-y-2">
-                 <button onClick={() => setLocation("/clients/novo")} className="w-full text-left text-sm text-frame-gray-light hover:text-frame-white transition px-2 py-1.5 border border-frame-gray-3 hover:border-frame-orange/50">
+                 <button onClick={() => setLocation("/clients/new")} className="w-full text-left text-sm text-frame-gray-light hover:text-frame-white transition px-2 py-1.5 border border-frame-gray-3 hover:border-frame-orange/50">
                   + Novo Cliente
                 </button>
                 <button className="w-full text-left text-sm text-frame-gray-light hover:text-frame-white transition px-2 py-1.5 border border-frame-gray-3 hover:border-frame-orange/50">
@@ -619,7 +558,7 @@ function ClientsContent() {
             <Users className="w-12 h-12 text-frame-gray-light mx-auto mb-4" />
             <p className="text-frame-gray-light mb-4">Nenhum cliente encontrado</p>
             <button
-              onClick={() => setLocation("/clients/novo")}
+              onClick={() => setLocation("/clients/new")}
               className="frame-btn-primary inline-flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />

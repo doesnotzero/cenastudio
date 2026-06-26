@@ -9,6 +9,7 @@ import {
   Eye, Grid3X3, List, Link, ExternalLink,
   Globe,
 } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 import { toast } from "sonner";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
@@ -465,18 +466,12 @@ function FilesContent() {
                 <Loader2 className="w-8 h-8 animate-spin text-frame-orange" />
               </div>
             ) : filteredFiles.length === 0 ? (
-              <div className="border border-dashed border-frame-gray-3 p-12 text-center">
-                <Folder className="w-12 h-12 text-frame-gray-light mx-auto mb-4" />
-                <p className="text-frame-gray-light mb-2">
-                  {searchQuery || filter !== "all" ? "Nenhum arquivo para esses filtros" : "Nenhum arquivo neste projeto"}
-                </p>
-                <p className="text-xs text-frame-gray-light/60 mb-4">
-                  {searchQuery || filter !== "all" ? "Tente outros filtros" : "Faça upload ou salve links de referência"}
-                </p>
-                <button onClick={() => setIsUploadOpen(true)} className="frame-btn-ghost">
-                  <Plus className="w-4 h-4 mr-2" /> Adicionar
-                </button>
-              </div>
+              <EmptyState
+                icon={Folder}
+                title={searchQuery || filter !== "all" ? "Nenhum arquivo para esses filtros" : "Nenhum arquivo neste projeto"}
+                description={searchQuery || filter !== "all" ? "Tente outros filtros" : "Faça upload ou salve links de referência"}
+                action={{ label: "Adicionar", onClick: () => setIsUploadOpen(true) }}
+              />
             ) : viewMode === "grid" ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 <AnimatePresence>

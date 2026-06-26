@@ -7,6 +7,7 @@ import { LogOut, Sun, Moon, ChevronDown } from "lucide-react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import NotificationsPopover from "@/components/NotificationsPopover";
 
 interface AppNavBarProps {
   children?: React.ReactNode;
@@ -121,6 +122,7 @@ export default function AppNavBar({ children }: AppNavBarProps) {
             <ChevronDown className="w-3 h-3 text-frame-gray-light opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
         )}
+        {user && <NotificationsPopover />}
         <button
           type="button"
           onClick={toggleTheme}

@@ -31,6 +31,7 @@ import ToolDetail from "@/pages/ToolDetail";
 import Tools from "@/pages/Tools";
 import VideoReviews from "@/pages/VideoReviews";
 import SharedReview from "@/pages/SharedReview";
+import CommandPalette from "@/components/CommandPalette";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { Route, Switch } from "wouter";
 
@@ -80,6 +81,7 @@ function App() {
               <TooltipProvider>
                 <FrameShell>
                   <Toaster />
+                  <CommandPalette />
                   <Router />
                   <CheckoutModal />
                   <DemoModal />

@@ -14,7 +14,9 @@ import {
   Trash2,
   Building2,
   ArrowRight,
+  Inbox,
 } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -483,9 +485,7 @@ function PipelineContent() {
                     ))}
 
                     {stageOpps.length === 0 && (
-                      <div className="text-center py-8 text-frame-gray-light text-sm">
-                        Nenhuma oportunidade
-                      </div>
+                      <EmptyState icon={Inbox} title="Nenhuma oportunidade" />
                     )}
                   </div>
                 </div>

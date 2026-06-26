@@ -15,6 +15,7 @@ import {
   MoreVertical,
   Filter,
 } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -405,12 +406,7 @@ function CollaboratorsContent() {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-frame-orange" />
           </div>
         ) : getFilteredCollaborators().length === 0 ? (
-          <div className="border border-dashed border-frame-gray-3 p-12 text-center">
-            <Users className="w-12 h-12 text-frame-gray-light mx-auto mb-4" />
-            <p className="text-frame-gray-light">
-              Nenhum colaborador encontrado
-            </p>
-          </div>
+          <EmptyState icon={Users} title="Nenhum colaborador encontrado" />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {getFilteredCollaborators().map((collaborator) => (
