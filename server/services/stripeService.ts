@@ -156,14 +156,19 @@ export async function handleWebhook(rawBody: Buffer, signature: string) {
       const userId = Number(sub.metadata?.userId);
       if (!userId) break;
 
-      db.prepare(
-        `UPDATE subscriptions SET plan_id = 'free', status = 'cancelled',
-         stripe_subscription_id = NULL WHERE user_id = ?`,
-      ).run(userId);
-
-      db.prepare(
-        `INSERT INTO subscriptions (user_id, plan_id, status) VALUES (?, 'free', 'active')`,
-      ).run(userId);
+      const existingSub = db.prepare("SELECT id FROM subscriptions WHERE user_id = ?").get(userId);
+      if (existingSub) {
+        db.prepare(
+          `UPDATE subscriptions SET plan_id = 'free', status = 'cancelled',
+           stripe_subscription_id = NULL, current_period_end = datetime('now', '+1 month')
+           WHERE user_id = ?`,
+        ).run(userId);
+      } else {
+        db.prepare(
+          `INSERT INTO subscriptions (user_id, plan_id, status, current_period_end)
+           VALUES (?, 'free', 'active', datetime('now', '+1 month'))`,
+        ).run(userId);
+      }
 
       console.log(`[Stripe] User ${userId} downgraded to free (subscription cancelled)`);
       break;

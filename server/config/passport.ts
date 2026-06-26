@@ -3,6 +3,7 @@ import crypto from "crypto";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { db } from "../models/db.js";
+import { ensureUserSubscription } from "../services/authService.js";
 
 interface GitHubProfile {
   id: string;
@@ -68,6 +69,8 @@ if (githubClientId && githubClientSecret) {
             );
 
           user = db.prepare("SELECT * FROM users WHERE id = ?").get(result.lastInsertRowid);
+
+          ensureUserSubscription(user!.id, "pro", "trial");
 
           return done(null, user);
         } catch (error) {

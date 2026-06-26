@@ -1,49 +1,34 @@
 import { PRICING } from "@shared/site";
 import { useAuth } from "@/contexts/AuthContext";
-import { ApiError, startCheckout } from "@/lib/api";
+import { useApp } from "@/contexts/AppContext";
 import { motion } from "framer-motion";
-import { Check } from "lucide-react";
+import { Check, MessageCircle } from "lucide-react";
 import { useLocation } from "wouter";
-import { toast } from "sonner";
+import { WHATSAPP_NUMBER, WHATSAPP_MESSAGE } from "@/lib/constants";
 
-/**
- * Pricing Section Component
- * Design: 3 cards com destaque para o plano popular
- * Animações: Fade-in staggered, scale on hover
- */
 export default function PricingSection() {
   const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
+  const { openModal, selectPlan } = useApp();
 
-  const handleSelectPlan = async (planId: string) => {
+  const handleSelectPlan = (planId: string) => {
     if (planId === "iniciante") {
       setLocation("/register");
       return;
     }
 
-    const stripePlan = planId === "profissional" ? "pro" : "studio";
-
     if (isAuthenticated) {
-      try {
-        await startCheckout(stripePlan);
-      } catch (error) {
-        if (error instanceof ApiError && error.status === 503) {
-          toast.error("Pagamentos temporariamente indisponíveis.");
-        } else {
-          toast.error(error instanceof Error ? error.message : "Erro ao iniciar checkout");
-        }
-      }
+      selectPlan(planId as "profissional" | "produtora");
+      openModal("checkout");
       return;
     }
 
-    setLocation(`/register?plan=${stripePlan}`);
+    setLocation(`/register?plan=${planId}`);
   };
 
-  const ctaLabel = (planId: string, defaultLabel: string) => {
+  const ctaLabel = (planId: string) => {
     if (planId === "iniciante") return "Começar grátis";
-    if (planId === "profissional") return "Assinar Pro";
-    if (planId === "produtora") return "Assinar Studio";
-    return defaultLabel;
+    return "Falar com consultor";
   };
 
   const containerVariants = {
@@ -121,9 +106,12 @@ export default function PricingSection() {
                 <button
                   type="button"
                   onClick={() => handleSelectPlan(plan.id)}
-                  className={plan.highlight ? "frame-btn-primary w-full mb-8" : "frame-btn-ghost w-full mb-8"}
+                  className={`w-full mb-8 flex items-center justify-center gap-2 ${
+                    plan.highlight ? "frame-btn-primary" : "frame-btn-ghost"
+                  }`}
                 >
-                  {ctaLabel(plan.id, plan.cta.label)}
+                  <MessageCircle className="w-4 h-4" />
+                  {ctaLabel(plan.id)}
                 </button>
 
                 <ul className="space-y-4">

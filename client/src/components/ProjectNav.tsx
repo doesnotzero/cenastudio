@@ -1,0 +1,86 @@
+import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
+import {
+  LayoutDashboard,
+  Film,
+  FileText,
+  Video,
+  Users,
+  ChevronLeft,
+} from "lucide-react";
+
+interface ProjectNavProps {
+  projectId: number;
+}
+
+const TABS = [
+  { path: (id: number) => `/project/${id}`, label: "Visão Geral", icon: LayoutDashboard },
+  { path: (id: number) => `/project/${id}/studio/01`, label: "Studio", icon: Film },
+  { path: (id: number) => `/project/${id}/files`, label: "Arquivos", icon: FileText },
+  { path: (id: number) => `/project/${id}/video-reviews`, label: "Aprovação", icon: Video },
+  { path: (id: number) => `/project/${id}/collaborators`, label: "Equipe", icon: Users },
+];
+
+export default function ProjectNav({ projectId }: ProjectNavProps) {
+  const [location, setLocation] = useLocation();
+  const [projectName, setProjectName] = useState("");
+  const currentSection = location.replace(`/project/${projectId}/`, "").split("/")[0] || "";
+
+  useEffect(() => {
+    fetch(`/api/projects/${projectId}`, { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) setProjectName(data.data.name);
+      })
+      .catch(() => {});
+  }, [projectId]);
+
+  return (
+    <div className="border-b border-frame-gray-3 bg-frame-black/90 backdrop-blur-sm sticky top-0 z-40">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="flex items-center gap-3 py-2">
+          <button
+            type="button"
+            onClick={() => setLocation("/dashboard")}
+            className="text-frame-gray-light hover:text-frame-orange transition p-1"
+            title="Voltar ao painel"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <div className="h-4 w-px bg-frame-gray-3" />
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="font-frame-mono text-[0.55rem] text-frame-gray-light tracking-widest uppercase shrink-0">
+              Projeto
+            </span>
+            <span className="text-sm font-semibold text-frame-white truncate max-w-[200px]">
+              {projectName || `#${projectId}`}
+            </span>
+          </div>
+          <div className="h-4 w-px bg-frame-gray-3" />
+          <nav className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+            {TABS.map((tab) => {
+              const isActive =
+                tab.path(projectId) === location ||
+                (currentSection && tab.path(projectId).includes(`/project/${projectId}/${currentSection}`));
+              return (
+                <button
+                  key={tab.label}
+                  type="button"
+                  onClick={() => setLocation(tab.path(projectId))}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-frame-mono tracking-wider transition whitespace-nowrap ${
+                    isActive
+                      ? "text-frame-orange border-b-2 border-frame-orange"
+                      : "text-frame-gray-light hover:text-frame-white border-b-2 border-transparent"
+                  }`}
+                >
+                  <tab.icon className="w-3.5 h-3.5" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </div>
+    </div>
+  );
+}

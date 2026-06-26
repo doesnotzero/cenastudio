@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
 import AppNavBar from "@/components/AppNavBar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import {
@@ -70,8 +69,6 @@ const STATUS = [
 ];
 
 function CollaboratorsContent() {
-  const { user } = useAuth();
-
   const [collaborators, setCollaborators] = useState<Collaborator[]>([]);
   const [stats, setStats] = useState<CollaboratorStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);

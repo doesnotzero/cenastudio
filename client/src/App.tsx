@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ProjectProvider } from "@/contexts/ProjectContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import AdminDashboard from "@/pages/AdminDashboard";
+import AdminUsers from "@/pages/AdminUsers";
 import Analytics from "@/pages/Analytics";
 import Clients from "@/pages/Clients";
 import NewClient from "@/pages/NewClient";
@@ -65,6 +66,7 @@ function Router() {
       <Route path="/studio/:id" component={Studio} />
       <Route path="/project/:projectId/studio/:id" component={Studio} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/gerenciar" component={AdminUsers} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

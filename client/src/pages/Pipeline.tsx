@@ -58,7 +58,6 @@ const STAGES = [
 ];
 
 function PipelineContent() {
-  const { user } = useAuth();
   const [, setLocation] = useLocation();
 
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);

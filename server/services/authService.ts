@@ -35,7 +35,7 @@ function hashPassword(password: string): string {
   return bcrypt.hashSync(password, 12);
 }
 
-function ensureUserSubscription(userId: number, planId: string, status = "active") {
+export function ensureUserSubscription(userId: number, planId: string, status = "active") {
   const existing = db.prepare("SELECT id FROM subscriptions WHERE user_id = ?").get(userId);
   if (!existing) {
     db.prepare(
@@ -231,4 +231,49 @@ export function resetPassword(token: string, newPassword: string) {
 export function countUsers(): number {
   const row = db.prepare("SELECT COUNT(*) as c FROM users").get() as { c: number };
   return row.c;
+}
+
+export function listAllUsers(): Array<{
+  id: number;
+  name: string | null;
+  email: string;
+  role: string;
+  github_id: string | null;
+  created_at: string;
+  plan_name: string | null;
+  generation_limit: number | null;
+}> {
+  return db
+    .prepare(
+      `SELECT u.id, u.name, u.email, u.role, u.github_id, u.created_at,
+              p.name as plan_name, p.generation_limit
+       FROM users u
+       LEFT JOIN subscriptions s ON s.user_id = u.id
+       LEFT JOIN plans p ON p.id = s.plan_id
+       ORDER BY u.created_at DESC`,
+    )
+    .all() as any[];
+}
+
+export function updateUserRole(userId: number, role: string) {
+  if (!["user", "admin"].includes(role)) {
+    throw new AppError("Invalid role. Must be 'user' or 'admin'.", 400);
+  }
+  const result = db.prepare("UPDATE users SET role = ? WHERE id = ?").run(role, userId);
+  if (result.changes === 0) {
+    throw new AppError("User not found", 404);
+  }
+}
+
+export function updateUserPlan(userId: number, planId: string) {
+  const validPlans = db.prepare("SELECT id FROM plans").all() as { id: string }[];
+  if (!validPlans.some((p) => p.id === planId)) {
+    throw new AppError("Invalid plan ID", 400);
+  }
+  const existing = db.prepare("SELECT id FROM subscriptions WHERE user_id = ?").get(userId);
+  if (existing) {
+    db.prepare("UPDATE subscriptions SET plan_id = ?, status = 'active', trial_ends_at = NULL, current_period_end = datetime('now', '+1 month') WHERE user_id = ?").run(planId, userId);
+  } else {
+    db.prepare("INSERT INTO subscriptions (user_id, plan_id, status, current_period_end) VALUES (?, ?, 'active', datetime('now', '+1 month'))").run(userId, planId);
+  }
 }

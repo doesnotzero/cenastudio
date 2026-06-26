@@ -64,7 +64,6 @@ const DIRECTIONS = [
 ];
 
 function InteractionsContent() {
-  const { user } = useAuth();
   const [, setLocation] = useLocation();
 
   const [interactions, setInteractions] = useState<Interaction[]>([]);

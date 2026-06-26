@@ -284,11 +284,12 @@ export function initDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       name TEXT NOT NULL,
-      role TEXT,
-      email TEXT,
-      phone TEXT,
+      email TEXT NOT NULL,
+      role TEXT DEFAULT 'member',
+      phone TEXT DEFAULT '',
       skills TEXT,
-      daily_rate INTEGER,
+      daily_rate INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'active',
       availability TEXT,
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
@@ -301,7 +302,8 @@ export function initDatabase() {
       collaborator_id INTEGER REFERENCES collaborators(id) ON DELETE CASCADE,
       role TEXT DEFAULT 'member',
       permissions TEXT DEFAULT '[]',
-      created_at TEXT DEFAULT (datetime('now'))
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
     );
 
     CREATE TABLE IF NOT EXISTS files (

@@ -38,8 +38,30 @@ export const listUsers: RequestHandler = (_req, res, next) => {
   try {
     res.json({
       success: true,
-      data: { count: authService.countUsers(), online: authService.countUsers() },
+      data: { count: authService.countUsers(), users: authService.listAllUsers() },
     });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const updateUserRole: RequestHandler = (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { role } = req.body;
+    authService.updateUserRole(userId, role);
+    res.json({ success: true, data: { id: userId, role } });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const updateUserPlan: RequestHandler = (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const { planId } = req.body;
+    authService.updateUserPlan(userId, planId);
+    res.json({ success: true, data: { id: userId, planId } });
   } catch (e) {
     next(e);
   }

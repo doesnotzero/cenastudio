@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
 import AppNavBar from "@/components/AppNavBar";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import {
@@ -12,9 +11,6 @@ import {
   Calendar,
   Activity,
   RefreshCw,
-  PieChart,
-  ArrowUpRight,
-  ArrowDownRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -43,8 +39,6 @@ interface ActivityAnalytics {
 }
 
 function AnalyticsContent() {
-  const { user } = useAuth();
-
   const [overall, setOverall] = useState<OverallAnalytics | null>(null);
   const [revenue, setRevenue] = useState<RevenueAnalytics | null>(null);
   const [activity, setActivity] = useState<ActivityAnalytics | null>(null);

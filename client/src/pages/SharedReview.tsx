@@ -3,7 +3,7 @@ import { useParams } from "wouter";
 import { motion } from "framer-motion";
 import VideoPlayer from "@/components/VideoPlayer";
 import {
-  Play, MessageSquare, Clock, Send, AlertCircle, User,
+  MessageSquare, Clock, Send, AlertCircle, User,
 } from "lucide-react";
 import { toast } from "sonner";
 

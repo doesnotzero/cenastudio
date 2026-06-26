@@ -4,17 +4,15 @@ Inteligência artificial para produção audiovisual — roteiros, callsheets, d
 
 ## 🚀 Novidades Recentes
 
-- **Dark/Light Mode**: Tema completo com `next-themes` — CSS variables de tema sem valores hardcoded
-- **CRM Reformulado**: Create/Edit de clientes agora em páginas dedicadas (`/clients/new`, `/clients/:id/edit`) com componente `ClientFormFields.tsx` compartilhado
-- **Video Player Real**: Player server-side com anotações no frame (`AnnotationCanvas.tsx`), sem dependência de Cloudflare
-- **Video Reviews Aprimorado**: Workflow com limite de 2 revisões, notificações internas e Google Drive
-- **Review de Vídeos**: Sistema estilo Frame.io com comentários timestamped e links compartilháveis
-- **Login GitHub**: Autenticação OAuth para administradores
-- **Gestão de Equipe**: Colaboradores e permissões por projeto
-- **Upload de Arquivos**: Organização por projeto com upload local
-- **Export Avançado**: JSON, CSV com branding customizável
-- **Dashboard Analytics**: Métricas de projetos, clientes, receita e equipe
-- **Site Config Compartilhado**: `shared/site.ts` centraliza dados de landing, pricing, navegação e footer
+- **Project Hub**: Página `/project/:id` com visão geral do projeto, ferramentas de acesso rápido, arquivos recentes e aprovações
+- **Nav Contextual**: Barra `ProjectNav` com abas (Visão Geral, Studio, Arquivos, Aprovação, Equipe) em todas as páginas do projeto
+- **Admin Users**: Página `/admin/gerenciar` para gerenciar usuários, papéis e planos
+- **Pagamento via PIX/WhatsApp**: Stripe substituído por contato direto via WhatsApp + PIX para mercado brasileiro
+- **opencode Skills**: 5 skills configuradas (ui-refine, ux-flow, animations, routes-structure, database-evolve)
+- **In-App Notifications**: Sistema de notificações com popover no navbar
+- **Command Palette**: Cmd+K global com 12 comandos de navegação
+- **EmptyState Component**: Componente compartilhado de estado vazio com CTA
+- **Bugfixes**: Tool lookup por slug, Zod schema projectId, collaborators schema (daily_rate + status), client address preserve, Stripe webhook duplicate sub, dead code removido
 
 ## 📍 Rotas Principais
 
@@ -25,7 +23,7 @@ Inteligência artificial para produção audiovisual — roteiros, callsheets, d
 | `/register` | **Registro** — nova conta (trial de 14 dias Pro) |
 | `/forgot-password` | Solicitação de reset de senha |
 | `/reset-password` | Definir nova senha (`?token=`) |
-| `/dashboard` | **App entry** — redireciona para `/tools` após login |
+| `/dashboard` | **Painel** — lista de projetos, fixar, criar, excluir |
 | `/clients` | **CRM** — listagem de clientes |
 | `/clients/new` | **CRM** — criação de cliente |
 | `/clients/:id/edit` | **CRM** — edição de cliente |
@@ -38,11 +36,17 @@ Inteligência artificial para produção audiovisual — roteiros, callsheets, d
 | `/analytics` | **Analytics** — dashboard de métricas e relatórios |
 | `/tools` | **Ferramentas** — 12 ferramentas IA de produção |
 | `/tools/:id` | **Detalhe** — página individual da ferramenta |
+| `/project/:id` | **Project Hub** — visão geral e acesso rápido às ferramentas |
+| `/project/:id/studio/:toolId` | **Studio (projeto)** — workspace com contexto do projeto |
+| `/project/:id/files` | **Arquivos (projeto)** — upload e gestão por projeto |
+| `/project/:id/video-reviews` | **Aprovação (projeto)** — reviews de vídeo por projeto |
+| `/project/:id/collaborators` | **Equipe (projeto)** — membros do projeto |
 | `/studio/:id` | **Estúdio** — workspace completo da ferramenta |
 | `/profile` | **Perfil** — conta e preferências do usuário |
-| `/admin` | **Admin** — painel administrativo |
+| `/admin` | **Admin Dashboard** — métricas do sistema |
+| `/admin/gerenciar` | **Admin Users** — gerenciar usuários, papéis e planos (admin only, não listado) |
 
-Rotas autenticadas: `/tools`, `/tools/:id`, `/studio/:id`, `/admin`, `/clients`, `/clients/new`, `/clients/:id/edit`, `/pipeline`, `/interactions`, `/files/:projectId`, `/video-reviews/:projectId`, `/collaborators`, `/analytics`, `/profile`.
+Rotas autenticadas: `/dashboard`, `/project/:id/*`, `/tools`, `/tools/:id`, `/studio/:id`, `/admin`, `/admin/gerenciar`, `/clients`, `/clients/new`, `/clients/:id/edit`, `/pipeline`, `/interactions`, `/files/:projectId`, `/video-reviews/:projectId`, `/collaborators`, `/analytics`, `/profile`.
 
 ## 🛠️ Setup
 

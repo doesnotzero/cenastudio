@@ -65,9 +65,6 @@ export const listVideoReviews: RequestHandler = (req, res, next) => {
     }));
 
     res.json({ success: true, data: mapped });
-    return;
-
-    res.json({ success: true, data: reviews });
   } catch (e) {
     next(e);
   }

@@ -1,11 +1,10 @@
 import { useApp } from "@/contexts/AppContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { ApiError, openBillingPortal } from "@/lib/api";
-import { CHECKOUT_MODAL_PLAN, planDisplayLabel } from "@/lib/plans";
+import { planDisplayLabel } from "@/lib/plans";
+import { WHATSAPP_NUMBER } from "@/lib/constants";
 import { LogOut, Sun, Moon, ChevronDown } from "lucide-react";
 import { useLocation } from "wouter";
-import { toast } from "sonner";
 import { motion } from "framer-motion";
 import NotificationsPopover from "@/components/NotificationsPopover";
 
@@ -30,31 +29,21 @@ export default function AppNavBar({ children }: AppNavBarProps) {
 
   const isAdmin = user?.role === "admin";
 
-  const handleBadgeClick = async () => {
+  const handleBadgeClick = () => {
     if (!plan) return;
 
     const isFreeOrTrial = plan.planId === "free" || plan.status === "trial";
-    const isPaid = plan.planId === "pro" || plan.planId === "studio";
 
     if (isFreeOrTrial) {
-      selectPlan(CHECKOUT_MODAL_PLAN);
+      selectPlan("produtora");
       openModal("checkout");
       return;
     }
 
-    if (isPaid) {
-      try {
-        await openBillingPortal();
-      } catch (error) {
-        const msg =
-          error instanceof ApiError
-            ? error.message
-            : error instanceof Error
-              ? error.message
-              : "Erro ao abrir portal";
-        toast.error(msg);
-      }
-    }
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Olá! Quero falar sobre meu plano FRAME.AI Director.")}`,
+      "_blank",
+    );
   };
 
   const navLink = (href: string, label: string) => {

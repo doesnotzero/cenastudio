@@ -46,7 +46,7 @@ export const getCollaborator: RequestHandler = (req, res, next) => {
 export const createCollaborator: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
-    const { name, email, role, phone, skills, hourly_rate } = req.body;
+    const { name, email, role, phone, skills, daily_rate } = req.body;
 
     if (!name || !email) {
       throw new AppError("Name and email are required", 400);
@@ -54,10 +54,10 @@ export const createCollaborator: RequestHandler = (req, res, next) => {
 
     const result = db
       .prepare(
-        `INSERT INTO collaborators (user_id, name, email, role, phone, skills, hourly_rate, created_at, updated_at)
+        `INSERT INTO collaborators (user_id, name, email, role, phone, skills, daily_rate, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       )
-      .run(userId, name.trim(), email.trim(), role || "member", phone || "", skills || "", hourly_rate || 0);
+      .run(userId, name.trim(), email.trim(), role || "member", phone || "", skills || "", daily_rate || 0);
 
     const newCollaborator = db
       .prepare("SELECT * FROM collaborators WHERE id = ?")
@@ -74,7 +74,7 @@ export const updateCollaborator: RequestHandler = (req, res, next) => {
   try {
     const userId = req.user!.id;
     const collaboratorId = parseInt(req.params.id);
-    const { name, email, role, phone, skills, hourly_rate, status } = req.body;
+    const { name, email, role, phone, skills, daily_rate, status } = req.body;
 
     if (!collaboratorId) {
       throw new AppError("Collaborator ID is required", 400);
@@ -91,7 +91,7 @@ export const updateCollaborator: RequestHandler = (req, res, next) => {
     db
       .prepare(
         `UPDATE collaborators
-         SET name = ?, email = ?, role = ?, phone = ?, skills = ?, hourly_rate = ?, status = ?, updated_at = datetime('now')
+         SET name = ?, email = ?, role = ?, phone = ?, skills = ?, daily_rate = ?, status = ?, updated_at = datetime('now')
          WHERE id = ?`,
       )
       .run(
@@ -100,7 +100,7 @@ export const updateCollaborator: RequestHandler = (req, res, next) => {
         role || collaborator.role,
         phone !== undefined ? phone : collaborator.phone,
         skills !== undefined ? skills : collaborator.skills,
-        hourly_rate !== undefined ? hourly_rate : collaborator.hourly_rate,
+        daily_rate !== undefined ? daily_rate : collaborator.daily_rate,
         status || collaborator.status,
         collaboratorId,
       );

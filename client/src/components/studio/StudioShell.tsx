@@ -38,7 +38,7 @@ export default function StudioShell() {
   const [limitReached, setLimitReached] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
 
-  const tool = tools.find((t) => t.id === activeToolId);
+  const tool = tools.find((t) => t.id === activeToolId || t.slug === activeToolId);
 
   // Sync active project state from URL parameters
   useEffect(() => {

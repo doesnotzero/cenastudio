@@ -13,5 +13,7 @@ router.post("/tools", validateBody(createToolSchema), adminController.createTool
 router.put("/tools/:id", validateBody(updateToolSchema), adminController.updateTool);
 router.delete("/tools/:id", adminController.deleteTool);
 router.get("/users", adminController.listUsers);
+router.put("/users/:id/role", adminController.updateUserRole);
+router.put("/users/:id/plan", adminController.updateUserPlan);
 
 export default router;

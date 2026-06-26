@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import AppNavBar from "@/components/AppNavBar";
@@ -7,11 +7,35 @@ import VideoPlayer from "@/components/VideoPlayer";
 import type { Annotation } from "@/components/AnnotationCanvas";
 import {
   Plus, Share2, MessageSquare, Clock,
-  Trash2, Copy, ExternalLink, FileVideo, Link as LinkIcon, Upload,
+  Trash2, Copy, ExternalLink,
   Film, CheckSquare, Square, Send, PenLine,
   ChevronRight, Video,
 } from "lucide-react";
 import { toast } from "sonner";
+
+function parseGoogleDriveLink(url: string): string | null {
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  // Already a direct video URL (mp4, webm, etc.) — use as-is
+  if (/\.(mp4|webm|mov|avi|mkv|ogg)(\?|$)/i.test(trimmed)) return trimmed;
+  // Google Drive share links
+  const patterns = [
+    /(?:drive\.google\.com\/file\/d\/)([a-zA-Z0-9_-]+)/,
+    /(?:drive\.google\.com\/open\?id=)([a-zA-Z0-9_-]+)/,
+    /(?:drive\.google\.com\/uc\?(?:export=download&)?id=)([a-zA-Z0-9_-]+)/,
+    /(?:docs\.google\.com\/uc\?(?:export=download&)?id=)([a-zA-Z0-9_-]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = trimmed.match(pattern);
+    if (match) return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+  }
+  // YouTube — let react-player handle it
+  if (/youtube\.com|youtu\.be/i.test(trimmed)) return trimmed;
+  // Vimeo — let react-player handle it
+  if (/vimeo\.com/i.test(trimmed)) return trimmed;
+  // Anything else — use raw URL, react-player will try its best
+  return trimmed;
+}
 
 interface VideoReview {
   id: number;
@@ -74,11 +98,7 @@ function VideoReviewsContent() {
   const [seekTo, setSeekTo] = useState<number | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [driveLink, setDriveLink] = useState("");
-  const [uploadMode, setUploadMode] = useState<"file" | "drive" | null>(null);
-  const [selectedFileForUpload, setSelectedFileForUpload] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [playerReady, setPlayerReady] = useState(false);
 
   useEffect(() => {
     loadAllReviews();
@@ -151,7 +171,6 @@ function VideoReviewsContent() {
       if (data.success) {
         setSelectedReview(data.data);
         setComments(data.data.comments || []);
-        setPlayerReady(false);
         setSeekTo(null);
       }
     } catch {
@@ -164,50 +183,22 @@ function VideoReviewsContent() {
       toast.error("Título é obrigatório");
       return;
     }
-    if (!selectedFileId && !driveLink.trim() && !selectedFileForUpload) {
-      toast.error("Selecione um vídeo, cole um link ou faça upload");
+
+    const rawLink = driveLink.trim();
+    if (!selectedFileId && !rawLink) {
+      toast.error("Cole um link do Google Drive ou selecione um vídeo do projeto");
       return;
     }
 
+    setIsUploading(true);
     try {
       let fileId = selectedFileId ? parseInt(selectedFileId) : null;
-      let videoUrl = driveLink.trim() || "";
-      let activeProjectId: number | null = projectId ? parseInt(projectId) : null;
-
-      if (selectedFileForUpload) {
-        setIsUploading(true);
-        activeProjectId = await ensureDefaultProject();
-        const reader = new FileReader();
-        reader.onload = async () => {
-          const base64 = reader.result as string;
-          const response = await fetch("/api/files/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({
-              projectId: activeProjectId,
-              fileName: selectedFileForUpload.name,
-              fileType: selectedFileForUpload.type,
-              fileSize: selectedFileForUpload.size,
-              fileData: base64.split(",")[1],
-            }),
-          });
-          const data = await response.json();
-          if (data.success) {
-            fileId = data.data.id;
-            await submitReview(fileId, videoUrl, activeProjectId);
-          } else {
-            toast.error(data.error || "Erro ao fazer upload");
-          }
-          setIsUploading(false);
-        };
-        reader.readAsDataURL(selectedFileForUpload);
-        return;
-      }
-
+      const videoUrl = rawLink ? parseGoogleDriveLink(rawLink) || rawLink : "";
+      const activeProjectId: number | null = projectId ? parseInt(projectId) : null;
       await submitReview(fileId, videoUrl, activeProjectId);
     } catch {
       toast.error("Erro ao criar review");
+    } finally {
       setIsUploading(false);
     }
   };
@@ -241,8 +232,6 @@ function VideoReviewsContent() {
     setNewReviewDescription("");
     setSelectedFileId("");
     setDriveLink("");
-    setSelectedFileForUpload(null);
-    setUploadMode(null);
   };
 
   const handleGenerateShareLink = async () => {
@@ -551,7 +540,6 @@ function VideoReviewsContent() {
                     <VideoPlayer
                       url={resolveVideoUrl(selectedReview)}
                       onProgress={handlePlayerProgress}
-                      onReady={() => setPlayerReady(true)}
                       seekTo={seekTo}
                       commentMarkers={commentMarkers}
                       onAddAnnotatedComment={handleAddAnnotatedComment}
@@ -703,121 +691,42 @@ function VideoReviewsContent() {
             <div className="space-y-4">
               <div className="border border-frame-gray-3 bg-frame-black/30 p-4">
                 <label className="block text-sm font-medium text-frame-gray-light mb-3 uppercase tracking-wider text-xs">
-                  Fonte do Vídeo
+                  Link do Vídeo
                 </label>
-                <div className="grid grid-cols-3 gap-2 mb-4">
-                  <button
-                    type="button"
-                    onClick={() => setUploadMode("file")}
-                    className={`p-3 border text-center transition ${
-                      uploadMode === "file"
-                        ? "border-frame-orange bg-frame-orange/10 text-frame-orange"
-                        : "border-frame-gray-3 text-frame-gray-light hover:border-frame-gray-4"
-                    }`}
-                  >
-                    <FileVideo className="w-5 h-5 mx-auto mb-1" />
-                    <span className="text-xs">Arquivo</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setUploadMode("drive")}
-                    className={`p-3 border text-center transition ${
-                      uploadMode === "drive"
-                        ? "border-frame-orange bg-frame-orange/10 text-frame-orange"
-                        : "border-frame-gray-3 text-frame-gray-light hover:border-frame-gray-4"
-                    }`}
-                  >
-                    <LinkIcon className="w-5 h-5 mx-auto mb-1" />
-                    <span className="text-xs">Google Drive</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setUploadMode(null); loadProjectFiles(); }}
-                    className={`p-3 border text-center transition ${
-                      uploadMode === null && !selectedFileId
-                        ? "border-frame-orange bg-frame-orange/10 text-frame-orange"
-                        : "border-frame-gray-3 text-frame-gray-light hover:border-frame-gray-4"
-                    }`}
-                  >
-                    <Film className="w-5 h-5 mx-auto mb-1" />
-                    <span className="text-xs">Projeto</span>
-                  </button>
-                </div>
+                <input
+                  type="url"
+                  value={driveLink}
+                  onChange={(e) => setDriveLink(e.target.value)}
+                  className="frame-input w-full"
+                  placeholder="https://drive.google.com/file/d/..."
+                />
+                <p className="text-xs text-frame-gray-light/60 mt-2">
+                  Google Drive, YouTube, Vimeo ou URL direta de vídeo
+                </p>
 
-                {uploadMode === "file" && (
-                  <div className="space-y-3">
-                    <div className="border-2 border-dashed border-frame-gray-3 p-6 text-center hover:border-frame-orange/50 transition cursor-pointer">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="video/*"
-                        onChange={(e) => setSelectedFileForUpload(e.target.files?.[0] || null)}
-                        className="hidden"
-                      />
-                      {selectedFileForUpload ? (
-                        <div>
-                          <p className="text-sm text-frame-white">{selectedFileForUpload.name}</p>
-                          <p className="text-xs text-frame-gray-light mt-1">
-                            {(selectedFileForUpload.size / 1024 / 1024).toFixed(2)} MB
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() => setSelectedFileForUpload(null)}
-                            className="text-xs text-frame-red hover:underline mt-2"
-                          >
-                            Remover
-                          </button>
-                        </div>
-                      ) : (
-                        <div onClick={() => fileInputRef.current?.click()}>
-                          <Upload className="w-8 h-8 mx-auto mb-2 text-frame-gray-light" />
-                          <p className="text-sm text-frame-gray-light">Clique para selecionar um vídeo</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {uploadMode === "drive" && (
-                  <div>
-                    <label className="block text-xs text-frame-gray-light mb-2 uppercase tracking-wider">
-                      Link do Google Drive
-                    </label>
-                    <input
-                      type="url"
-                      value={driveLink}
-                      onChange={(e) => setDriveLink(e.target.value)}
+                <div className="mt-4 pt-4 border-t border-frame-gray-3">
+                  <label className="block text-xs text-frame-gray-light mb-2 uppercase tracking-wider">
+                    Ou selecione um vídeo já enviado ao projeto
+                  </label>
+                  {videoFiles.length > 0 ? (
+                    <select
+                      value={selectedFileId}
+                      onChange={(e) => setSelectedFileId(e.target.value)}
                       className="frame-input w-full"
-                      placeholder="https://drive.google.com/file/d/..."
-                    />
-                    <p className="text-xs text-frame-gray-light/60 mt-1">
-                      Cole o link de qualquer vídeo do Google Drive (público ou com permissão)
+                    >
+                      <option value="">Nenhum</option>
+                      {videoFiles.map((file) => (
+                        <option key={file.id} value={file.id}>
+                          {file.original_name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <p className="text-frame-gray-light text-xs italic">
+                      Nenhum vídeo no projeto ainda
                     </p>
-                  </div>
-                )}
-
-                {uploadMode === null && (
-                  <div>
-                    {videoFiles.length > 0 ? (
-                      <select
-                        value={selectedFileId}
-                        onChange={(e) => setSelectedFileId(e.target.value)}
-                        className="frame-input w-full"
-                      >
-                        <option value="">Selecione um vídeo do projeto</option>
-                        {videoFiles.map((file) => (
-                          <option key={file.id} value={file.id}>
-                            {file.original_name}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <p className="text-frame-gray-light text-sm">
-                        Nenhum vídeo no projeto. Use "Arquivo" ou "Google Drive" acima.
-                      </p>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               <div>
