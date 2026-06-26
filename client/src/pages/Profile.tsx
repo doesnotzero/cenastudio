@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { CHECKOUT_MODAL_PLAN, planDisplayLabel } from "@/lib/plans";
 import { useApp } from "@/contexts/AppContext";
 import { openBillingPortal, ApiError } from "@/lib/api";
-import { CalendarClock, Crown, LogOut, ShieldCheck, UserRound, Zap } from "lucide-react";
+import { CalendarClock, Crown, LogOut, ShieldCheck, UserRound, Zap, Settings, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 
@@ -124,6 +124,54 @@ function ProfileContent() {
               </button>
             </div>
           </div>
+
+          {user?.role === "admin" && (
+            <div className="border border-frame-gold/40 bg-frame-gold/5 p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="font-frame-mono text-[0.58rem] tracking-[0.18em] text-frame-gold uppercase">
+                    Administracao
+                  </p>
+                  <h2 className="frame-title text-[2rem] mt-1">GERENCIAR CONTAS</h2>
+                  <p className="text-frame-gray-light text-sm mt-2 max-w-md">
+                    Promote e rebaixe administradores, altere planos e monitore todos os usuarios da plataforma.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setLocation("/admin/gerenciar")}
+                  className="frame-btn-primary flex items-center gap-2 shrink-0"
+                >
+                  <Users className="w-4 h-4" />
+                  Gerenciar
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3 mt-5">
+                <div className="border border-frame-gold/30 bg-frame-black/30 p-4">
+                  <Settings className="w-5 h-5 text-frame-gold mb-3" />
+                  <p className="font-frame-mono text-[0.55rem] tracking-[0.16em] uppercase text-frame-gray-light">
+                    Painel Admin
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setLocation("/admin")}
+                    className="text-frame-gold underline underline-offset-4 text-sm mt-2 hover:text-frame-orange transition"
+                  >
+                    Acessar dashboard →
+                  </button>
+                </div>
+                <div className="border border-frame-gold/30 bg-frame-black/30 p-4">
+                  <Users className="w-5 h-5 text-frame-gold mb-3" />
+                  <p className="font-frame-mono text-[0.55rem] tracking-[0.16em] uppercase text-frame-gray-light">
+                    Usuarios
+                  </p>
+                  <p className="text-lg font-semibold mt-1 text-frame-gold">
+                    Acesso total
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="border border-frame-gray-3 bg-frame-gray-1/20 p-6 space-y-6">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
