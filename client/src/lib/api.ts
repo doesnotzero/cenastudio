@@ -1,0 +1,532 @@
+function resolveApiBase() {
+  const raw = (import.meta.env.VITE_API_URL ?? "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("/")) return raw.replace(/\/$/, "");
+
+  const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try {
+    return new URL(withProtocol).origin;
+  } catch {
+    return "";
+  }
+}
+
+const API_BASE = resolveApiBase();
+
+export function apiUrl(path: string) {
+  return `${API_BASE}/api${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+export function redirectToStripe(url: string) {
+  const parsed = new URL(url);
+  const trustedHost = parsed.hostname === "stripe.com" || parsed.hostname.endsWith(".stripe.com");
+  if (parsed.protocol !== "https:" || !trustedHost) {
+    throw new ApiError("O checkout retornou um endereco invalido.", 502);
+  }
+  window.location.assign(parsed.toString());
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+export class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const res = await fetch(apiUrl(path), {
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers as Record<string, string>),
+    },
+    ...options,
+  });
+
+  const contentType = res.headers.get("content-type") || "";
+  let json: ApiResponse<T> | null = null;
+  let text = "";
+
+  if (contentType.includes("application/json")) {
+    try {
+      json = (await res.json()) as ApiResponse<T>;
+    } catch {
+      json = null;
+    }
+  } else {
+    text = await res.text().catch(() => "");
+  }
+
+  if (!res.ok || !json?.success) {
+    if (res.status === 401 && path !== "/auth/me") {
+      window.dispatchEvent(new CustomEvent("frame:auth-expired"));
+    }
+
+    const fallbackMessage =
+      res.status === 429
+        ? "Muitas tentativas no servidor. Aguarde alguns segundos e tente novamente."
+        : text || `Request failed (${res.status})`;
+
+    throw new ApiError(
+      res.status === 401
+        ? json?.error || "Sessão expirada. Entre novamente para continuar."
+        : json?.error || fallbackMessage,
+      res.status,
+    );
+  }
+  return json.data as T;
+}
+
+export interface AuthUser {
+  id: number;
+  email: string;
+  role: "user" | "admin";
+  name?: string;
+  studioName?: string;
+  studioRole?: string;
+  phone?: string;
+}
+
+export interface UserPlan {
+  planId: string;
+  planName: string;
+  status: string;
+  generationLimit: number;
+  trialEndsAt: string | null;
+  features: string[];
+}
+
+export interface ClientAllowance {
+  planId: "free" | "pro" | "studio";
+  status: string;
+  used: number;
+  limit: number | null;
+  remaining: number | null;
+  canCreate: boolean;
+}
+
+export interface StudioSettingsPayload {
+  studioName: string;
+  legalName: string;
+  document: string;
+  email: string;
+  phone: string;
+  city: string;
+  website: string;
+  signature: string;
+  primaryColor: string;
+}
+
+export const api = {
+  auth: {
+    login: (email: string, password: string) =>
+      request<{ user: AuthUser }>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }),
+    register: (name: string, email: string, password: string, desiredPlan?: "pro" | "studio") =>
+      request<{ user: AuthUser }>("/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password, desiredPlan }),
+      }),
+    forgotPassword: (email: string) =>
+      request<{ message: string }>("/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      }),
+    resetPassword: (token: string, password: string) =>
+      request<{ message: string }>("/auth/reset-password", {
+        method: "POST",
+        body: JSON.stringify({ token, password }),
+      }),
+    logout: () => request<null>("/auth/logout", { method: "POST" }),
+    me: () => request<{ user: AuthUser; plan: UserPlan | null }>("/auth/me"),
+    updateProfile: (data: { name: string; studioName: string; studioRole: string; phone: string }) =>
+      request<{ user: AuthUser }>("/auth/profile", {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    supabase: (accessToken: string) =>
+      request<{ user: AuthUser; plan: UserPlan | null }>("/auth/supabase", {
+        method: "POST",
+        body: JSON.stringify({ accessToken }),
+      }),
+    providers: () => request<{ github: boolean; supabase: boolean }>("/auth/providers"),
+  },
+  tools: {
+    list: () => request<ToolFromApi[]>("/tools"),
+    get: (id: string) => request<ToolFromApi>(`/tools/${id}`),
+  },
+  clients: {
+    list: () => request<Client[]>("/clients"),
+    get: (id: number) => request<ClientDetails>(`/clients/${id}`),
+    allowance: () => request<ClientAllowance>("/clients/allowance"),
+    lookupCnpj: (cnpj: string) => request<CnpjCompanyData>(`/clients/lookup/cnpj/${encodeURIComponent(cnpj)}`),
+  },
+  ai: {
+    generate: (toolId: string, input: Record<string, string>, projectId?: number | null) =>
+      request<{ output: string; generationId: number }>("/ai/generate", {
+        method: "POST",
+        body: JSON.stringify({ toolId, input, projectId }),
+      }),
+    history: (toolId: string, projectId?: number | null) =>
+      request<
+        Array<{
+          id: number;
+          toolId: string;
+          input: string;
+          output: string;
+          createdAt: string;
+          projectId?: number | null;
+          projectName?: string | null;
+        }>
+      >(`/ai/history/${toolId}${projectId ? `?projectId=${projectId}` : ""}`),
+  },
+  projects: {
+    list: () => request<Project[]>("/projects"),
+    activity: () => request<RecentActivity[]>("/projects/activity"),
+    create: (name: string, description?: string, clientId?: number, metadataJson?: string) =>
+      request<Project>("/projects", {
+        method: "POST",
+        body: JSON.stringify({ name, description, clientId, metadataJson }),
+      }),
+    get: (id: number) => request<Project>(`/projects/${id}`),
+    update: (id: number, data: Partial<Omit<Project, "id" | "userId" | "createdAt" | "updatedAt">>) =>
+      request<Project>(`/projects/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    delete: (id: number) => request<{ id: number }>(`/projects/${id}`, { method: "DELETE" }),
+    saveState: (id: number, toolId: string, formData: Record<string, string>, outputData?: string) =>
+      request<{ projectId: number; toolId: string }>(`/projects/${id}/state`, {
+        method: "POST",
+        body: JSON.stringify({ toolId, formData, outputData }),
+      }),
+    getState: (id: number, toolId: string) =>
+      request<ToolState | null>(`/projects/${id}/state/${toolId}`),
+    populatedStates: (id: number) =>
+      request<Array<{ toolId: string; updatedAt: string }>>(`/projects/${id}/states`),
+  },
+  studioSettings: {
+    get: () => request<StudioSettingsPayload>("/studio-settings"),
+    update: (data: StudioSettingsPayload) =>
+      request<StudioSettingsPayload>("/studio-settings", {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+  },
+  dashboard: {
+    stats: () =>
+      request<{
+        activeJobs: number;
+        clientsWaiting: number;
+        reviewsPending: number;
+      }>("/dashboard/stats"),
+    financeStrip: () =>
+      request<{
+        monthlyRevenue: number;
+        jobsCompleted: number;
+      }>("/dashboard/finance-strip"),
+    userInfo: () =>
+      request<{
+        name: string;
+      }>("/dashboard/user-info"),
+    jobsActive: () =>
+      request<
+        Array<{
+          id: string;
+          title: string;
+          client: string;
+          status: "briefing" | "production" | "review" | "delivered";
+          deadline: string;
+          daysLeft: number;
+          progress: number;
+          urgent?: boolean;
+        }>
+      >("/dashboard/jobs/active"),
+  },
+  checklist: {
+    list: (status?: "completed" | "pending" | "all") =>
+      request<
+        Array<{
+          id: string;
+          text: string;
+          checked: boolean;
+          link?: string;
+        }>
+      >(`/checklist${status ? `?status=${status}` : ""}`),
+    create: (data: { text: string; link?: string }) =>
+      request<{
+        id: string;
+        text: string;
+        checked: boolean;
+        link?: string;
+      }>("/checklist", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    update: (
+      id: string,
+      data: { text?: string; checked?: boolean; link?: string | null }
+    ) =>
+      request<{
+        id: string;
+        text: string;
+        checked: boolean;
+        link?: string;
+      }>(`/checklist/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    delete: (id: string) =>
+      request<{ id: string }>(`/checklist/${id}`, {
+        method: "DELETE",
+      }),
+  },
+  commercial: {
+    dashboard: () =>
+      request<{
+        totalRevenue: number;
+        monthlyRevenue: number;
+        conversionRate: number;
+        pipelineValue: number;
+        averageTicket: number;
+        activeDeals: number;
+        wonDeals: number;
+        lostDeals: number;
+      }>("/commercial/dashboard"),
+    metrics: () =>
+      request<{
+        winRate: number;
+        avgCloseTime: number;
+        stageTickets: Record<string, { count: number; totalValue: number; avgTicket: number }>;
+        pipelineVelocity: number;
+        velocityChange: number;
+        totalOpportunities: number;
+        wonOpportunities: number;
+        lostOpportunities: number;
+      }>("/commercial/metrics"),
+    revenue: () =>
+      request<Array<{ month: string; revenue: number }>>("/commercial/revenue"),
+    funnel: () =>
+      request<Array<{ stage: string; count: number; value: number }>>("/commercial/funnel"),
+    forecast: () =>
+      request<{
+        historical: Array<{ month: string; revenue: number; isForecast: boolean }>;
+        forecast: Array<{ month: string; revenue: number; isForecast: boolean }>;
+        metrics: {
+          avgRevenue: number;
+          recentTrend: number;
+          growthRate: string;
+          confidence: string;
+        };
+      }>("/commercial/forecast"),
+    comparison: () =>
+      request<{
+        revenue: { current: number; previous: number; change: string; isPositive: boolean };
+        conversionRate: { current: number; previous: number; change: string; isPositive: boolean };
+        pipelineValue: { current: number; previous: number; change: string; isPositive: boolean };
+        activeDeals: { current: number; previous: number; change: string; isPositive: boolean };
+      }>("/commercial/comparison"),
+  },
+  admin: {
+    listTools: () => request<ToolFromApi[]>("/admin/tools"),
+    updateTool: (id: string, body: Record<string, unknown>) =>
+      request<ToolFromApi>(`/admin/tools/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+      }),
+    createTool: (body: Record<string, unknown>) =>
+      request<ToolFromApi>("/admin/tools", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    deleteTool: (id: string) =>
+      request<{ id: string; isActive: boolean }>(`/admin/tools/${id}`, {
+        method: "DELETE",
+      }),
+    users: () => request<{ count: number; users: { id: number; email: string; role: string; name?: string; plan_name?: string; generation_limit?: number | null; project_count?: number; file_count?: number; review_count?: number }[] }>("/admin/users"),
+    createUser: (body: { name: string; email: string; password: string; role: "user" | "admin"; planId: "free" | "pro" | "studio" }) =>
+      request<{ id: number; email: string; role: string; planId: string }>("/admin/users", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    updateUserRole: (id: number, role: "user" | "admin") =>
+      request<{ id: number; role: string }>(`/admin/users/${id}/role`, {
+        method: "PUT",
+        body: JSON.stringify({ role }),
+      }),
+    updateUserPlan: (id: number, planId: "free" | "pro" | "studio") =>
+      request<{ id: number; planId: string }>(`/admin/users/${id}/plan`, {
+        method: "PUT",
+        body: JSON.stringify({ planId }),
+      }),
+    deleteUser: (id: number) =>
+      request<{ id: number; email: string; deleted: boolean; summary: Record<string, number> }>(`/admin/users/${id}`, {
+        method: "DELETE",
+      }),
+  },
+  contact: {
+    submit: (data: ContactPayload) =>
+      request<{ message: string }>("/contact", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    demo: (data: { name: string; email: string }) =>
+      request<{ message: string }>("/contact/demo", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+  },
+  checkout: {
+    session: (planId: string) =>
+      request<{ url: string }>("/checkout/session", {
+        method: "POST",
+        body: JSON.stringify({ planId }),
+      }),
+    syncSession: (sessionId: string) =>
+      request<{ synced: boolean; status: string | null; paymentStatus: string | null; planId: string }>(
+        "/checkout/sync-session",
+        {
+          method: "POST",
+          body: JSON.stringify({ sessionId }),
+        },
+      ),
+    portal: () =>
+      request<{ url: string }>("/checkout/portal", {
+        method: "POST",
+      }),
+  },
+  demo: {
+    check: () =>
+      request<{
+        exists: boolean;
+        project: {
+          id: number;
+          name: string;
+          description: string;
+          status: string;
+        } | null;
+      }>("/demo/check"),
+    create: () =>
+      request<{
+        message: string;
+        data: {
+          client: { id: number; name: string; company: string };
+          project: { id: number; name: string; description: string };
+        };
+      }>("/demo/create", {
+        method: "POST",
+      }),
+  },
+};
+
+/** Start Stripe Checkout — redirects to Stripe hosted page */
+export async function startCheckout(planId: string): Promise<void> {
+  const data = await api.checkout.session(planId);
+  redirectToStripe(data.url);
+}
+
+/** Open Stripe Customer Portal */
+export async function openBillingPortal(): Promise<void> {
+  const data = await api.checkout.portal();
+  redirectToStripe(data.url);
+}
+
+export interface ToolFromApi {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  isActive: boolean;
+  icon: string;
+  tags: string[];
+  slug: string;
+  processingTime?: string;
+  placeholder?: string;
+}
+
+export interface ContactPayload {
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  type?: "contact" | "demo" | "support";
+}
+
+export interface Project {
+  id: number;
+  userId: number;
+  clientId?: number | null;
+  clientName?: string | null;
+  name: string;
+  description?: string;
+  status: "active" | "completed" | "archived";
+  metadataJson: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Client {
+  id: number;
+  name: string;
+  company?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  tax_id?: string | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  country?: string | null;
+  industry?: string | null;
+}
+
+export interface ClientDetails {
+  client: Client;
+  projects: Project[];
+  opportunities: unknown[];
+  interactions: unknown[];
+}
+
+export interface CnpjCompanyData {
+  cnpj: string;
+  legalName: string;
+  tradeName: string;
+  email: string;
+  phone: string;
+  address: string;
+  postalCode: string;
+  district: string;
+  city: string;
+  state: string;
+  country: string;
+  industry: string;
+  companySize: string;
+  status: string;
+  legalNature: string;
+  shareCapital: string;
+  updatedAt: string;
+}
+
+export interface ToolState {
+  projectId: number;
+  toolId: string;
+  formData: Record<string, string>;
+  outputData: string;
+  updatedAt: string;
+}
+
+export interface RecentActivity {
+  id: number;
+  toolId: string;
+  createdAt: string;
+  projectId: number | null;
+  projectName: string | null;
+}

@@ -1,0 +1,231 @@
+/**
+ * Pro Plan Tokens
+ * Visual Identity: "Filmmaker Cockpit"
+ * 
+ * Design Philosophy:
+ * - Enhanced visual richness with subtle animations
+ * - Medium shadows (8-24px blur with orange tint)
+ * - Prominent accent color usage (#E85002)
+ * - Glow effects on interactive elements
+ * - Typography scale: 1.06x (slightly larger)
+ * - Refined interactions and micro-animations
+ * 
+ * Target Audience: Professional filmmakers, agencies, production companies
+ * Feature Count: 12+ tools including Pipeline view, advanced project management
+ */
+
+:root[data-plan="pro"],
+.plan-pro {
+  /* ========================================
+     Accent Colors
+     More prominent usage than Free plan
+     ======================================== */
+  --plan-accent-primary: #e85002;
+  --plan-accent-secondary: #f16001;        /* Lighter orange for highlights */
+  --plan-accent-tertiary: #ff8740;         /* Even lighter for energy */
+  --plan-accent-contrast: #000000;         /* Text color on accent backgrounds */
+
+  /* ========================================
+     Surface Colors
+     Slightly more elevated than Free
+     ======================================== */
+  --plan-surface-base: #000000;
+  --plan-surface-elevated: #101010;        /* More elevated than Free */
+  --plan-surface-overlay: #181818;         /* Richer overlay */
+
+  /* ========================================
+     Border Tokens
+     Stronger opacity than Free plan
+     ======================================== */
+  --plan-border-subtle: rgba(249, 249, 249, 0.08);
+  --plan-border-default: rgba(249, 249, 249, 0.12);
+  --plan-border-strong: rgba(232, 80, 2, 0.45);
+
+  /* ========================================
+     Shadow Tokens
+     Enhanced shadows: card (8px blur), hover (16px blur with orange tint), elevated (24px blur)
+     ======================================== */
+  --plan-shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --plan-shadow-hover: 0 16px 48px rgba(232, 80, 2, 0.15);
+  --plan-shadow-elevated: 0 24px 64px rgba(0, 0, 0, 0.42);
+
+  /* ========================================
+     Glow Effects
+     Glow effects for cards and buttons with orange
+     ======================================== */
+  --plan-glow-card: 0 0 0 1px rgba(232, 80, 2, 0.2), 0 0 24px rgba(232, 80, 2, 0.1);
+  --plan-glow-button: 0 0 32px rgba(232, 80, 2, 0.3);
+
+  /* ========================================
+     State Tokens
+     Enhanced hover/active states
+     ======================================== */
+  --plan-state-hover: rgba(232, 80, 2, 0.08);
+  --plan-state-active: rgba(232, 80, 2, 0.14);
+  --plan-state-focus: rgba(232, 80, 2, 0.24);
+
+  /* ========================================
+     Typography Scale
+     1.06x larger than Free
+     ======================================== */
+  --plan-typography-scale: 1.06;
+
+  /* ========================================
+     Text Colors
+     ======================================== */
+  --plan-text-primary: #f9f9f9;
+  --plan-text-secondary: #b0b0b0;
+  --plan-text-tertiary: #707070;
+
+  /* ========================================
+     Component-Specific Tokens
+     ======================================== */
+  
+  /* Buttons */
+  --plan-button-primary-bg: var(--plan-accent-primary);
+  --plan-button-primary-text: #000000;
+  --plan-button-primary-hover: var(--plan-accent-tertiary);
+  --plan-button-primary-glow: var(--plan-glow-button);
+  --plan-button-secondary-bg: transparent;
+  --plan-button-secondary-border: var(--plan-border-default);
+  --plan-button-secondary-text: var(--plan-text-primary);
+  --plan-button-secondary-hover-glow: var(--plan-glow-card);
+  --plan-button-ghost-hover: var(--plan-state-hover);
+
+  /* Cards */
+  --plan-card-bg: var(--plan-surface-elevated);
+  --plan-card-border: var(--plan-border-subtle);
+  --plan-card-shadow: var(--plan-shadow-card);
+  --plan-card-hover-shadow: var(--plan-shadow-hover);
+  --plan-card-glow: var(--plan-glow-card);
+  --plan-card-accent-bar: linear-gradient(90deg, 
+                          var(--plan-accent-primary) 0%, 
+                          transparent 100%);
+
+  /* Navigation */
+  --plan-nav-bg: var(--plan-surface-base);
+  --plan-nav-item-hover: var(--plan-state-hover);
+  --plan-nav-item-active: rgba(232, 80, 2, 0.14);
+  --plan-nav-item-active-glow: var(--plan-glow-card);
+  --plan-nav-accent: var(--plan-accent-primary);
+
+  /* Forms */
+  --plan-border-input: var(--plan-border-default);
+  --plan-input-bg: var(--plan-surface-elevated);
+  --plan-input-border: var(--plan-border-default);
+  --plan-input-focus-border: var(--plan-accent-primary);
+  --plan-input-focus-glow: 0 0 8px rgba(232, 80, 2, 0.25);
+  --plan-input-text: var(--plan-text-primary);
+  --plan-shadow-input-focus: 0 0 0 3px rgba(232, 80, 2, 0.15), 0 0 12px rgba(232, 80, 2, 0.2);
+  --plan-border-input: var(--plan-border-default);
+
+  /* Buttons */
+  --plan-shadow-button-rest: 0 2px 4px rgba(0, 0, 0, 0.12);
+  --plan-shadow-button-hover: 0 4px 12px rgba(232, 80, 2, 0.2);
+
+  /* Modals */
+  --plan-modal-backdrop: rgba(0, 0, 0, 0.75);
+  --plan-modal-backdrop-blur: 4px;
+  --plan-modal-bg: var(--plan-surface-overlay);
+  --plan-modal-border: var(--plan-border-default);
+  --plan-modal-shadow: var(--plan-shadow-elevated);
+  --plan-modal-glow: var(--plan-glow-card);
+
+  /* Pipeline View (Pro-specific) */
+  --plan-pipeline-card-bg: var(--plan-surface-elevated);
+  --plan-pipeline-card-border: var(--plan-border-default);
+  --plan-pipeline-card-shadow: var(--plan-shadow-card);
+  --plan-pipeline-card-hover-glow: var(--plan-glow-card);
+  --plan-pipeline-lane-bg: rgba(255, 255, 255, 0.02);
+  --plan-pipeline-lane-border: var(--plan-border-subtle);
+
+  /* ========================================
+     Animation Tokens
+     Subtle micro-animations for interactions
+     ======================================== */
+  --plan-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --plan-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --plan-transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ========================================
+     NO Dual-Accent System (Studio only)
+     ======================================== */
+  /* Pro plan does not have secondary accent */
+  /* --plan-accent-financial: intentionally omitted */
+}
+
+/* ========================================
+   Responsive Typography Adjustments
+   Pro plan scales up on larger screens
+   ======================================== */
+@media (min-width: 640px) {
+  :root[data-plan="pro"],
+  .plan-pro {
+    --plan-typography-scale: 1.06;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root[data-plan="pro"],
+  .plan-pro {
+    --plan-typography-scale: 1.08;          /* Slightly larger on desktop */
+  }
+}
+
+/* ========================================
+   Light Mode Overrides
+   Pro plan enhanced visual richness in light mode
+   ======================================== */
+@media (prefers-color-scheme: light) {
+  :root[data-plan="pro"],
+  .plan-pro {
+    /* Surfaces - White base with subtle elevation */
+    --plan-surface-base: #ffffff;
+    --plan-surface-elevated: #f8f8f8;
+    --plan-surface-overlay: #f2f2f2;
+    
+    /* Text - High contrast for filmmaker cockpit */
+    --plan-text-primary: #0a0a0a;
+    --plan-text-secondary: #4a4a4a;
+    --plan-text-tertiary: #6a6a6a;         /* CORRIGIDO: 5.74:1 contrast */
+    
+    /* Accent - Darker orange for WCAG AA compliance */
+    --plan-accent-primary: #c14301;        /* CORRIGIDO: 4.51:1 with white text */
+    --plan-accent-contrast: #ffffff;
+    
+    /* Borders - Black with low opacity */
+    --plan-border-subtle: rgba(0, 0, 0, 0.06);
+    --plan-border-default: rgba(0, 0, 0, 0.10);
+    --plan-border-strong: rgba(193, 67, 1, 0.30);  /* Darker orange border */
+    
+    /* Shadows - Subtle with hint of orange */
+    --plan-shadow-card: 0 2px 6px rgba(0, 0, 0, 0.10);
+    --plan-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(193, 67, 1, 0.08);
+    --plan-shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.16);
+    
+    /* Glow - MUITO reduzido para light mode */
+    --plan-glow-card: 0 0 0 1px rgba(193, 67, 1, 0.12);
+    --plan-glow-button: 0 0 16px rgba(193, 67, 1, 0.15);
+    --plan-glow-hover: 0 0 20px rgba(193, 67, 1, 0.18);
+    
+    /* States */
+    --plan-state-hover: rgba(193, 67, 1, 0.04);
+    --plan-state-active: rgba(193, 67, 1, 0.08);
+    --plan-state-focus: #c14301;
+  }
+}
+
+/* ========================================
+   Reduced Motion Support
+   Disable animations for users with motion sensitivity
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-plan="pro"],
+  .plan-pro {
+    --plan-transition-fast: 0ms;
+    --plan-transition-normal: 0ms;
+    --plan-transition-slow: 0ms;
+    --plan-glow-card: none;
+    --plan-glow-button: none;
+  }
+}

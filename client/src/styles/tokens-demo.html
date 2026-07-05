@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Tokens Demo - Cena Studio</title>
+  <link rel="stylesheet" href="./tokens.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      padding: var(--space-2xl);
+      min-height: 100vh;
+      transition: background 300ms, color 300ms;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: var(--text-page);
+      margin-bottom: var(--space-xl);
+      color: var(--text-primary);
+    }
+
+    .section {
+      margin-bottom: var(--space-2xl);
+    }
+
+    .section-title {
+      font-size: var(--text-section);
+      margin-bottom: var(--space-lg);
+      color: var(--text-primary);
+    }
+
+    .card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur) var(--glass-saturation);
+      -webkit-backdrop-filter: var(--glass-blur) var(--glass-saturation);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: var(--space-lg);
+      right: var(--space-lg);
+      background: var(--glass-button-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-button-border);
+      border-radius: var(--radius-md);
+      color: var(--color-orange-primary);
+      padding: var(--space-md) var(--space-lg);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: var(--text-body);
+      font-weight: 600;
+      transition: all var(--duration-normal) var(--ease-out);
+    }
+
+    .theme-toggle:hover {
+      background: var(--glass-button-hover-bg);
+      color: var(--glass-button-hover-color);
+      transform: translateY(-2px);
+      box-shadow: var(--glass-button-hover-shadow);
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .color-swatch {
+      padding: var(--space-lg);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+    }
+
+    .color-swatch.primary {
+      background: var(--color-orange-primary);
+      color: white;
+    }
+
+    .color-swatch.success {
+      background: var(--status-success);
+      color: white;
+    }
+
+    .color-swatch.warning {
+      background: var(--status-warning);
+      color: white;
+    }
+
+    .color-swatch.danger {
+      background: var(--status-danger);
+      color: white;
+    }
+
+    .color-swatch.info {
+      background: var(--status-info);
+      color: white;
+    }
+
+    .spacing-demo {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .spacing-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .spacing-box {
+      height: 40px;
+      background: var(--color-orange-primary);
+      border-radius: var(--radius-sm);
+    }
+
+    .radius-demo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .radius-item {
+      height: 100px;
+      background: var(--color-orange-primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .typography-demo p {
+      margin-bottom: var(--space-md);
+    }
+
+    .hero-text {
+      font-size: var(--text-hero);
+      font-family: var(--font-display);
+      line-height: 1;
+      margin-bottom: var(--space-lg);
+      background: linear-gradient(135deg, var(--color-orange-primary), var(--color-orange-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .shadow-demo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .shadow-item {
+      height: 150px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .shadow-sm { box-shadow: var(--shadow-sm); }
+    .shadow-md { box-shadow: var(--shadow-md); }
+    .shadow-lg { box-shadow: var(--shadow-lg); }
+    .shadow-xl { box-shadow: var(--shadow-xl); }
+
+    .glass-demo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .glass-card {
+      padding: var(--space-xl);
+      border-radius: var(--radius-xl);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    🌓 Toggle Theme
+  </button>
+
+  <div class="container">
+    <h1>🎬 Cena Studio Design Tokens</h1>
+    <p style="font-size: var(--text-body-lg); color: var(--text-secondary); margin-bottom: var(--space-2xl);">
+      Phase 1 Foundation - Liquid Glass Aesthetic Design System
+    </p>
+
+    <!-- Hero Typography -->
+    <div class="section">
+      <h2 class="hero-text">HERO</h2>
+    </div>
+
+    <!-- Color System -->
+    <div class="section">
+      <h2 class="section-title">Color System</h2>
+      <div class="card">
+        <div class="color-grid">
+          <div class="color-swatch primary">
+            <strong>Primary</strong>
+            <div style="margin-top: 8px;">#FF6B00</div>
+          </div>
+          <div class="color-swatch success">
+            <strong>Success</strong>
+            <div style="margin-top: 8px;">#10b981</div>
+          </div>
+          <div class="color-swatch warning">
+            <strong>Warning</strong>
+            <div style="margin-top: 8px;">#f59e0b</div>
+          </div>
+          <div class="color-swatch danger">
+            <strong>Danger</strong>
+            <div style="margin-top: 8px;">#ef4444</div>
+          </div>
+          <div class="color-swatch info">
+            <strong>Info</strong>
+            <div style="margin-top: 8px;">#3b82f6</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typography Scale -->
+    <div class="section">
+      <h2 class="section-title">Typography Scale</h2>
+      <div class="card typography-demo">
+        <p style="font-size: var(--text-hero); font-family: var(--font-display); line-height: 1;">Hero (4rem)</p>
+        <p style="font-size: var(--text-page); font-family: var(--font-display);">Page Title (2.5rem)</p>
+        <p style="font-size: var(--text-section);">Section Title (2rem)</p>
+        <p style="font-size: var(--text-card);">Card Title (1.5rem)</p>
+        <p style="font-size: var(--text-body-lg);">Body Large (1.125rem)</p>
+        <p style="font-size: var(--text-body);">Body Regular (1rem)</p>
+        <p style="font-size: var(--text-small);">Small Text (0.875rem)</p>
+        <p style="font-size: var(--text-label); text-transform: uppercase; letter-spacing: 0.08em;">Label (0.75rem)</p>
+      </div>
+    </div>
+
+    <!-- Spacing Scale -->
+    <div class="section">
+      <h2 class="section-title">Spacing Scale</h2>
+      <div class="card">
+        <div class="spacing-demo">
+          <div class="spacing-item">
+            <span style="width: 100px;">xs (4px)</span>
+            <div class="spacing-box" style="width: var(--space-xs);"></div>
+          </div>
+          <div class="spacing-item">
+            <span style="width: 100px;">sm (8px)</span>
+            <div class="spacing-box" style="width: var(--space-sm);"></div>
+          </div>
+          <div class="spacing-item">
+            <span style="width: 100px;">md (16px)</span>
+            <div class="spacing-box" style="width: var(--space-md);"></div>
+          </div>
+          <div class="spacing-item">
+            <span style="width: 100px;">lg (24px)</span>
+            <div class="spacing-box" style="width: var(--space-lg);"></div>
+          </div>
+          <div class="spacing-item">
+            <span style="width: 100px;">xl (32px)</span>
+            <div class="spacing-box" style="width: var(--space-xl);"></div>
+          </div>
+          <div class="spacing-item">
+            <span style="width: 100px;">2xl (48px)</span>
+            <div class="spacing-box" style="width: var(--space-2xl);"></div>
+          </div>
+          <div class="spacing-item">
+            <span style="width: 100px;">3xl (64px)</span>
+            <div class="spacing-box" style="width: var(--space-3xl);"></div>
+          </div>
+          <div class="spacing-item">
+            <span style="width: 100px;">4xl (96px)</span>
+            <div class="spacing-box" style="width: var(--space-4xl);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Border Radius Scale -->
+    <div class="section">
+      <h2 class="section-title">Border Radius Scale</h2>
+      <div class="card">
+        <div class="radius-demo">
+          <div class="radius-item" style="border-radius: var(--radius-sm);">sm (8px)</div>
+          <div class="radius-item" style="border-radius: var(--radius-md);">md (12px)</div>
+          <div class="radius-item" style="border-radius: var(--radius-lg);">lg (16px)</div>
+          <div class="radius-item" style="border-radius: var(--radius-xl);">xl (24px)</div>
+          <div class="radius-item" style="border-radius: var(--radius-2xl);">2xl (32px)</div>
+          <div class="radius-item" style="border-radius: var(--radius-full); width: 100px; height: 100px; margin: 0 auto;">full</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shadow Scale -->
+    <div class="section">
+      <h2 class="section-title">Shadow Scale</h2>
+      <div class="card" style="background: transparent; backdrop-filter: none; border: none; box-shadow: none;">
+        <div class="shadow-demo">
+          <div class="shadow-item shadow-sm">sm</div>
+          <div class="shadow-item shadow-md">md</div>
+          <div class="shadow-item shadow-lg">lg</div>
+          <div class="shadow-item shadow-xl">xl</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glass Effects -->
+    <div class="section">
+      <h2 class="section-title">Glass Effects (Liquid Glass Aesthetic)</h2>
+      <div style="background: transparent;">
+        <div class="glass-demo">
+          <div class="glass-card glass-card-standard">
+            <h3 style="margin-bottom: var(--space-md);">Standard Glass Card</h3>
+            <p style="font-size: var(--text-small); color: var(--text-secondary);">
+              backdrop-blur(20px) with 0.7 opacity background
+            </p>
+          </div>
+          <div class="glass-card glass-nav">
+            <h3 style="margin-bottom: var(--space-md);">Glass Navigation</h3>
+            <p style="font-size: var(--text-small); color: var(--text-secondary);">
+              backdrop-blur(30px) for navigation bars
+            </p>
+          </div>
+          <button class="glass-button" style="width: 100%; padding: var(--space-lg); font-size: var(--text-body);">
+            Glass Button
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle functionality
+    function toggleTheme() {
+      const root = document.documentElement;
+      const currentTheme = root.getAttribute('data-theme');
+
+      if (currentTheme === 'dark') {
+        root.setAttribute('data-theme', 'light');
+      } else {
+        root.setAttribute('data-theme', 'dark');
+      }
+    }
+
+    // Set initial theme based on system preference
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  </script>
+</body>
+</html>

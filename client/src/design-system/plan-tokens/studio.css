@@ -1,0 +1,334 @@
+/**
+ * Studio Plan Tokens
+ * Visual Identity: "Command Center"
+ * 
+ * Design Philosophy:
+ * - Premium dual-accent system (Orange #E85002 + Gold #D8B343)
+ * - Maximum information density
+ * - Multi-layer shadows with inset borders
+ * - Enterprise-grade visual language
+ * - Typography scale: 1.08x (largest)
+ * - Complex UI patterns for advanced workflows
+ * 
+ * Target Audience: Production companies, studios, agencies with teams
+ * Feature Count: Unlimited tools including Commercial Hub (Proposals, Contracts, Clients)
+ * + Financial modules (Budget, Expenses, Analytics with gold accents)
+ */
+
+:root[data-plan="studio"],
+.plan-studio {
+  /* ========================================
+     Dual-Accent Color System
+     Orange for creative, Gold for financial
+     ======================================== */
+  --plan-accent-primary: #e85002;          /* Orange: Creative modules */
+  --plan-accent-secondary: #d8b343;        /* Gold: Financial/Business modules */
+  --plan-accent-tertiary: #f16001;         /* Lighter orange for highlights */
+  --plan-accent-financial: #d8b343;        /* Explicit financial accent (gold) */
+
+  /* ========================================
+     Surface Colors
+     Premium elevated surfaces
+     ======================================== */
+  --plan-surface-base: #000000;
+  --plan-surface-elevated: #101010;
+  --plan-surface-overlay: #1a1a1a;         /* Richest overlay */
+
+  /* ========================================
+     Border Tokens
+     Strongest borders with dual-accent support
+     ======================================== */
+  --plan-border-subtle: rgba(255, 255, 255, 0.10);
+  --plan-border-default: rgba(255, 255, 255, 0.16);
+  --plan-border-strong: rgba(255, 255, 255, 0.24);
+  --plan-border-gold: rgba(216, 179, 67, 0.48);   /* Gold border for financial */
+
+  /* ========================================
+     Shadow Tokens
+     Premium multi-layer shadows
+     ======================================== */
+  --plan-shadow-card: 0 8px 32px rgba(0, 0, 0, 0.5),
+                      0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  --plan-shadow-hover: 0 16px 48px rgba(0, 0, 0, 0.6),
+                       0 0 40px rgba(232, 80, 2, 0.2),
+                       0 0 0 1px rgba(232, 80, 2, 0.1) inset;
+  --plan-shadow-elevated: 0 24px 64px rgba(0, 0, 0, 0.7),
+                          0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  --plan-shadow-premium: 0 32px 80px rgba(0, 0, 0, 0.75),
+                         0 0 0 1px rgba(232, 80, 2, 0.1) inset,
+                         0 0 64px rgba(232, 80, 2, 0.12);
+  --plan-shadow-gold: 0 16px 48px rgba(0, 0, 0, 0.6),
+                      0 0 40px rgba(216, 179, 67, 0.18),
+                      0 0 0 1px rgba(216, 179, 67, 0.12) inset;
+
+  /* ========================================
+     Glow Effects
+     Premium dual-accent glows
+     ======================================== */
+  --plan-glow-primary: 0 0 0 1px rgba(232, 80, 2, 0.2),
+                       0 0 52px rgba(232, 80, 2, 0.18);
+  --plan-glow-gold: 0 0 0 1px rgba(216, 179, 67, 0.2),
+                    0 0 48px rgba(216, 179, 67, 0.16);
+  --plan-glow-card: 0 0 24px rgba(232, 80, 2, 0.14);
+  --plan-glow-button: 0 0 28px rgba(232, 80, 2, 0.3);
+  --plan-glow-hover: 0 0 32px rgba(232, 80, 2, 0.35);
+  --plan-glow-financial: 0 0 28px rgba(216, 179, 67, 0.25);
+
+  /* ========================================
+     State Tokens
+     Enhanced premium states
+     ======================================== */
+  --plan-state-hover: rgba(255, 255, 255, 0.09);
+  --plan-state-active: rgba(255, 255, 255, 0.16);
+  --plan-state-focus: #e85002;
+  --plan-state-focus-gold: #d8b343;
+
+  /* ========================================
+     Typography Scale
+     1.08x larger than Free (premium feel)
+     ======================================== */
+  --plan-typography-scale: 1.08;
+
+  /* ========================================
+     Text Colors
+     Highest contrast for maximum readability
+     ======================================== */
+  --plan-text-primary: #ffffff;            /* Pure white for max contrast */
+  --plan-text-secondary: #c0c0c0;          /* Brightest secondary text */
+  --plan-text-tertiary: #808080;
+  --plan-text-gold: #d8b343;               /* Gold text for financial */
+
+  /* ========================================
+     Component-Specific Tokens
+     ======================================== */
+  
+  /* Buttons */
+  --plan-button-primary-bg: var(--plan-accent-primary);
+  --plan-button-primary-text: #000000;
+  --plan-button-primary-hover: var(--plan-accent-tertiary);
+  --plan-button-primary-glow: var(--plan-glow-button);
+  --plan-button-secondary-bg: transparent;
+  --plan-button-secondary-border: var(--plan-border-default);
+  --plan-button-secondary-text: var(--plan-text-primary);
+  --plan-button-secondary-hover-glow: var(--plan-glow-card);
+  --plan-button-ghost-hover: var(--plan-state-hover);
+  --plan-button-financial-bg: var(--plan-accent-financial);
+  --plan-button-financial-text: #000000;
+  --plan-button-financial-glow: var(--plan-glow-financial);
+
+  /* Cards */
+  --plan-card-bg: var(--plan-surface-elevated);
+  --plan-card-border: var(--plan-border-subtle);
+  --plan-card-shadow: var(--plan-shadow-card);
+  --plan-card-hover-shadow: var(--plan-shadow-hover);
+  --plan-card-glow: var(--plan-glow-card);
+  --plan-card-accent-bar: linear-gradient(90deg, 
+                          var(--plan-accent-primary) 0%, 
+                          transparent 100%);
+  --plan-card-financial-accent-bar: linear-gradient(90deg, 
+                                    var(--plan-accent-financial) 0%, 
+                                    transparent 100%);
+  --plan-card-premium-border: 0 0 0 1px rgba(232, 80, 2, 0.2) inset;
+
+  /* Navigation */
+  --plan-nav-bg: var(--plan-surface-base);
+  --plan-nav-item-hover: var(--plan-state-hover);
+  --plan-nav-item-active: rgba(232, 80, 2, 0.16);
+  --plan-nav-item-active-glow: var(--plan-glow-card);
+  --plan-nav-accent: var(--plan-accent-primary);
+  --plan-nav-accent-gold: var(--plan-accent-financial);
+  --plan-nav-section-divider: var(--plan-border-default);
+
+  /* Forms */
+  --plan-border-input: var(--plan-border-default);
+  --plan-input-bg: var(--plan-surface-elevated);
+  --plan-input-border: var(--plan-border-default);
+  --plan-input-focus-border: var(--plan-accent-primary);
+  --plan-input-focus-glow: 0 0 12px rgba(232, 80, 2, 0.3);
+  --plan-input-text: var(--plan-text-primary);
+  --plan-input-financial-focus-border: var(--plan-accent-financial);
+  --plan-input-financial-focus-glow: 0 0 12px rgba(216, 179, 67, 0.3);
+  --plan-shadow-input-focus: 0 0 0 3px rgba(232, 80, 2, 0.15), 0 0 16px rgba(232, 80, 2, 0.25), 0 0 0 1px rgba(232, 80, 2, 0.1) inset;
+  --plan-shadow-input-focus-gold: 0 0 0 3px rgba(216, 179, 67, 0.15), 0 0 16px rgba(216, 179, 67, 0.25), 0 0 0 1px rgba(216, 179, 67, 0.1) inset;
+
+  /* Buttons */
+  --plan-shadow-button-rest: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --plan-shadow-button-hover: 0 6px 16px rgba(232, 80, 2, 0.25);
+
+  /* Modals */
+  --plan-modal-backdrop: rgba(0, 0, 0, 0.82);
+  --plan-modal-backdrop-blur: 8px;         /* Maximum backdrop blur */
+  --plan-modal-bg: var(--plan-surface-overlay);
+  --plan-modal-border: var(--plan-border-default);
+  --plan-modal-shadow: var(--plan-shadow-premium);
+  --plan-modal-glow: var(--plan-glow-primary);
+  --plan-modal-inset-border: 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+
+  /* Dashboard Modules (Studio-specific) */
+  --plan-dashboard-module-bg: var(--plan-surface-elevated);
+  --plan-dashboard-module-border: var(--plan-border-default);
+  --plan-dashboard-module-shadow: var(--plan-shadow-card);
+  --plan-dashboard-module-hover-glow: var(--plan-glow-hover);
+  --plan-dashboard-creative-accent: var(--plan-accent-primary);
+  --plan-dashboard-financial-accent: var(--plan-accent-financial);
+
+  /* Commercial Hub (Studio-specific) */
+  --plan-commercial-hub-bg: var(--plan-surface-base);
+  --plan-commercial-card-bg: var(--plan-surface-elevated);
+  --plan-commercial-card-border: var(--plan-border-default);
+  --plan-commercial-card-shadow: var(--plan-shadow-card);
+  --plan-commercial-card-hover-glow: var(--plan-glow-hover);
+  --plan-commercial-status-active: #00c864;
+  --plan-commercial-status-pending: #ffb800;
+  --plan-commercial-status-inactive: #666666;
+
+  /* Financial Modules (Studio-specific with gold accents) */
+  --plan-financial-bg: var(--plan-surface-base);
+  --plan-financial-card-bg: var(--plan-surface-elevated);
+  --plan-financial-card-border: var(--plan-border-gold);
+  --plan-financial-card-shadow: var(--plan-shadow-gold);
+  --plan-financial-card-hover-glow: var(--plan-glow-financial);
+  --plan-financial-accent: var(--plan-accent-financial);
+  --plan-financial-positive: #00c864;
+  --plan-financial-negative: #ff3b3b;
+  --plan-financial-neutral: #a7a7a7;
+
+  /* Pipeline View (Enhanced for Studio) */
+  --plan-pipeline-card-bg: var(--plan-surface-elevated);
+  --plan-pipeline-card-border: var(--plan-border-default);
+  --plan-pipeline-card-shadow: var(--plan-shadow-card);
+  --plan-pipeline-card-hover-glow: var(--plan-glow-hover);
+  --plan-pipeline-lane-bg: rgba(255, 255, 255, 0.03);
+  --plan-pipeline-lane-border: var(--plan-border-subtle);
+  --plan-pipeline-lane-header-bg: var(--plan-surface-overlay);
+
+  /* Team Collaboration (Studio-specific) */
+  --plan-team-avatar-border: var(--plan-border-default);
+  --plan-team-avatar-glow: var(--plan-glow-card);
+  --plan-team-role-admin: var(--plan-accent-primary);
+  --plan-team-role-producer: #00c864;
+  --plan-team-role-creative: #8b5cf6;
+  --plan-team-role-finance: var(--plan-accent-financial);
+
+  /* ========================================
+     Animation Tokens
+     Refined micro-animations for premium feel
+     ======================================== */
+  --plan-transition-fast: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  --plan-transition-normal: 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  --plan-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --plan-transition-spring: 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ========================================
+   Responsive Typography Adjustments
+   Studio plan scales up on larger screens
+   ======================================== */
+@media (min-width: 640px) {
+  :root[data-plan="studio"],
+  .plan-studio {
+    --plan-typography-scale: 1.08;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root[data-plan="studio"],
+  .plan-studio {
+    --plan-typography-scale: 1.10;          /* Even larger on desktop */
+  }
+}
+
+@media (min-width: 1440px) {
+  :root[data-plan="studio"],
+  .plan-studio {
+    --plan-typography-scale: 1.12;          /* Maximum scale on large displays */
+  }
+}
+
+/* ========================================
+   Light Mode Overrides
+   Studio plan adapts to light mode with premium white aesthetic
+   ======================================== */
+@media (prefers-color-scheme: light) {
+  :root[data-plan="studio"],
+  .plan-studio {
+    /* Surfaces - Pure white to very light gray (Command Center) */
+    --plan-surface-base: #ffffff;
+    --plan-surface-elevated: #f7f7f7;        /* Muito claro, quase branco */
+    --plan-surface-overlay: #efefef;         /* Levemente mais escuro para modals */
+    
+    /* Text - Near-black for maximum contrast */
+    --plan-text-primary: #0a0a0a;           /* Quase preto: 19.6:1 contrast */
+    --plan-text-secondary: #4a4a4a;         /* Cinza escuro: 9.0:1 contrast */
+    --plan-text-tertiary: #6a6a6a;          /* CORRIGIDO: 5.74:1 contrast (WCAG AA) */
+    --plan-text-gold: #8a6300;              /* CORRIGIDO: Gold darker for contrast */
+    
+    /* Dual-accent system - CORRIGIDO para WCAG AA */
+    --plan-accent-primary: #c14301;         /* CORRIGIDO: Darker orange 4.51:1 */
+    --plan-accent-secondary: #8a6300;       /* CORRIGIDO: Darker gold 4.87:1 */
+    --plan-accent-contrast: #ffffff;        /* White text on buttons */
+    
+    /* Borders - Black with LOW opacity */
+    --plan-border-subtle: rgba(0, 0, 0, 0.06);
+    --plan-border-default: rgba(0, 0, 0, 0.12);
+    --plan-border-strong: rgba(0, 0, 0, 0.16);
+    --plan-border-gold: rgba(138, 99, 0, 0.24);  /* Darker gold border */
+    
+    /* Shadows - Light and subtle (max 20% opacity) */
+    --plan-shadow-card: 0 2px 8px rgba(0, 0, 0, 0.10);
+    --plan-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.14);
+    --plan-shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.16);
+    --plan-shadow-premium: 0 12px 32px rgba(0, 0, 0, 0.18);
+    --plan-shadow-gold: 0 4px 16px rgba(0, 0, 0, 0.14);
+    
+    /* Glow - MUITO reduzido para light mode */
+    --plan-glow-primary: 0 0 0 1px rgba(193, 67, 1, 0.12);
+    --plan-glow-gold: 0 0 0 1px rgba(138, 99, 0, 0.12);
+    --plan-glow-card: 0 0 16px rgba(193, 67, 1, 0.08);
+    --plan-glow-button: 0 0 20px rgba(193, 67, 1, 0.12);
+    --plan-glow-hover: 0 0 24px rgba(193, 67, 1, 0.15);
+    --plan-glow-financial: 0 0 20px rgba(138, 99, 0, 0.12);
+    
+    /* States - Black with very low opacity */
+    --plan-state-hover: rgba(0, 0, 0, 0.04);
+    --plan-state-active: rgba(0, 0, 0, 0.08);
+    --plan-state-focus: #c14301;             /* Darker orange focus */
+  }
+}
+
+/* ========================================
+   Reduced Motion Support
+   Disable animations for users with motion sensitivity
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  :root[data-plan="studio"],
+  .plan-studio {
+    --plan-transition-fast: 0ms;
+    --plan-transition-normal: 0ms;
+    --plan-transition-slow: 0ms;
+    --plan-transition-spring: 0ms;
+    --plan-glow-primary: none;
+    --plan-glow-gold: none;
+    --plan-glow-card: none;
+    --plan-glow-button: none;
+    --plan-glow-hover: none;
+    --plan-glow-financial: none;
+  }
+}
+
+/* ========================================
+   High Contrast Mode Support
+   Enhanced contrast for accessibility
+   ======================================== */
+@media (prefers-contrast: high) {
+  :root[data-plan="studio"],
+  .plan-studio {
+    --plan-border-subtle: rgba(255, 255, 255, 0.20);
+    --plan-border-default: rgba(255, 255, 255, 0.30);
+    --plan-border-strong: rgba(255, 255, 255, 0.40);
+    --plan-border-gold: rgba(216, 179, 67, 0.60);
+    --plan-text-primary: #ffffff;
+    --plan-text-secondary: #e0e0e0;
+    --plan-text-tertiary: #a0a0a0;
+  }
+}

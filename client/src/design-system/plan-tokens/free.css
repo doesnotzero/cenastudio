@@ -1,0 +1,178 @@
+/**
+ * Free Plan Tokens
+ * Visual Identity: "Minimal"
+ * 
+ * Design Philosophy:
+ * - Clean, high-contrast aesthetic
+ * - Simple shadows (4-12px blur)
+ * - Single accent color (#E85002)
+ * - Minimal decorative elements
+ * - Typography scale: 1.0x (baseline)
+ * 
+ * Target Audience: Individual creators, hobbyists, students
+ * Feature Count: 5 core tools (Script, Shotlist, Moodboard, Checklist, Assistant)
+ */
+
+:root[data-plan="free"],
+.plan-free {
+  /* ========================================
+     Accent Colors
+     ======================================== */
+  --plan-accent-primary: #e85002;
+  --plan-accent-secondary: #c10801;        /* Darker orange for contrast */
+  --plan-accent-tertiary: #f16001;         /* Lighter orange for highlights */
+  --plan-accent-contrast: #000000;         /* Text color on accent backgrounds */
+
+  /* ========================================
+     Surface Colors
+     ======================================== */
+  --plan-surface-base: #000000;            /* Pure black base */
+  --plan-surface-elevated: #0a0a0a;        /* Slightly elevated */
+  --plan-surface-overlay: #121212;         /* Overlays (modals, dropdowns) */
+
+  /* ========================================
+     Border Tokens
+     ======================================== */
+  --plan-border-subtle: rgba(255, 255, 255, 0.06);
+  --plan-border-default: rgba(255, 255, 255, 0.12);
+  --plan-border-strong: rgba(255, 255, 255, 0.18);
+
+  /* ========================================
+     Shadow Tokens
+     Simple shadows for minimal aesthetic
+     ======================================== */
+  --plan-shadow-card: 0 2px 4px rgba(0, 0, 0, 0.5);
+  --plan-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.6);
+  --plan-shadow-elevated: 0 6px 12px rgba(0, 0, 0, 0.7);
+
+  /* ========================================
+     State Tokens
+     ======================================== */
+  --plan-state-hover: rgba(255, 255, 255, 0.06);
+  --plan-state-active: rgba(255, 255, 255, 0.12);
+  --plan-state-focus: #e85002;
+
+  /* ========================================
+     Typography Scale
+     ======================================== */
+  --plan-typography-scale: 1.0;
+
+  /* ========================================
+     Text Colors
+     ======================================== */
+  --plan-text-primary: #f9f9f9;
+  --plan-text-secondary: #a7a7a7;
+  --plan-text-tertiary: #666666;
+
+  /* ========================================
+     Component-Specific Tokens
+     ======================================== */
+  
+  /* Buttons */
+  --plan-button-primary-bg: var(--plan-accent-primary);
+  --plan-button-primary-text: #000000;
+  --plan-button-primary-hover: var(--plan-accent-tertiary);
+  --plan-button-secondary-bg: transparent;
+  --plan-button-secondary-border: var(--plan-border-default);
+  --plan-button-secondary-text: var(--plan-text-primary);
+  --plan-button-ghost-hover: var(--plan-state-hover);
+
+  /* Cards */
+  --plan-card-bg: var(--plan-surface-elevated);
+  --plan-card-border: var(--plan-border-subtle);
+  --plan-card-shadow: var(--plan-shadow-card);
+  --plan-card-hover-shadow: var(--plan-shadow-hover);
+
+  /* Navigation */
+  --plan-nav-bg: var(--plan-surface-base);
+  --plan-nav-item-hover: var(--plan-state-hover);
+  --plan-nav-item-active: rgba(232, 80, 2, 0.12);
+  --plan-nav-accent: var(--plan-accent-primary);
+
+  /* Forms */
+  --plan-border-input: var(--plan-border-default);
+  --plan-input-bg: var(--plan-surface-elevated);
+  --plan-input-border: var(--plan-border-default);
+  --plan-input-focus-border: var(--plan-accent-primary);
+  --plan-input-text: var(--plan-text-primary);
+  --plan-shadow-input-focus: 0 0 0 3px rgba(232, 80, 2, 0.15);
+
+  /* Buttons */
+  --plan-shadow-button-rest: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --plan-shadow-button-hover: 0 2px 4px rgba(0, 0, 0, 0.15);
+
+  /* Modals */
+  --plan-modal-backdrop: rgba(0, 0, 0, 0.7);
+  --plan-modal-bg: var(--plan-surface-overlay);
+  --plan-modal-border: var(--plan-border-default);
+  --plan-modal-shadow: var(--plan-shadow-elevated);
+
+  /* ========================================
+     NO Glow Effects (Pro/Studio only)
+     ======================================== */
+  /* Free plan does not have glow effects */
+  /* --plan-glow-card: intentionally omitted */
+  /* --plan-glow-button: intentionally omitted */
+
+  /* ========================================
+     NO Dual-Accent System (Studio only)
+     ======================================== */
+  /* Free plan does not have secondary accent */
+  /* --plan-accent-financial: intentionally omitted */
+}
+
+/* ========================================
+   Responsive Typography Adjustments
+   Free plan maintains 1.0x scale at all breakpoints
+   ======================================== */
+@media (min-width: 640px) {
+  :root[data-plan="free"],
+  .plan-free {
+    --plan-typography-scale: 1.0;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root[data-plan="free"],
+  .plan-free {
+    --plan-typography-scale: 1.0;
+  }
+}
+
+/* ========================================
+   Light Mode Overrides
+   Free plan adapts to light mode with proper contrast
+   ======================================== */
+@media (prefers-color-scheme: light) {
+  :root[data-plan="free"],
+  .plan-free {
+    /* Surfaces - Pure white to very light gray */
+    --plan-surface-base: #ffffff;
+    --plan-surface-elevated: #f8f8f8;        /* Muito claro, quase branco */
+    --plan-surface-overlay: #f0f0f0;         /* Levemente mais escuro para modals */
+    
+    /* Text - Near-black for maximum contrast */
+    --plan-text-primary: #0a0a0a;           /* Quase preto: 19.6:1 contrast */
+    --plan-text-secondary: #5a5a5a;         /* Cinza escuro: 7.0:1 contrast */
+    --plan-text-tertiary: #6a6a6a;          /* CORRIGIDO: 5.74:1 contrast (WCAG AA) */
+    
+    /* Accent - Darker orange for better contrast with white text */
+    --plan-accent-primary: #c14301;         /* CORRIGIDO: Darker orange for 4.51:1 */
+    --plan-accent-contrast: #ffffff;        /* Branco em botões laranja */
+    
+    /* Borders - Black with LOW opacity (critical!) */
+    --plan-border-subtle: rgba(0, 0, 0, 0.06);   /* Quase invisível */
+    --plan-border-default: rgba(0, 0, 0, 0.10);  /* Sutil mas visível */
+    --plan-border-strong: rgba(0, 0, 0, 0.16);   /* Clara sem ser pesada */
+    
+    /* Shadows - Light and subtle (max 20% opacity) */
+    --plan-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --plan-shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.12);
+    --plan-shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    /* States - Black with very low opacity */
+    --plan-state-hover: rgba(0, 0, 0, 0.03);     /* Quase imperceptível */
+    --plan-state-active: rgba(0, 0, 0, 0.06);    /* Sutil */
+    --plan-state-focus: #c14301;                  /* Darker orange */
+  }
+}

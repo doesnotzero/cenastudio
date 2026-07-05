@@ -1,0 +1,113 @@
+{
+  "app": {
+    "dashboard": {
+      "statusEmpty": "No projects",
+      "statusBriefing": "Waiting for briefing",
+      "statusProduction": "In production",
+      "statusDelivery": "Delivered",
+      "actionCreateProject": "Create project",
+      "actionCompleteBriefing": "Complete briefing",
+      "actionDefineDeadline": "Set deadline",
+      "actionOpenHub": "Open hub",
+      "queueBriefing": "Pending briefing",
+      "queueDeadline": "Deadline approaching",
+      "queueReviewOutput": "New generation",
+      "activityProposal": "New proposal",
+      "activityBriefing": "New briefing",
+      "activityCallsheet": "New callsheet",
+      "activityGenerated": "New generation"
+    },
+    "common": {
+      "noData": "No data"
+    },
+    "errors": {
+      "generic": "An error occurred"
+    },
+    "landing": {
+      "hero": {
+        "subtitle": "Creative production platform with AI",
+        "titleLine1": "CENA Studio",
+        "titleLine2": "Director's Cut",
+        "titleLine3": "Your creative command center",
+        "description": "From briefing to delivery, manage your audiovisual production projects with AI assistance. Simplify workflows, collaborate in real-time, and deliver exceptional results.",
+        "cta": "Start Creating",
+        "watchProduct": "Watch Demo",
+        "filmmakers": "Made by filmmakers for filmmakers",
+        "realProduct": "Real product in action",
+        "reviewProduction": "Production review",
+        "branding": "CENA Studio - AI Creative Platform"
+      },
+      "howItWorks": {
+        "eyebrow": "Workflow",
+        "heading": "Simple flow, <strong>powerful results</strong>",
+        "copy": "From concept to final cut in three simple steps",
+        "step1Title": "Create Project",
+        "step1Desc": "Define project briefing and creative direction",
+        "step2Title": "AI Assistance",
+        "step2Desc": "Get intelligent help at every production stage",
+        "step3Title": "Review & Deliver",
+        "step3Desc": "Collaborate, refine and deliver exceptional results",
+        "seeTools": "See All Tools"
+      },
+      "toolsSection": {
+        "eyebrow": "AI Tools",
+        "heading": "Create faster with",
+        "outlineText": "AI",
+        "description": "From scripts to storyboards, our AI toolkit accelerates every production stage."
+      },
+      "pricing": {
+        "eyebrow": "Plans & Pricing",
+        "heading": "Choose the perfect plan for",
+        "outlineText": "you",
+        "description": "Start free and scale as you grow. No hidden fees, no long contracts.",
+        "popular": "Most Popular",
+        "freeCta": "Start Free",
+        "createPro": "Try Pro Free",
+        "activatePro": "Activate Pro",
+        "createStudio": "Talk to Sales",
+        "activateStudio": "Activate Studio",
+        "invalidPlan": "Invalid plan",
+        "loginPrompt": "Please login to continue",
+        "checkoutError": "Error starting checkout",
+        "footnote": "All prices in BRL. Cancel anytime, no bureaucracy."
+      },
+      "footer": {
+        "eyebrow": "Ready to start?",
+        "headingLine1": "Transform",
+        "headingLine2": "your ideas into",
+        "headingLine3": "reality",
+        "copy": "Join hundreds of production companies and filmmakers creating audiovisual content more efficiently.",
+        "enterProduct": "Enter Product",
+        "scheduleDemo": "Schedule Demo",
+        "description": "Operational platform for audiovisual production with AI. From briefing to delivery.",
+        "allRightsReserved": "All rights reserved.",
+        "license": "Proprietary software. Use subject to terms of service.",
+        "legalNotice": "Legal documents and policies available upon request."
+      },
+      "navigation": {
+        "howItWorks": "How it works",
+        "tools": "Tools",
+        "pricing": "Pricing",
+        "contact": "Contact"
+      },
+      "modals": {
+        "fullName": "Full Name",
+        "yourName": "Your name",
+        "nameRequired": "Name is required",
+        "email": "Email",
+        "emailPlaceholder": "your@email.com",
+        "emailRequired": "Email is required",
+        "invalidEmail": "Invalid email",
+        "phone": "Phone",
+        "phonePlaceholder": "(00) 00000-0000",
+        "message": "Message",
+        "messagePlaceholder": "Tell us about your project...",
+        "messageRequired": "Message is required",
+        "sending": "Sending...",
+        "sendMessage": "Send Message"
+      }
+    },
+    "login": "Login",
+    "start": "Get Started"
+  }
+}

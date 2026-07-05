@@ -1,0 +1,426 @@
+/**
+ * Cena Studio Platform - Design Token System
+ * Phase 1: Foundation - Liquid Glass Aesthetic
+ *
+ * This file defines the complete CSS custom properties system supporting
+ * both light and dark themes with glassmorphism effects, rounded borders,
+ * and a comprehensive design token system.
+ */
+
+/* ============================================================================
+   BASE TOKENS (Theme-Independent)
+   ============================================================================ */
+
+:root {
+  /* Typography Scale */
+  --font-display: 'Frame Display', 'Inter', system-ui, sans-serif;
+  --font-body: 'DM Sans', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-hero: 4rem;        /* 64px - Hero/Display */
+  --text-page: 2.5rem;      /* 40px - Page titles */
+  --text-section: 2rem;     /* 32px - Section titles */
+  --text-card: 1.5rem;      /* 24px - Card titles */
+  --text-body-lg: 1.125rem; /* 18px - Large body */
+  --text-body: 1rem;        /* 16px - Regular body */
+  --text-small: 0.875rem;   /* 14px - Small text */
+  --text-label: 0.75rem;    /* 12px - Labels/Uppercase */
+
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  /* Border Radius Scale */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  /* Animation Timing */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* Smooth theme transition */
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+/* Apply smooth transitions to all elements that use theme colors */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 300ms;
+  transition-timing-function: ease;
+}
+
+/* ============================================================================
+   LIGHT THEME
+   ============================================================================ */
+
+:root[data-theme="light"] {
+  /* Brand Colors */
+  --color-orange-primary: #FF6B00;
+  --color-orange-light: #FF8533;
+  --color-orange-dark: #CC5500;
+
+  /* Background Colors */
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #F5F5F5;
+
+  /* Text Colors */
+  --text-primary: #0A0A0A;
+  --text-secondary: #404040;
+  --text-muted: #808080;
+
+  /* Status Colors */
+  --status-success: #10b981;
+  --status-success-bg: rgba(16, 185, 129, 0.1);
+  --status-success-border: rgba(16, 185, 129, 0.3);
+
+  --status-warning: #f59e0b;
+  --status-warning-bg: rgba(245, 158, 11, 0.1);
+  --status-warning-border: rgba(245, 158, 11, 0.3);
+
+  --status-danger: #ef4444;
+  --status-danger-bg: rgba(239, 68, 68, 0.1);
+  --status-danger-border: rgba(239, 68, 68, 0.3);
+
+  --status-info: #3b82f6;
+  --status-info-bg: rgba(59, 130, 246, 0.1);
+  --status-info-border: rgba(59, 130, 246, 0.3);
+
+  --status-neutral: #6b7280;
+  --status-neutral-bg: rgba(107, 114, 128, 0.1);
+  --status-neutral-border: rgba(107, 114, 128, 0.3);
+
+  /* Border Colors */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-medium: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.18);
+
+  /* Shadow Scale */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.16);
+
+  /* Glass Effect Variables */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --glass-blur: blur(20px);
+  --glass-saturation: saturate(180%);
+
+  /* Glass Navigation (stronger blur) */
+  --glass-nav-bg: rgba(255, 255, 255, 0.7);
+  --glass-nav-blur: blur(30px);
+  --glass-nav-border: rgba(0, 0, 0, 0.08);
+
+  /* Glass Button */
+  --glass-button-bg: rgba(255, 107, 0, 0.1);
+  --glass-button-border: var(--color-orange-primary);
+  --glass-button-hover-bg: var(--color-orange-primary);
+  --glass-button-hover-color: #FFFFFF;
+  --glass-button-hover-shadow: 0 4px 16px rgba(255, 107, 0, 0.3);
+}
+
+/* ============================================================================
+   DARK THEME
+   ============================================================================ */
+
+:root[data-theme="dark"] {
+  /* Brand Colors (same as light) */
+  --color-orange-primary: #FF6B00;
+  --color-orange-light: #FF8533;
+  --color-orange-dark: #CC5500;
+
+  /* Background Colors */
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #1A1A1A;
+  --bg-tertiary: #2A2A2A;
+
+  /* Text Colors */
+  --text-primary: #FFFFFF;
+  --text-secondary: #E0E0E0;
+  --text-muted: #A0A0A0;
+
+  /* Status Colors (same as light) */
+  --status-success: #10b981;
+  --status-success-bg: rgba(16, 185, 129, 0.1);
+  --status-success-border: rgba(16, 185, 129, 0.3);
+
+  --status-warning: #f59e0b;
+  --status-warning-bg: rgba(245, 158, 11, 0.1);
+  --status-warning-border: rgba(245, 158, 11, 0.3);
+
+  --status-danger: #ef4444;
+  --status-danger-bg: rgba(239, 68, 68, 0.1);
+  --status-danger-border: rgba(239, 68, 68, 0.3);
+
+  --status-info: #3b82f6;
+  --status-info-bg: rgba(59, 130, 246, 0.1);
+  --status-info-border: rgba(59, 130, 246, 0.3);
+
+  --status-neutral: #6b7280;
+  --status-neutral-bg: rgba(107, 114, 128, 0.1);
+  --status-neutral-border: rgba(107, 114, 128, 0.3);
+
+  /* Border Colors */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  /* Shadow Scale */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.5);
+
+  /* Glass Effect Variables */
+  --glass-bg: rgba(10, 10, 10, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --glass-blur: blur(20px);
+  --glass-saturation: saturate(180%);
+
+  /* Glass Navigation (stronger blur) */
+  --glass-nav-bg: rgba(10, 10, 10, 0.6);
+  --glass-nav-blur: blur(30px);
+  --glass-nav-border: rgba(255, 255, 255, 0.18);
+
+  /* Glass Button */
+  --glass-button-bg: rgba(255, 107, 0, 0.1);
+  --glass-button-border: var(--color-orange-primary);
+  --glass-button-hover-bg: var(--color-orange-primary);
+  --glass-button-hover-color: #FFFFFF;
+  --glass-button-hover-shadow: 0 4px 16px rgba(255, 107, 0, 0.3);
+}
+
+/* ============================================================================
+   DEFAULT THEME (Light)
+   ============================================================================ */
+
+:root {
+  /* Apply light theme as default */
+  /* Brand Colors */
+  --color-orange-primary: #FF6B00;
+  --color-orange-light: #FF8533;
+  --color-orange-dark: #CC5500;
+
+  /* Background Colors */
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #F5F5F5;
+
+  /* Text Colors */
+  --text-primary: #0A0A0A;
+  --text-secondary: #404040;
+  --text-muted: #808080;
+
+  /* Status Colors */
+  --status-success: #10b981;
+  --status-success-bg: rgba(16, 185, 129, 0.1);
+  --status-success-border: rgba(16, 185, 129, 0.3);
+
+  --status-warning: #f59e0b;
+  --status-warning-bg: rgba(245, 158, 11, 0.1);
+  --status-warning-border: rgba(245, 158, 11, 0.3);
+
+  --status-danger: #ef4444;
+  --status-danger-bg: rgba(239, 68, 68, 0.1);
+  --status-danger-border: rgba(239, 68, 68, 0.3);
+
+  --status-info: #3b82f6;
+  --status-info-bg: rgba(59, 130, 246, 0.1);
+  --status-info-border: rgba(59, 130, 246, 0.3);
+
+  --status-neutral: #6b7280;
+  --status-neutral-bg: rgba(107, 114, 128, 0.1);
+  --status-neutral-border: rgba(107, 114, 128, 0.3);
+
+  /* Border Colors */
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-medium: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.18);
+
+  /* Shadow Scale */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.16);
+
+  /* Glass Effect Variables */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --glass-blur: blur(20px);
+  --glass-saturation: saturate(180%);
+
+  /* Glass Navigation (stronger blur) */
+  --glass-nav-bg: rgba(255, 255, 255, 0.7);
+  --glass-nav-blur: blur(30px);
+  --glass-nav-border: rgba(0, 0, 0, 0.08);
+
+  /* Glass Button */
+  --glass-button-bg: rgba(255, 107, 0, 0.1);
+  --glass-button-border: var(--color-orange-primary);
+  --glass-button-hover-bg: var(--color-orange-primary);
+  --glass-button-hover-color: #FFFFFF;
+  --glass-button-hover-shadow: 0 4px 16px rgba(255, 107, 0, 0.3);
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+/* Glass Card Standard */
+.glass-card-standard {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur) var(--glass-saturation);
+  -webkit-backdrop-filter: var(--glass-blur) var(--glass-saturation);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Glass Navigation */
+.glass-nav {
+  background: var(--glass-nav-bg);
+  backdrop-filter: var(--glass-nav-blur) var(--glass-saturation);
+  -webkit-backdrop-filter: var(--glass-nav-blur) var(--glass-saturation);
+  border-bottom: 1px solid var(--glass-nav-border);
+}
+
+/* Glass Button */
+.glass-button {
+  background: var(--glass-button-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-button-border);
+  border-radius: var(--radius-md);
+  color: var(--glass-button-border);
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.glass-button:hover {
+  background: var(--glass-button-hover-bg);
+  color: var(--glass-button-hover-color);
+  transform: translateY(-2px);
+  box-shadow: var(--glass-button-hover-shadow);
+}
+
+/* Hover Lift Effect */
+.hover-lift {
+  transition: transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  .glass-button:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   BROWSER COMPATIBILITY
+   ============================================================================ */
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(20px)) {
+  .glass-card-standard {
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  :root[data-theme="dark"] .glass-card-standard {
+    background: rgba(10, 10, 10, 0.95);
+  }
+
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  :root[data-theme="dark"] .glass-nav {
+    background: rgba(10, 10, 10, 0.95);
+  }
+
+  .glass-button {
+    background: rgba(255, 107, 0, 0.15);
+  }
+}

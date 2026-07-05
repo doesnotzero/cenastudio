@@ -1,0 +1,113 @@
+{
+  "app": {
+    "dashboard": {
+      "statusEmpty": "Nenhum projeto",
+      "statusBriefing": "Aguardando briefing",
+      "statusProduction": "Em produção",
+      "statusDelivery": "Entregue",
+      "actionCreateProject": "Criar projeto",
+      "actionCompleteBriefing": "Completar briefing",
+      "actionDefineDeadline": "Definir prazo",
+      "actionOpenHub": "Abrir hub",
+      "queueBriefing": "Briefing pendente",
+      "queueDeadline": "Prazo próximo",
+      "queueReviewOutput": "Nova geração",
+      "activityProposal": "Nova proposta",
+      "activityBriefing": "Novo briefing",
+      "activityCallsheet": "Novo callsheet",
+      "activityGenerated": "Nova geração"
+    },
+    "common": {
+      "noData": "Sem dados"
+    },
+    "errors": {
+      "generic": "Ocorreu um erro"
+    },
+    "landing": {
+      "hero": {
+        "subtitle": "Plataforma de produção criativa com IA",
+        "titleLine1": "CENA Studio",
+        "titleLine2": "Director's Cut",
+        "titleLine3": "Seu centro de comando criativo",
+        "description": "Do briefing à entrega, gerencie seus projetos de produção audiovisual com assistência de IA. Simplifique workflows, colabore em tempo real e entregue resultados excepcionais.",
+        "cta": "Começar a Criar",
+        "watchProduct": "Ver Demonstração",
+        "filmmakers": "Feito por filmmakers para filmmakers",
+        "realProduct": "Produto real em ação",
+        "reviewProduction": "Revisão de produção",
+        "branding": "CENA Studio - Plataforma Criativa de IA"
+      },
+      "howItWorks": {
+        "eyebrow": "Fluxo de trabalho",
+        "heading": "Fluxo simples, <strong>resultados poderosos</strong>",
+        "copy": "Do conceito ao cut final em três passos simples",
+        "step1Title": "Criar Projeto",
+        "step1Desc": "Defina o briefing e direção criativa do projeto",
+        "step2Title": "Assistência de IA",
+        "step2Desc": "Obtenha ajuda inteligente em cada etapa da produção",
+        "step3Title": "Revisar & Entregar",
+        "step3Desc": "Colabore, refina e entrega resultados excepcionais",
+        "seeTools": "Ver Todas as Ferramentas"
+      },
+      "toolsSection": {
+        "eyebrow": "Ferramentas IA",
+        "heading": "Crie mais rápido com",
+        "outlineText": "IA",
+        "description": "De roteiros a storyboards, nossa suite de ferramentas IA acelera cada etapa da produção."
+      },
+      "pricing": {
+        "eyebrow": "Planos e Preços",
+        "heading": "Escolha o plano ideal para",
+        "outlineText": "você",
+        "description": "Comece grátis e escale conforme cresce. Sem taxas ocultas, sem contratos longos.",
+        "popular": "Mais Popular",
+        "freeCta": "Começar Grátis",
+        "createPro": "Testar Pro Grátis",
+        "activatePro": "Ativar Pro",
+        "createStudio": "Falar com Vendas",
+        "activateStudio": "Ativar Studio",
+        "invalidPlan": "Plano inválido",
+        "loginPrompt": "Faça login para continuar",
+        "checkoutError": "Erro ao iniciar checkout",
+        "footnote": "Todos os preços em BRL. Cancele quando quiser, sem burocracia."
+      },
+      "footer": {
+        "eyebrow": "Pronto para começar?",
+        "headingLine1": "Transforme",
+        "headingLine2": "suas ideias em",
+        "headingLine3": "realidade",
+        "copy": "Junte-se a centenas de produtoras e filmmakers que estão criando conteúdo audiovisual de forma mais eficiente.",
+        "enterProduct": "Entrar no Produto",
+        "scheduleDemo": "Agendar Demo",
+        "description": "Plataforma operacional para produção audiovisual com IA. Do briefing à entrega.",
+        "allRightsReserved": "Todos os direitos reservados.",
+        "license": "Software proprietário. Uso sujeito a termos de serviço.",
+        "legalNotice": "Documentos legais e políticas disponíveis mediante solicitação."
+      },
+      "navigation": {
+        "howItWorks": "Como funciona",
+        "tools": "Ferramentas",
+        "pricing": "Preços",
+        "contact": "Contato"
+      },
+      "modals": {
+        "fullName": "Nome Completo",
+        "yourName": "Seu nome",
+        "nameRequired": "Nome é obrigatório",
+        "email": "E-mail",
+        "emailPlaceholder": "seu@email.com",
+        "emailRequired": "E-mail é obrigatório",
+        "invalidEmail": "E-mail inválido",
+        "phone": "Telefone",
+        "phonePlaceholder": "(00) 00000-0000",
+        "message": "Mensagem",
+        "messagePlaceholder": "Conte-nos sobre seu projeto...",
+        "messageRequired": "Mensagem é obrigatória",
+        "sending": "Enviando...",
+        "sendMessage": "Enviar Mensagem"
+      }
+    },
+    "login": "Entrar",
+    "start": "Começar"
+  }
+}
